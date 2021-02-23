@@ -18,15 +18,19 @@ I ran it without `sudo` and then manually copied two packages to `/usr/local/lib
 c. To rebuild the server, run
 
 ```
-cd ~/swift; sudo python setup.py develop
+cd ~/swift; sudo python3 setup.py develop
 cd ~/swift; sudo chown -R ${USER}:${USER} swift.egg-info
 startmain
 ```
-d. How to get Auth_token? (I put the following exports to .bashrc on the development server for faster testing)
+
+d. To stop the server run, `swift-init all stop`
+
+e. How to get Auth_token? (I put the following exports to .bashrc on the development server for faster testing)
 
 curl -v -H 'X-Storage-User: test:tester' -H 'X-Storage-Pass: testing' http://127.0.0.1:8080/auth/v1.0
 
-You can set the following environment variables to access the storage directly
+You can set the following environment variables to access the storage directly 
+(note that the service layer in the python client use these environment variables)
 
 ```
 export ST_AUTH_VERSION=1.0
@@ -35,6 +39,8 @@ export ST_USER=test:tester
 export ST_KEY=testing
 ```
 
-e. CLI documentation [here](https://docs.openstack.org/python-swiftclient/latest/cli/index.html)
+f. CLI documentation [here](https://docs.openstack.org/python-swiftclient/latest/cli/index.html)
 
-f. The client Service API documentation [here](https://docs.openstack.org/python-swiftclient/latest/service-api.html)
+g. The client Service API documentation [here](https://docs.openstack.org/python-swiftclient/latest/service-api.html)
+
+h. use `swift_rebuild.sh` to stop, revbuild, and restart the swift server after changing the source code
