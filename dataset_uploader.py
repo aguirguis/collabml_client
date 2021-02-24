@@ -1,6 +1,6 @@
 #Upload dataset to swift DB...
 #Based on: https://docs.openstack.org/python-swiftclient/latest/service-api.html#upload
-import swiftclient as client
+#import swiftclient as client
 from swiftclient.service import SwiftService, SwiftUploadObject, SwiftError
 from swiftclient.exceptions import ClientException
 import os
@@ -37,7 +37,7 @@ def uploadf(swift, container_name, fname, dir):
         print("%s" % error)
 
 def main():
-  url, token = client.get_auth(auth_url='http://127.0.0.1:8080/auth/v1.0', user='test:tester', key='testing')
+#  url, token = client.get_auth(auth_url='http://127.0.0.1:8080/auth/v1.0', user='test:tester', key='testing')  #no need to work directly with client
   swift = SwiftService()
   dataset_name = 'cifar10'
   try:
@@ -46,7 +46,7 @@ def main():
   except SwiftError as e:
     found = False
   if not found:
-    client.put_container(url, token, dataset_name)
+    swift.post(container=dataset_name)
   else:
     print("Container {} already exists".format(dataset_name))
   homedir = os.environ['HOME']
