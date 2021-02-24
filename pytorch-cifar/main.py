@@ -15,7 +15,6 @@ from models import *
 from utils import progress_bar
 from time import time
 
-import swiftclient as client
 from swiftclient.service import SwiftService, SwiftError
 from swiftclient.exceptions import ClientException
 
@@ -66,7 +65,10 @@ datadir = homedir+"/dataset/"+dataset_name+"/"
 #first fetch data....we assume here that data does not exist locally
 swift = SwiftService()
 start_download_t = time()
-download_dataset(swift, dataset_name, datadir)
+try:
+  download_dataset(swift, dataset_name, datadir)
+except ClientException as e:
+  print("Got an exeption while downloading the dataset ", e)
 print('data downloaded...time elapsed: {}'.format(time()-start_download_t))
 trainset = torchvision.datasets.CIFAR10(
     root=datadir, train=True, download=False, transform=transform_train)
