@@ -3,7 +3,7 @@ from swiftclient.service import SwiftService, SwiftPostObject, SwiftError
 container = 'cifar10'
 objects=['cifar-10-batches-py/readme.html']
 swift = SwiftService()
-opts = {"meta": {"Info:This is some info about the README file"}}
+opts = {"meta": {"Ml-task:inference","dataset:cifar10","model:cifarnet"}}
 post_objects=[SwiftPostObject(o,opts) for o in objects]
 for post_res in swift.post(
       container=container,
