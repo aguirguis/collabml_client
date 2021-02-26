@@ -4,7 +4,7 @@ container = 'cifar10'
 objects=['cifar-10-batches-py/test_batch'] #'cifar-10-batches-py/data_batch_1']
 swift = SwiftService()
 step = 1000					#current limits: 9K with Cifarnet, 850 with ResNet50
-for start in range(0,10000,step):
+for start in range(0,1000,step):
   end = start+step
   end = 10000 if end >= 10000 else end
   #ask to do inference for images [strat:end] from the test batch
@@ -17,9 +17,8 @@ for start in range(0,10000,step):
       container=container,
       objects=post_objects):
     if post_res['success']:
-      inf_res = post_res['response_dict']['headers']['inf-res'][1:-1].split()
+      inf_res = str(post_res['result'])[1:-1].split()
       print("Inference result length: ", len(inf_res))
-#      print(post_res)
       print("Object '%s' POST success" % post_res['object'])
     else:
       print("Object '%s' POST failed" % post_res['object'])
