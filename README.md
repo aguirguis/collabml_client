@@ -34,7 +34,7 @@ You can set the following environment variables to access the storage directly
 
 ```
 export ST_AUTH_VERSION=1.0
-export ST_AUTH=http://127.0.0.1:8080/auth/v1.0
+export ST_AUTH=http://10.221.117.112:8080/auth/v1.0
 export ST_USER=test:tester
 export ST_KEY=testing
 ```
