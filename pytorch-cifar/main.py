@@ -36,11 +36,13 @@ def download_dataset(swift, dataset_name, datadir):
           print("ERROR!!", res)
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
+parser.add_argument('--testonly', action='store_true', help='run inference only without training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
 parser.add_argument('--resume', '-r', action='store_true',
                     help='resume from checkpoint')
 args = parser.parse_args()
 
+print("Test only? {}".format(args.testonly))
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
@@ -149,6 +151,7 @@ def test(epoch):
     test_loss = 0
     correct = 0
     total = 0
+    res = []
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
@@ -157,6 +160,7 @@ def test(epoch):
 
             test_loss += loss.item()
             _, predicted = outputs.max(1)
+            res.extend(predicted)
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
 
@@ -176,7 +180,12 @@ def test(epoch):
             os.mkdir('checkpoint')
         torch.save(state, './checkpoint/ckpt.pth')
         best_acc = acc
+    return res
 
+if args.testonly:
+    res = test(0)
+    print("Inference done for {} inputs".format(len(res)))
+    exit(0)
 
 for epoch in range(start_epoch, start_epoch+200):
     train(epoch)

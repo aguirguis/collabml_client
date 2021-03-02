@@ -44,3 +44,5 @@ f. CLI documentation [here](https://docs.openstack.org/python-swiftclient/latest
 g. The client Service API documentation [here](https://docs.openstack.org/python-swiftclient/latest/service-api.html)
 
 h. use `swift_rebuild.sh` to stop, revbuild, and restart the swift server after changing the source code
+
+i. use `sudo python3 setup.py develop` to build the client from source too (make sure to checkout to `ml-swift` branch first)
