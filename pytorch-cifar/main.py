@@ -11,8 +11,7 @@ import torchvision.transforms as transforms
 import os
 import argparse
 
-from models import *
-from utils import progress_bar
+from utils import *
 from time import time
 
 from swiftclient.service import SwiftService, SwiftError
@@ -86,6 +85,7 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer',
 
 # Model
 print('==> Building model..')
+net = get_model('resnet50','cifar10')
 # net = VGG('VGG19')
 # net = ResNet18()
 # net = PreActResNet18()
@@ -100,7 +100,7 @@ print('==> Building model..')
 # net = ShuffleNetV2(1)
 # net = EfficientNetB0()
 # net = RegNetX_200MF()
-net = SimpleDLA()
+# net = SimpleDLA()
 net = net.to(device)
 if device == 'cuda':
     net = torch.nn.DataParallel(net)
