@@ -3,22 +3,21 @@ import pickle
 import torchvision
 from pytorch_cifar.utils import get_model
 
-dataset = 'mnist'	#cifar10
-model = 'convnet'	#resnet50
-task = 'training'
-parent_dir = 'mnist' #'cifar-10-batches-py'
-objects = ['mnist/train-images-idx3-ubyte']
+dataset = 'imagenet' #'mnist'	#cifar10
+model = 'resnet50' #'convnet'	#resnet50
+task = 'training'	#'training'
+parent_dir = 'imagenet' #'mnist' #'cifar-10-batches-py'
+objects = ['imagenet/ILSVRC2012_val_00002456.JPEG']	#some image I am sure it's uploaded to Swift
 #['mnist/train-images-idx3-ubyte'] #['mnist/t10k-images-idx3-ubyte'] #['cifar-10-batches-py/data_batch_1']
 swift = SwiftService()
-step = 10000					#current limits: 9K with Cifarnet, 850 with ResNet50
-for start in range(0,10000,step):
+step = 10					#current limits: 9K with Cifarnet, 850 with ResNet50
+for start in range(24440,24450,step):
   end = start+step
-  end = 10000 if end >= 10000 else end
   #ask to do inference for images [strat:end] from the test batch
   print("{} for data [{}:{}]".format(task,start,end))
   opts = {"meta": {"Ml-Task:{}".format(task),
 	"dataset:{}".format(dataset),"model:{}".format(model),
-        "Batch-Size:100","Num-Epochs:1",
+        "Batch-Size:1","Num-Epochs:1",
         "Lossfn:cross-entropy","Optimizer:sgd",
 	"start:{}".format(start),"end:{}".format(end)},
 	"header": {"Parent-Dir:{}".format(parent_dir)}}

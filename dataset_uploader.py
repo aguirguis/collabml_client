@@ -20,9 +20,8 @@ def uploadf(swift, container_name, fname, dir):
   for (_dir, _ds, _fs) in walk(join(dir,fname)):	#explore the directory
     if (_ds + _fs):	#found some files here
       objs.extend([join(_dir, _f) for _f in _fs])
-  print(dir+fname)
   objs = [SwiftUploadObject(o, object_name=o[len(dir):]) for o in objs]		#strip the "dir" name from the object name
-  for r in swift.upload(container_name, objs):		#checking if everything is Ok
+  for r in swift.upload(container_name, objs,options={'skip_identical': True}):		#checking if everything is Ok
     if r['success']:
       if 'object' in r:
         print(r['object']+ " uploaded!")
@@ -31,15 +30,15 @@ def uploadf(swift, container_name, fname, dir):
     else:
       error = r['error']
       if r['action'] == "create_container":
-        print('Warning: failed to create container '"'%s'%s", container, error)
+        print('Warning: failed to create container '"'%s'%s", container_name, error)
       elif r['action'] == "upload_object":
-        print("Failed to upload object %s to container %s: %s" %(container, r['object'], error))
+        print("Failed to upload object %s to container %s: %s" %(container_name, r['object'], error))
       else:
         print("%s" % error)
 
 def main():
   swift = SwiftService()
-  dataset_name = 'mnist'
+  dataset_name = 'imagenet'
   try:
     swift.stat(container=dataset_name)
     found = True
@@ -50,8 +49,8 @@ def main():
   else:
     print("Container {} already exists".format(dataset_name))
   homedir = os.environ['HOME']
-  fname = dataset_name
-  uploadf(swift, dataset_name, fname, join(homedir,'dataset'))
+  fname = 'imagenet'
+  uploadf(swift, dataset_name, fname, join(homedir,'dataset', fname))
   print('Uploaded {} successfully!'.format(fname))
 
 if __name__ == "__main__":
