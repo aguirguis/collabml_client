@@ -14,7 +14,10 @@ import psutil
 import numpy as np
 import torch
 import torchvision
-from models import *
+try:
+    from pytorch_cifar.models import *
+except:
+    from models import *
 
 def get_model(model_str, dataset):
     """
