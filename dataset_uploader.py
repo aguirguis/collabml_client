@@ -17,9 +17,10 @@ def uploadf(swift, container_name, fname, dir):
 	dir (str)		the directory of the file or the folder locally
   """
   objs = []
-  for (_dir, _ds, _fs) in walk(dir+fname):	#explore the directory
+  for (_dir, _ds, _fs) in walk(join(dir,fname)):	#explore the directory
     if (_ds + _fs):	#found some files here
       objs.extend([join(_dir, _f) for _f in _fs])
+  print(dir+fname)
   objs = [SwiftUploadObject(o, object_name=o[len(dir):]) for o in objs]		#strip the "dir" name from the object name
   for r in swift.upload(container_name, objs):		#checking if everything is Ok
     if r['success']:
@@ -37,9 +38,8 @@ def uploadf(swift, container_name, fname, dir):
         print("%s" % error)
 
 def main():
-#  url, token = client.get_auth(auth_url='http://127.0.0.1:8080/auth/v1.0', user='test:tester', key='testing')  #no need to work directly with client
   swift = SwiftService()
-  dataset_name = 'cifar10'
+  dataset_name = 'mnist'
   try:
     swift.stat(container=dataset_name)
     found = True
@@ -50,8 +50,8 @@ def main():
   else:
     print("Container {} already exists".format(dataset_name))
   homedir = os.environ['HOME']
-  fname = 'cifar-10-batches-py'
-  uploadf(swift, dataset_name, fname, homedir+'/dataset/cifar10/')
+  fname = dataset_name
+  uploadf(swift, dataset_name, fname, join(homedir,'dataset'))
   print('Uploaded {} successfully!'.format(fname))
 
 if __name__ == "__main__":

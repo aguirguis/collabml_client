@@ -3,9 +3,9 @@ import pickle
 import torchvision
 from pytorch_cifar.utils import get_model
 
-dataset = 'cifar10'
-model = 'resnet50'
-objects=['cifar-10-batches-py/data_batch_1']
+dataset = 'mnist'	#cifar10
+model = 'convnet'	#resnet50
+objects=['mnist/t10k-images-idx3-ubyte'] #['cifar-10-batches-py/data_batch_1']
 swift = SwiftService()
 step = 10000					#current limits: 9K with Cifarnet, 850 with ResNet50
 task='inference'
@@ -19,7 +19,7 @@ for start in range(0,10000,step):
         "Batch-Size:100","Num-Epochs:1",
         "Lossfn:cross-entropy","Optimizer:sgd",
 	"start:{}".format(start),"end:{}".format(end)},
-	"header": {"Parent-Dir:cifar-10-batches-py"}}
+	"header": {"Parent-Dir:mnist"}}
   post_objects=[SwiftPostObject(o,opts) for o in objects]
   for post_res in swift.post(
       container=dataset,
