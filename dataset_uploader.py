@@ -6,6 +6,8 @@ from swiftclient.exceptions import ClientException
 import os
 from os import walk
 from os.path import join
+from time import sleep
+import sys
 
 def uploadf(swift, container_name, fname, dir):
   """
@@ -17,11 +19,12 @@ def uploadf(swift, container_name, fname, dir):
 	dir (str)		the directory of the file or the folder locally
   """
   objs = []
+  print(join(dir,fname))
   for (_dir, _ds, _fs) in walk(join(dir,fname)):	#explore the directory
     if (_ds + _fs):	#found some files here
       objs.extend([join(_dir, _f) for _f in _fs])
   objs = [SwiftUploadObject(o, object_name=o[len(dir):]) for o in objs]		#strip the "dir" name from the object name
-  for r in swift.upload(container_name, objs,options={'skip_identical': True}):		#checking if everything is Ok
+  for r in swift.upload(container_name, objs):		#checking if everything is Ok
     if r['success']:
       if 'object' in r:
         print(r['object']+ " uploaded!")
@@ -38,7 +41,7 @@ def uploadf(swift, container_name, fname, dir):
 
 def main():
   swift = SwiftService()
-  dataset_name = 'imagenet'
+  dataset_name = 'mnist' #'cifar10'
   try:
     swift.stat(container=dataset_name)
     found = True
@@ -49,8 +52,8 @@ def main():
   else:
     print("Container {} already exists".format(dataset_name))
   homedir = os.environ['HOME']
-  fname = 'imagenet'
-  uploadf(swift, dataset_name, fname, join(homedir,'dataset', fname))
+  fname = 'mnist' #'cifar-10-batches-py'
+  uploadf(swift, dataset_name, fname, join(homedir,'dataset',dataset_name))
   print('Uploaded {} successfully!'.format(fname))
 
 if __name__ == "__main__":
