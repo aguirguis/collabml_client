@@ -2,22 +2,52 @@ from swiftclient.service import SwiftService, SwiftPostObject, SwiftError
 import pickle
 import torchvision
 from pytorch_cifar.utils import get_model
+from time import time
+import argparse
 
-dataset = 'imagenet' #'mnist'	#cifar10
-model = 'resnet50' #'convnet'	#resnet50
-task = 'training'	#'training'
-parent_dir = 'imagenet' #'mnist' #'cifar-10-batches-py'
-objects = ['imagenet/ILSVRC2012_val_00002456.JPEG']	#some image I am sure it's uploaded to Swift
-#['mnist/train-images-idx3-ubyte'] #['mnist/t10k-images-idx3-ubyte'] #['cifar-10-batches-py/data_batch_1']
+parser = argparse.ArgumentParser(description='Do ML computation in Swift')
+parser.add_argument('--dataset', default='mnist', type=str, help='dataset to be used')
+parser.add_argument('--model', default='convnet', type=str, help='model to be used')
+parser.add_argument('--task', default='inference', type=str, help='ML task (inference or training)')
+parser.add_argument('--batch_size', default=100, type=int, help='batch size for dataloader')
+parser.add_argument('--num_epochs', default=10, type=int, help='number of epochs for training')
+args = parser.parse_args()
+
+dataset = args.dataset
+model = args.model
+task = args.task
+batch_size = args.batch_size
+num_epochs = args.num_epochs
+print(args)
+
+parent_dirs = {'imagenet':'imagenet', 'mnist':'mnist', 'cifar10':'cifar-10-batches-py'}
+parent_dir = parent_dirs[dataset]
+objs_invoke = {'imagenet':'imagenet/ILSVRC2012_val_00000001.JPEG',
+		'mnist_training':'mnist/train-images-idx3-ubyte',
+		'mnist_inference':'mnist/t10k-images-idx3-ubyte',
+		'cifar10':'cifar-10-batches-py/data_batch_1'}
+try:
+  obj = objs_invoke[dataset]
+except:		#This should be mnist!
+  obj = objs_invoke[dataset+"_"+task]
+objects = [obj]
 swift = SwiftService()
-step = 10					#current limits: 9K with Cifarnet, 850 with ResNet50
-for start in range(24440,24450,step):
+step = 10000
+#If it is a training task, I do not want to invoke post multiple times
+#If it is an inference task with a small dataset (mnist or cifar10), we can actually do it in one go
+#In both cases, set the size to step so that for loop is entered once only
+if task == 'training' or dataset == 'mnist' or dataset == 'cifar10':
+  dataset_size = step
+else:
+  dataset_size = 50000		#Imagenet has 50K images for now
+start_time = time()
+for start in range(0,dataset_size,step):
   end = start+step
   #ask to do inference for images [strat:end] from the test batch
   print("{} for data [{}:{}]".format(task,start,end))
   opts = {"meta": {"Ml-Task:{}".format(task),
 	"dataset:{}".format(dataset),"model:{}".format(model),
-        "Batch-Size:1","Num-Epochs:1",
+        "Batch-Size:{}".format(batch_size),"Num-Epochs:{}".format(num_epochs),
         "Lossfn:cross-entropy","Optimizer:sgd",
 	"start:{}".format(start),"end:{}".format(end)},
 	"header": {"Parent-Dir:{}".format(parent_dir)}}
@@ -37,6 +67,8 @@ for start in range(24440,24450,step):
         model.load_state_dict(model_dict)
     else:
       print("Object '%s' POST failed" % post_res['object'])
+
+print("The whole process took {} seconds".format(time()-start_time))
 
 #make sure metadata was posted successfully
 #res = swift.download(container=dataset,objects=objects)
