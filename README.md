@@ -46,3 +46,13 @@ g. The client Service API documentation [here](https://docs.openstack.org/python
 h. use `swift_rebuild.sh` to stop, revbuild, and restart the swift server after changing the source code
 
 i. use `sudo python3 setup.py develop` to build the client from source too (make sure to checkout to `ml-swift` branch first)
+
+##Imagenet download
+I used the following commands:
+
+```
+axel -n 20 http://image-net.org/challenges/LSVRC/2012/dd31405981ef5f776aa17412e1f0c112/ILSVRC2012_img_val.tar
+axel -n 20 http://image-net.org/challenges/LSVRC/2010/d5ef8751a0a1077596a929e9a224ee01/non-pub/ILSVRC2010_images_test.tar
+axel -n 30 http://image-net.org/challenges/LSVRC/2010/d5ef8751a0a1077596a929e9a224ee01/non-pub/ILSVRC2010_images_train.tar
+```
+The `valprep.sh` script can be found [here](https://raw.githubusercontent.com/soumith/imagenetloader.torch/master/valprep.sh)
