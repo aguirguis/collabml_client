@@ -25,7 +25,7 @@ parent_dir = parent_dirs[dataset]
 objs_invoke = {'imagenet':'imagenet/ILSVRC2012_val_00000001.JPEG',
 		'mnist_training':'mnist/train-images-idx3-ubyte',
 		'mnist_inference':'mnist/t10k-images-idx3-ubyte',
-		'cifar10':'cifar-10-batches-py/data_batch_1'}
+		'cifar10':'cifar-10-batches-py/test_batch'}
 try:
   obj = objs_invoke[dataset]
 except:		#This should be mnist!
