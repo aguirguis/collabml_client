@@ -1,6 +1,5 @@
 #Upload dataset to swift DB...
 #Based on: https://docs.openstack.org/python-swiftclient/latest/service-api.html#upload
-#import swiftclient as client
 from swiftclient.service import SwiftService, SwiftUploadObject, SwiftError
 from swiftclient.exceptions import ClientException
 import os
@@ -8,6 +7,7 @@ from os import walk
 from os.path import join
 from time import sleep
 import sys
+import argparse
 
 def uploadf(swift, container_name, fname, dir):
   """
@@ -40,8 +40,13 @@ def uploadf(swift, container_name, fname, dir):
         print("%s" % error)
 
 def main():
+  parser = argparse.ArgumentParser(description='Swift Dataset Uploader')
+  parser.add_argument('--dataset', type=str, help='dataset to be uploaded')
+  args = parser.parse_args()
+  dataset_name = args.dataset
+  fnames = {'mnist':'mnist', 'cifar10':'cifar-10-batches-py', 'imagenet':'val'}
+
   swift = SwiftService()
-  dataset_name = 'mnist' #'cifar10'
   try:
     swift.stat(container=dataset_name)
     found = True
@@ -52,7 +57,7 @@ def main():
   else:
     print("Container {} already exists".format(dataset_name))
   homedir = os.environ['HOME']
-  fname = 'mnist' #'cifar-10-batches-py'
+  fname = fnames[dataset_name]
   uploadf(swift, dataset_name, fname, join(homedir,'dataset',dataset_name))
   print('Uploaded {} successfully!'.format(fname))
 

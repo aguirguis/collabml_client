@@ -20,12 +20,12 @@ batch_size = args.batch_size
 num_epochs = args.num_epochs
 print(args)
 
-parent_dirs = {'imagenet':'imagenet', 'mnist':'mnist', 'cifar10':'cifar-10-batches-py'}
+parent_dirs = {'imagenet':'val', 'mnist':'mnist', 'cifar10':'cifar-10-batches-py'}
 parent_dir = parent_dirs[dataset]
-objs_invoke = {'imagenet':'imagenet/ILSVRC2012_val_00000001.JPEG',
-		'mnist_training':'mnist/train-images-idx3-ubyte',
-		'mnist_inference':'mnist/t10k-images-idx3-ubyte',
-		'cifar10':'cifar-10-batches-py/test_batch'}
+objs_invoke = {'imagenet':'{}/ILSVRC2012_val_00000001.JPEG'.format(parent_dir),
+		'mnist_training':'{}/train-images-idx3-ubyte'.format(parent_dir),
+		'mnist_inference':'{}/t10k-images-idx3-ubyte'.format(parent_dir),
+		'cifar10':'{}/test_batch'.format(parent_dir)}
 try:
   obj = objs_invoke[dataset]
 except:		#This should be mnist!

@@ -47,12 +47,45 @@ h. use `swift_rebuild.sh` to stop, revbuild, and restart the swift server after 
 
 i. use `sudo python3 setup.py develop` to build the client from source too (make sure to checkout to `ml-swift` branch first)
 
-##Imagenet download
-I used the following commands:
+## Downloading datasets
+
+`mkdir ~/dataset`
+
+### Cifar10
+```
+cd ~/dataset
+mkdir cifar10; cd cifar10
+axel http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+tar xzvf cifar-10-python.tar.gz
+rm cifar-10-python.tar.gz
+cd ~
+```
+
+### MNIST
+```
+cd ~/dataset
+mkdir mnist; cd mnist
+mkdir mnist; cd mnist		#This is not a typo; we do this so that we have the same structure as the other datasets
+axel http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz; gzip train-images-idx3-ubyte.gz
+axel http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz; gzip train-labels-idx1-ubyte.gz
+axel http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz; gzip t10k-images-idx3-ubyte.gz
+axel http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz; gzip t10k-labels-idx1-ubyte.gz
+cd ~
+```
+
+### Imagenet
 
 ```
-axel -n 20 http://image-net.org/challenges/LSVRC/2012/dd31405981ef5f776aa17412e1f0c112/ILSVRC2012_img_val.tar
-axel -n 20 http://image-net.org/challenges/LSVRC/2010/d5ef8751a0a1077596a929e9a224ee01/non-pub/ILSVRC2010_images_test.tar
+cd ~/dataset
+mkdir imagenet; cd imagenet
+mkdir val; cd val;
+axel -n 30 http://image-net.org/challenges/LSVRC/2012/dd31405981ef5f776aa17412e1f0c112/ILSVRC2012_img_val.tar
+tar xvf ILSVRC2012_img_val.tar; rm ILSVRC2012_img_val.tar; cd ..
+axel -n 30 http://image-net.org/challenges/LSVRC/2010/d5ef8751a0a1077596a929e9a224ee01/non-pub/ILSVRC2010_images_test.tar
+tar xvf ILSVRC2010_images_test.tar; rm ILSVRC2010_images_test.tar
+mkdir train; cd train;
 axel -n 30 http://image-net.org/challenges/LSVRC/2010/d5ef8751a0a1077596a929e9a224ee01/non-pub/ILSVRC2010_images_train.tar
+tar xvf ILSVRC2010_images_train.tar; rm ILSVRC2010_images_train.tar
+cd ~
 ```
 The `valprep.sh` script can be found [here](https://raw.githubusercontent.com/soumith/imagenetloader.torch/master/valprep.sh)
