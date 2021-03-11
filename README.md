@@ -78,7 +78,9 @@ cd ~
 ```
 cd ~/dataset
 mkdir imagenet; cd imagenet
+wget http://www.image-net.org/challenges/LSVRC/2010/ILSVRC2010_test_ground_truth.txt
 mkdir val; cd val;
+cp ../ILSVRC2010_test_ground_truth.txt ./; mv ILSVRC2010_test_ground_truth.txt ILSVRC2012_validation_ground_truth.txt
 axel -n 30 http://image-net.org/challenges/LSVRC/2012/dd31405981ef5f776aa17412e1f0c112/ILSVRC2012_img_val.tar
 tar xvf ILSVRC2012_img_val.tar; rm ILSVRC2012_img_val.tar; cd ..
 axel -n 30 http://image-net.org/challenges/LSVRC/2010/d5ef8751a0a1077596a929e9a224ee01/non-pub/ILSVRC2010_images_test.tar

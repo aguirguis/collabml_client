@@ -57,6 +57,7 @@ for start in range(0,dataset_size,step):
       objects=post_objects):
     if post_res['success']:
       print("Object '%s' POST success" % post_res['object'])
+      print("Request took {} seconds".format(time()-start_time))
       body = post_res['result']
       if task == 'inference':
         inf_res = pickle.loads(body)

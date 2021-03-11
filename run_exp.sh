@@ -1,6 +1,6 @@
 #!/bin/bash
 #start with inference tests and then with training
-for bsize in 1000 100 10
+for bsize in 1 10 100 1000
 do
 	python3 mlswift_playground.py --dataset mnist --model convnet --batch_size $bsize >> explog
         echo "============================================================================" >> explog
@@ -17,9 +17,9 @@ do
 done
 
 #now training....requires also number of epochs to be passed
-for epoch in 10 50
+for epoch in 1 10 50
 do
-	for bsize in 1000 100 10
+	for bsize in 100 500 1000
 	do
       		python3 mlswift_playground.py --dataset mnist --model convnet --batch_size $bsize --task training --num_epoch $epoch >> explog
         	echo "============================================================================" >> explog
