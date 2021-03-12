@@ -73,3 +73,25 @@ def read_image_file(path: str) -> torch.Tensor:
     assert(x.dtype == torch.uint8)
     assert(x.ndimension() == 3)
     return x
+
+def process_mnist(datadir):
+  ###########################################################################################################
+  #This is the work that should be done to prepare the MNIST dataset...
+  #the same piece of code is excted in native PyTorch code
+  training_set = (
+        read_image_file(os.path.join(datadir,'mnist', 'train-images-idx3-ubyte')),
+        read_label_file(os.path.join(datadir,'mnist', 'train-labels-idx1-ubyte'))
+  )
+  test_set = (
+        read_image_file(os.path.join(datadir, 'mnist', 't10k-images-idx3-ubyte')),
+        read_label_file(os.path.join(datadir, 'mnist', 't10k-labels-idx1-ubyte'))
+  )
+  processed_folder = os.path.join('MNIST','processed')	#this format is required by PyTorch code
+  training_file = 'training.pt'
+  test_file = 'test.pt'
+  os.makedirs(processed_folder, exist_ok=True)
+  with open(os.path.join(datadir, processed_folder, training_file), 'wb') as f:
+    torch.save(training_set, f)
+  with open(os.path.join(datadir, processed_folder, test_file), 'wb') as f:
+    torch.save(test_set, f)
+###########################################################################################################

@@ -10,10 +10,11 @@ import torchvision.transforms as transforms
 
 import os
 import argparse
-
+import sys
 from utils import *
 from mnist_utils import *
 from time import time
+from threading import Thread
 
 from swiftclient.service import SwiftService, SwiftError
 from swiftclient.exceptions import ClientException
@@ -37,26 +38,30 @@ def download_dataset(swift, dataset_name, datadir):
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--testonly', action='store_true', help='run inference only without training')
-parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-parser.add_argument('--resume', '-r', action='store_true',
-                    help='resume from checkpoint')
+parser.add_argument('--downloadall', action='store_true',
+                    help='download the whole dataset once in the beginning; recommended only with small datasets')
 parser.add_argument('--dataset', default='mnist', type=str, help='dataset to be used')
 parser.add_argument('--model', default='convnet', type=str, help='model to be used')
 parser.add_argument('--batch_size', default=100, type=int, help='batch size for dataloader')
 parser.add_argument('--num_epochs', default=10, type=int, help='number of epochs for training')
+parser.add_argument('--start', default=0, type=int, help='start index of data to be processed')
+parser.add_argument('--end', default=10000, type=int, help='end index of data to be processed')
 args = parser.parse_args()
 
 dataset_name = args.dataset
+if not args.downloadall and (dataset_name == 'mnist' or dataset_name == 'cifar10'):
+  print("WARNING: dataset {} is small enough! Will download it only once in the beginning!".format(dataset_name))
+  args.downloadall = True
+
 model = args.model
-task = args.task
 batch_size = args.batch_size
 num_epochs = args.num_epochs
+start = args.start
+end = args.end
 print(args)
 
 start_time = time()
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-best_acc = 0  # best test accuracy
-start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
 # Data
 print('==> Preparing data..')
@@ -65,78 +70,33 @@ homedir = os.environ['HOME']
 datadir = os.path.join(homedir,"dataset",dataset_name)
 #first fetch data....we assume here that data does not exist locally
 swift = SwiftService()
-start_download_t = time()
-try:
-  download_dataset(swift, dataset_name, datadir)
-except ClientException as e:
-  print("Got an exeption while downloading the dataset ", e)
-print('data downloaded...time elapsed: {}'.format(time()-start_download_t))
+if args.downloadall:
+  start_download_t = time()
+  try:
+    download_dataset(swift, dataset_name, datadir)
+  except ClientException as e:
+    print("Got an exeption while downloading the dataset ", e)
+  print('data downloaded...time elapsed: {}'.format(time()-start_download_t))
 
-if dataset_name.startswith('cifar'):
-  transform_train = transforms.Compose([
-      transforms.RandomCrop(32, padding=4),
-      transforms.RandomHorizontalFlip(),
-      transforms.ToTensor(),
-      transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-  ])
-  transform_test = transforms.Compose([
-      transforms.ToTensor(),
-      transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-  ])
-  trainset = torchvision.datasets.CIFAR10(
-    root=datadir, train=True, download=False, transform=transform_train)
-  testset = torchvision.datasets.CIFAR10(
-    root=datadir, train=False, download=False, transform=transform_test)
-elif dataset_name == 'mnist':
-  transform = transforms.Compose([
-                 transforms.ToTensor(),
-                 transforms.Normalize((0.1307, ), (0.3081, ))
-              ])
-###########################################################################################################
-#This is the work that should be done to prepare the MNIST dataset...the same piece of code is excted in native PyTorch code
-  training_set = (
-  	read_image_file(os.path.join(datadir,'mnist', 'train-images-idx3-ubyte')),
-        read_label_file(os.path.join(datadir,'mnist', 'train-labels-idx1-ubyte'))
-  )
-  test_set = (
-        read_image_file(os.path.join(datadir, 'mnist', 't10k-images-idx3-ubyte')),
-        read_label_file(os.path.join(datadir, 'mnist', 't10k-labels-idx1-ubyte'))
-  )
-  processed_folder = 'processed'
-  training_file = 'training.pt'
-  test_file = 'test.pt'
-  os.makedirs(processed_folder, exist_ok=True)
-  with open(os.path.join(datadir, processed_folder, training_file), 'wb') as f:
-    torch.save(training_set, f)
-  with open(os.path.join(datadir, processed_folder, test_file), 'wb') as f:
-    torch.save(test_set, f)
-###########################################################################################################
-  trainset = datasets.MNIST(root=datadir, train=True, download=False, transform=transform)
-  testset = datasets.MNIST(root=datadir, train=False, download=False, transform=transform)
-elif dataset_name == 'iamgenet':
-  normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
-  transform_train = transforms.Compose([
-            transforms.RandomResizedCrop(224),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            normalize,
-  ])
-  transform_test = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            normalize,
-  ])
-  #First, we need to put images correctly in its folders
-  os.system("cd {}; ./valprep.sh".format(os.path.join(datadir,'imagenet')))
-  #Then, we load the Imagenet dataset
-  trainset = datasets.ImageFolder(root=datadir, transform=transform_train)
-  testset = datasets.ImageFolder(root=datadir, transform=transform_test)
-trainloader = torch.utils.data.DataLoader(
-    trainset, batch_size=batch_size, shuffle=True, num_workers=2)
-testloader = torch.utils.data.DataLoader(
-    testset, batch_size=batch_size, shuffle=False, num_workers=2)
+#prepare transformation
+transform_train, transform_test = prepare_transforms(dataset_name)
+
+if args.downloadall:
+  trainset, testset = get_train_test_split(dataset_name, datadir, transform_train, transform_test)
+  trainloader = torch.utils.data.DataLoader(
+      trainset, batch_size=batch_size, shuffle=True, num_workers=2)
+  testloader = torch.utils.data.DataLoader(
+      testset, batch_size=batch_size, shuffle=False, num_workers=2)
+
+if not args.downloadall and dataset_name == 'imagenet':
+  #We can download the labels file once and for all (it's small enough)
+  opts = {'out_file':'-'}	#so that we can have it directly in memory
+  query = swift.download(container=dataset_name, objects=['val/ILSVRC2012_validation_ground_truth.txt'], options=opts)
+  reader = next(query)['contents']
+  labelstr = b''.join(reader)
+  labels = labelstr.decode("utf-8").split("\n")[:-1]		#remove extra '' at the end
+  assert len(labels) == 150000		#remove this after making sure the code works
+  labels = [int(l)-1 for l in labels]
 
 # Model
 print('==> Building model..')
@@ -146,23 +106,15 @@ if device == 'cuda':
     net = torch.nn.DataParallel(net)
     cudnn.benchmark = True
 
-if args.resume:
-    # Load checkpoint.
-    print('==> Resuming from checkpoint..')
-    assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
-    checkpoint = torch.load('./checkpoint/ckpt.pth')
-    net.load_state_dict(checkpoint['net'])
-    best_acc = checkpoint['acc']
-    start_epoch = checkpoint['epoch']
-
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(net.parameters(), lr=args.lr,
+optimizer = optim.SGD(net.parameters(), lr=0.1,
                       momentum=0.9, weight_decay=5e-4)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
 
 
 # Training
 def train(epoch):
+    global trainloader, net
     print('\nEpoch: %d' % epoch)
     net.train()
     train_loss = 0
@@ -176,18 +128,8 @@ def train(epoch):
         loss.backward()
         optimizer.step()
 
-#To maintain fairness, we should not do extra computation(s)
-#        train_loss += loss.item()
-#        _, predicted = outputs.max(1)
-#        total += targets.size(0)
-#        correct += predicted.eq(targets).sum().item()
-
-#        progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-#                     % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
-
-
 def test(epoch):
-    global best_acc
+    global testloader, net
     net.eval()
     test_loss = 0
     correct = 0
@@ -202,35 +144,58 @@ def test(epoch):
             test_loss += loss.item()
             _, predicted = outputs.max(1)
             res.extend(predicted)
-#            total += targets.size(0)
-#            correct += predicted.eq(targets).sum().item()
-
-#            progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-#                         % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
-
-    # Save checkpoint.
-#    acc = 100.*correct/total
-#    if acc > best_acc:
-#        print('Saving..')
-#        state = {
-#            'net': net.state_dict(),
-#            'acc': acc,
-#            'epoch': epoch,
-#        }
-#        if not os.path.isdir('checkpoint'):
-#            os.mkdir('checkpoint')
-#        torch.save(state, './checkpoint/ckpt.pth')
-#        best_acc = acc
     return res
 
-if args.testonly:
-    res = test(0)
-    print("Inference done for {} inputs".format(len(res)))
-    print("The whole process took {} seconds".format(time()-start_time))
-    exit(0)
+next_loader= None
+def start_now(lstart, lend, transform):
+  global next_dataloader
+  next_dataloader = None
+  next_dataloader = stream_imagenet_batch(swift, datadir, "val", labels, transform, batch_size, lstart, lend)
 
-for epoch in range(start_epoch, num_epochs):
-    train(epoch)
-#    test(epoch)
+if args.testonly:
+  if not args.downloadall and dataset_name == 'imagenet':
+    gstart, gend = start, end
+    step = 1000
+    lstart, lend = gstart, gstart+step if gstart+step < gend else gend
+    testloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_test, batch_size, lstart, lend)
+    res = []
+    idx = 0
+    for s in range(gstart+step, gend, step):
+      lstart, lend = s,s+step if s+step < gend else gend
+      myt = Thread(target=start_now, args=(lstart, lend,transform_test,))
+      myt.start()
+      lres = test(idx)
+      res.extend(lres)
+      idx+=1
+      myt.join()
+      testloader = next_dataloader
+      dataloader = None
+    res.extend(test(idx))
+  else:
+    res = test(0)
+  print("Inference done for {} inputs".format(len(res)))
+  print("The whole process took {} seconds".format(time()-start_time))
+  exit(0)
+else:
+  for epoch in range(num_epochs):
+    if not args.downloadall and dataset_name == 'imagenet':
+      step = 1000
+      lstart, lend = 0, step
+      trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend)
+      idx=0
+      for s in range(step, 50000, step):
+        lstart, lend = s, s+step
+        myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
+        myt.start()
+        train(epoch)
+        print("Index:",idx)
+        idx+=1
+        myt.join()
+        trainloader = next_dataloader
+        dataloader = None
+      train(epoch)
+    else:
+      train(epoch)
     scheduler.step()
 print("The whole process took {} seconds".format(time()-start_time))
+sys.stdout.flush()

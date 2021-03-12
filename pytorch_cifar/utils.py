@@ -10,14 +10,22 @@ import math
 
 import torch.nn as nn
 import torch.nn.init as init
+import torchvision.transforms as transforms
 import psutil
 import numpy as np
 import torch
 import torchvision
+from io import BytesIO
+from PIL import Image
+
 try:
     from pytorch_cifar.models import *
+    from pytorch_cifar.dataset_utils import *
+    from pytorch_cifar.mnist_utils import *
 except:
     from models import *
+    from dataset_utils import *
+    from mnist_utils import *
 
 def get_model(model_str, dataset):
     """
@@ -174,3 +182,82 @@ def format_time(seconds):
     if f == '':
         f = '0ms'
     return f
+
+def prepare_transforms(dataset_name):
+  if dataset_name.startswith('cifar'):
+    transform_train = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
+    transform_test = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
+    return transform_train, transform_test
+  elif dataset_name == 'mnist':
+    transform = transforms.Compose([
+                 transforms.ToTensor(),
+                 transforms.Normalize((0.1307, ), (0.3081, ))
+    ])
+    return transform, transform
+  elif dataset_name == 'imagenet':
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+    transform_train = transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize,
+    ])
+    transform_test = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            normalize,
+    ])
+    return transform_train, transform_test
+
+def get_train_test_split(dataset_name, datadir, transform_train, transform_test):
+  if dataset_name == 'cifar10':
+    trainset = torchvision.datasets.CIFAR10(
+      root=datadir, train=True, download=False, transform=transform_train)
+    testset = torchvision.datasets.CIFAR10(
+      root=datadir, train=False, download=False, transform=transform_test)
+  elif dataset_name == 'mnist':
+    process_mnist(datadir)
+    trainset = torchvision.datasets.MNIST(root=datadir, train=True, download=False, transform=transform_train)
+    testset = torchvision.datasets.MNIST(root=datadir, train=False, download=False, transform=transform_test)
+  elif dataset_name == 'imagenet':
+    print("WARNING! Downloading the whole imagenet dataset is not recommended!")
+    #First, we need to put images correctly in its folders
+    os.system("cd {}; ./valprep.sh".format(os.path.join(datadir,'val')))
+    #Then, we load the Imagenet dataset
+    trainset = torchvision.datasets.ImageFolder(root=datadir, transform=transform_train)
+    testset = torchvision.datasets.ImageFolder(root=datadir, transform=transform_test)
+  return trainset, testset
+
+def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend):
+  objects = []
+  #prepare images that should be read
+  for idx in range(lstart, lend):
+    idstr = str(idx+1)
+    obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
+    objects.append(obj_name)
+  opts = {'out_directory':datadir}       #so that we can have it directly in memory
+  #read all requested images
+  queries = swift.download(container='imagenet', objects=objects, options=opts)
+  images = []
+  for query in queries:
+    with open(os.path.join(datadir,query['object']), 'rb') as f:
+      image_bytes = f.read()
+    img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
+    images.append(img)
+  #use only labels corresponding to the required images
+  labels = labels[lstart:lend]
+  assert len(images) == len(labels)
+  imgs = np.array(images)
+  dataset = InMemoryDataset(imgs, labels=labels, transform=transform)
+  dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
+  return dataloader
