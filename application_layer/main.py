@@ -104,14 +104,17 @@ if not args.downloadall and dataset_name == 'imagenet':
 # Model
 print('==> Building model..')
 net = get_model(model, dataset_name)
+if mode == 'split':
+    freeze_lower_layers(net, split_idx)		#for transfer learning -- no need for backpropagation for upper layers (idx < split_idx)
+
 net = net.to(device)
 if device == 'cuda':
     net = torch.nn.DataParallel(net)
     cudnn.benchmark = True
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(net.parameters(), lr=0.1,
-                      momentum=0.9, weight_decay=5e-4)
+optimizer = optim.SGD(filter(lambda p: p.requires_grad, net.parameters()), lr=0.1,
+                      momentum=0.9, weight_decay=5e-4)					#passing only parameters that require grad...the rest are frozen
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
 
 
@@ -193,15 +196,18 @@ else:
       trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx=split_idx)
       idx=0
       for s in range(step, 50000, step):
+        localtime = time()
         lstart, lend = s, s+step
         myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
         myt.start()
         train(epoch)
+        print("One training iteration takes: {} seconds".format(time()-localtime))
         print("Index:",idx)
         idx+=1
         myt.join()
         trainloader = next_dataloader
         dataloader = None
+        print("Then, training+dataloading take {} seconds".format(time()-localtime))
       train(epoch)
     else:
       train(epoch)

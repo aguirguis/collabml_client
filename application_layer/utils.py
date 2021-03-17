@@ -11,6 +11,7 @@ import math
 import torch.nn as nn
 import torch.nn.init as init
 import torchvision.transforms as transforms
+from torchvision.models.densenet import _DenseLayer, _Transition		#only for freeze_sequential of densenet
 import psutil
 import numpy as np
 import torch
@@ -294,3 +295,32 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
   dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode)
   dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
   return dataloader
+
+types = [torch.nn.modules.container.Sequential, _DenseLayer, _Transition]
+
+globalFreezeIndex = 0
+def freeze_sequential(network, all_layers):
+    global globalFreezeIndex
+    for layer in network.children():
+        if type(layer) in types:
+            freeze_sequential(layer, all_layers)
+        else:
+            all_layers.append(layer)
+            if globalFreezeIndex >= len(all_layers):
+                for param in layer.parameters():
+                    param.requires_grad = False
+
+def freeze_lower_layers(net, split_idx):
+  #freeze the lower layers whose index < split_idx
+  global globalFreezeIndex
+  globalFreezeIndex = split_idx
+  all_layers = []
+  freeze_sequential(net, all_layers)
+  #test if indeed frozen
+#  total=0
+#  frozen=0
+#  for param in net.parameters():
+#    if not param.requires_grad:
+#      frozen+=1
+#    total+=1
+#  print("Total number of frozen layers: {} out of {} ".format(frozen,total))
