@@ -76,7 +76,7 @@ for start in range(0,dataset_size,step):
                 inputs = torch.from_numpy(int_res)
                 logits = model(inputs, split_idx,100)		#continue the inference process here
                 final_res.extend(logits.max(1)[1])
-            print("Transfer learning results length: {}".format(len(final_res)))
+            print("Split inference results length: {}".format(len(final_res)))
         else:
             print("{} result length: {}".format(task, len(inf_res)))
       elif task == 'training':

@@ -7,7 +7,7 @@ from PIL import Image
 class InMemoryDataset(Dataset):
     """In memory dataset wrapper."""
 
-    def __init__(self, dataset, labels=None, transform=None, logFile=None):
+    def __init__(self, dataset, labels=None, transform=None, mode='vanilla', logFile=None):
         """
         Args:
             dataset (ndarray): array of dataset samples
@@ -19,6 +19,7 @@ class InMemoryDataset(Dataset):
         self.labels = labels
         self.transform = transform
         self.logFile = logFile
+        self.mode = mode
 
     def __len__(self):
         return len(self.dataset)
@@ -27,10 +28,13 @@ class InMemoryDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         image = self.dataset[idx]
-        try:
-            image = Image.fromarray(image)
-        except:
-            image = Image.fromarray(image.numpy(), mode='L')
+        if self.mode == 'split':		#this is not an image then, yet it is some intermediate result
+            image = torch.from_numpy(image)
+        else:
+            try:
+                image = Image.fromarray(image)
+            except:
+                image = Image.fromarray(image.numpy(), mode='L')
         if self.transform:
             image = self.transform(image)
         if self.labels is not None:

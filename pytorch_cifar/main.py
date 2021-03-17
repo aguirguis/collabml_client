@@ -46,6 +46,7 @@ parser.add_argument('--batch_size', default=100, type=int, help='batch size for 
 parser.add_argument('--num_epochs', default=10, type=int, help='number of epochs for training')
 parser.add_argument('--start', default=0, type=int, help='start index of data to be processed')
 parser.add_argument('--end', default=10000, type=int, help='end index of data to be processed')
+parser.add_argument('--split_idx', default=100, type=int, help='index at which computation is split between Swift and app. layer')
 args = parser.parse_args()
 
 dataset_name = args.dataset
@@ -58,6 +59,8 @@ batch_size = args.batch_size
 num_epochs = args.num_epochs
 start = args.start
 end = args.end
+split_idx = args.split_idx
+mode = 'split' if model.startswith("my") else 'vanilla'
 print(args)
 
 start_time = time()
@@ -123,7 +126,10 @@ def train(epoch):
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
-        outputs = net(inputs)
+        if mode == 'split':		#This is transfer learning deceted!
+            outputs = net(inputs, split_idx, 100)
+        else:
+            outputs = net(inputs)
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
@@ -138,7 +144,10 @@ def test(epoch):
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
-            outputs = net(inputs)
+            if mode == 'split':              #This is split inference deceted!
+                outputs = net(inputs, split_idx, 100)
+            else:
+                outputs = net(inputs)
             loss = criterion(outputs, targets)
 
             test_loss += loss.item()
@@ -150,14 +159,14 @@ next_loader= None
 def start_now(lstart, lend, transform):
   global next_dataloader
   next_dataloader = None
-  next_dataloader = stream_imagenet_batch(swift, datadir, "val", labels, transform, batch_size, lstart, lend)
+  next_dataloader = stream_imagenet_batch(swift, datadir, "val", labels, transform, batch_size, lstart, lend, model, mode, split_idx=split_idx)
 
 if args.testonly:
   if not args.downloadall and dataset_name == 'imagenet':
     gstart, gend = start, end
     step = 1000
     lstart, lend = gstart, gstart+step if gstart+step < gend else gend
-    testloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_test, batch_size, lstart, lend)
+    testloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_test, batch_size, lstart, lend, model, mode, split_idx=split_idx)
     res = []
     idx = 0
     for s in range(gstart+step, gend, step):
@@ -181,7 +190,7 @@ else:
     if not args.downloadall and dataset_name == 'imagenet':
       step = 1000
       lstart, lend = 0, step
-      trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend)
+      trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx=split_idx)
       idx=0
       for s in range(step, 50000, step):
         lstart, lend = s, s+step

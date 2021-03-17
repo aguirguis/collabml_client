@@ -17,6 +17,8 @@ import torch
 import torchvision
 from io import BytesIO
 from PIL import Image
+import pickle
+from swiftclient.service import SwiftService, SwiftPostObject
 
 try:
     from pytorch_cifar.models import *
@@ -256,26 +258,39 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
     testset = torchvision.datasets.ImageFolder(root=datadir, transform=transform_test)
   return trainset, testset
 
-def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend):
-  objects = []
-  #prepare images that should be read
-  for idx in range(lstart, lend):
-    idstr = str(idx+1)
-    obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
-    objects.append(obj_name)
-  opts = {'out_directory':datadir}       #so that we can have it directly in memory
-  #read all requested images
-  queries = swift.download(container='imagenet', objects=objects, options=opts)
-  images = []
-  for query in queries:
-    with open(os.path.join(datadir,query['object']), 'rb') as f:
-      image_bytes = f.read()
-    img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
-    images.append(img)
+def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100):
+  if mode == 'split':
+      opts = {"meta": {"Ml-Task:inference",
+        "dataset:imagenet","model:{}".format(model),
+        "Batch-Size:{}".format(batch_size),
+        "start:{}".format(lstart),"end:{}".format(lend),
+        "Split-Idx:{}".format(split_idx)},
+        "header": {"Parent-Dir:{}".format(parent_dir)}}
+      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
+      post_objects = [SwiftPostObject(obj_name,opts)]		#Invoke 1 post request
+      post_res = next(swift.post(container='imagenet', objects=post_objects))
+      images = pickle.loads(post_res['result'])			#images now should be a list of numpy arrays
+      transform=None		#no transform required in this case
+  else:		#mode=='vanilla'
+    objects = []
+    #prepare images that should be read
+    for idx in range(lstart, lend):
+      idstr = str(idx+1)
+      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
+      objects.append(obj_name)
+    opts = {'out_directory':datadir}       #so that we can have it directly in memory
+    #read all requested images
+    queries = swift.download(container='imagenet', objects=objects, options=opts)
+    images = []
+    for query in queries:
+      with open(os.path.join(datadir, query['object']), 'rb') as f:
+        image_bytes = f.read()
+      img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
+      images.append(img)
   #use only labels corresponding to the required images
   labels = labels[lstart:lend]
   assert len(images) == len(labels)
   imgs = np.array(images)
-  dataset = InMemoryDataset(imgs, labels=labels, transform=transform)
+  dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode)
   dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
   return dataloader
