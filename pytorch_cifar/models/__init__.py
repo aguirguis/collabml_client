@@ -15,3 +15,8 @@ from .mobilenetv2 import *
 from .efficientnet import *
 from .regnet import *
 from .nets import *
+from .myalexnet import *
+from .mydensenet import *
+from .myinception import *
+from .myresnet import *
+from .myvgg import *
