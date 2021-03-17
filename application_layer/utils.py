@@ -261,16 +261,21 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
 
 def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100):
   if mode == 'split':
-      opts = {"meta": {"Ml-Task:inference",
-        "dataset:imagenet","model:{}".format(model),
-        "Batch-Size:{}".format(batch_size),
-        "start:{}".format(lstart),"end:{}".format(lend),
-        "Split-Idx:{}".format(split_idx)},
-        "header": {"Parent-Dir:{}".format(parent_dir)}}
-      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
-      post_objects = [SwiftPostObject(obj_name,opts)]		#Invoke 1 post request
-      post_res = next(swift.post(container='imagenet', objects=post_objects))
-      images = pickle.loads(post_res['result'])			#images now should be a list of numpy arrays
+      post_step = max(int((lend-lstart)/10), batch_size)		#a step cannot be smaller than the batch size
+      post_objects = []
+      images = []
+      for s in range(lstart, lend, post_step):
+          post_start, post_end = s, s+post_step if s+post_step < lend else lend
+          opts = {"meta": {"Ml-Task:inference",
+            "dataset:imagenet","model:{}".format(model),
+            "Batch-Size:{}".format(batch_size),
+            "start:{}".format(post_start),"end:{}".format(post_end),
+            "Split-Idx:{}".format(split_idx)},
+            "header": {"Parent-Dir:{}".format(parent_dir)}}
+          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(post_start+1)))*"0")+str(post_start+1)+".JPEG"
+          post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
+      for post_res in swift.post(container='imagenet', objects=post_objects):
+          images.extend(pickle.loads(post_res['result']))			#images now should be a list of numpy arrays
       transform=None		#no transform required in this case
   else:		#mode=='vanilla'
     objects = []

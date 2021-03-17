@@ -164,10 +164,10 @@ def start_now(lstart, lend, transform):
   next_dataloader = None
   next_dataloader = stream_imagenet_batch(swift, datadir, "val", labels, transform, batch_size, lstart, lend, model, mode, split_idx=split_idx)
 
+step = 500
 if args.testonly:
   if not args.downloadall and dataset_name == 'imagenet':
     gstart, gend = start, end
-    step = 1000
     lstart, lend = gstart, gstart+step if gstart+step < gend else gend
     testloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_test, batch_size, lstart, lend, model, mode, split_idx=split_idx)
     res = []
@@ -191,7 +191,6 @@ if args.testonly:
 else:
   for epoch in range(num_epochs):
     if not args.downloadall and dataset_name == 'imagenet':
-      step = 1000
       lstart, lend = 0, step
       trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx=split_idx)
       idx=0
