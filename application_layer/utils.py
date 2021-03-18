@@ -290,10 +290,12 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       objects.append(obj_name)
     opts = {'out_directory':datadir}       #so that we can have it directly in memory
     #read all requested images
-    queries = swift.download(container='imagenet', objects=objects, options=opts)
+#    queries = swift.download(container='imagenet', objects=objects, options=opts)
     images = []
-    for query in queries:
-      with open(os.path.join(datadir, query['object']), 'rb') as f:
+#    for query in queries:
+    for obj in objects:		#testing the performance when downloading images one by one
+      query = swift.download(container='imagenet', objects=[obj], options=opts)
+      with open(os.path.join(datadir, next(query)['object']), 'rb') as f:
         image_bytes = f.read()
       img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
       images.append(img)
