@@ -164,7 +164,9 @@ def start_now(lstart, lend, transform):
   next_dataloader = None
   next_dataloader = stream_imagenet_batch(swift, datadir, "val", labels, transform, batch_size, lstart, lend, model, mode, split_idx=split_idx)
 
-step = 500
+#step defines the number of images (or intermediate values) got from the server per iteration
+#this value should be at least equal to the batch size
+step = max(10000, batch_size)		#using a value less than 1000 is really waste of bandwidth (after some experimentation)
 if args.testonly:
   if not args.downloadall and dataset_name == 'imagenet':
     gstart, gend = start, end
