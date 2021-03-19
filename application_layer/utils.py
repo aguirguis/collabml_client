@@ -62,6 +62,7 @@ def get_model(model_str, dataset):
         models = {'convnet':Net,
 		'cifarnet':Cifarnet,
 		'cnn': CNNet,
+                'alexnet': torchvision.models.alexnet,
 		'resnet18':torchvision.models.resnet18,
                 'resnet34':torchvision.models.resnet34,
                 'resnet50':torchvision.models.resnet50,
@@ -259,10 +260,10 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
     testset = torchvision.datasets.ImageFolder(root=datadir, transform=transform_test)
   return trainset, testset
 
-def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100):
+def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, sequential=False):
   stream_time = time.time()
   if mode == 'split':
-      post_step = 500 		#if the batch is smaller, it will be handled on the server
+      post_step = 1000 		#if the batch is smaller, it will be handled on the server
       print("Start {}, end {}, post_step {}\r\n".format(lstart, lend, post_step))
       post_objects = []
       images = []
@@ -290,12 +291,15 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       objects.append(obj_name)
     opts = {'out_directory':datadir}       #so that we can have it directly in memory
     #read all requested images
-#    queries = swift.download(container='imagenet', objects=objects, options=opts)
     images = []
-#    for query in queries:
-    for obj in objects:		#testing the performance when downloading images one by one
-      query = swift.download(container='imagenet', objects=[obj], options=opts)
-      with open(os.path.join(datadir, next(query)['object']), 'rb') as f:
+    if sequential:
+      queries = objects         #request them one by one then
+    else:
+      queries = swift.download(container='imagenet', objects=objects, options=opts)
+    for query in queries:
+      if sequential:
+        query = next(swift.download(container='imagenet', objects=[query], options=opts))
+      with open(os.path.join(datadir, query['object']), 'rb') as f:
         image_bytes = f.read()
       img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
       images.append(img)

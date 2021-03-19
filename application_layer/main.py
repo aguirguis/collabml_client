@@ -48,6 +48,7 @@ parser.add_argument('--start', default=0, type=int, help='start index of data to
 parser.add_argument('--end', default=10000, type=int, help='end index of data to be processed')
 parser.add_argument('--split_idx', default=100, type=int, help='index at which computation is split between Swift and app. layer')
 parser.add_argument('--freeze', action='store_true', help='freeze the lower layers of training model')
+parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
 args = parser.parse_args()
 
 dataset_name = args.dataset
@@ -164,7 +165,7 @@ next_loader= None
 def start_now(lstart, lend, transform):
   global next_dataloader
   next_dataloader = None
-  next_dataloader = stream_imagenet_batch(swift, datadir, "val", labels, transform, batch_size, lstart, lend, model, mode, split_idx=split_idx)
+  next_dataloader = stream_imagenet_batch(swift, datadir, "val", labels, transform, batch_size, lstart, lend, model, mode, split_idx, args.sequential)
 
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
@@ -173,16 +174,19 @@ if args.testonly:
   if not args.downloadall and dataset_name == 'imagenet':
     gstart, gend = start, end
     lstart, lend = gstart, gstart+step if gstart+step < gend else gend
-    testloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_test, batch_size, lstart, lend, model, mode, split_idx=split_idx)
+    testloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_test, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
     res = []
     idx = 0
     for s in range(gstart+step, gend, step):
       lstart, lend = s,s+step if s+step < gend else gend
       myt = Thread(target=start_now, args=(lstart, lend,transform_test,))
-      myt.start()
+      if not args.sequential:	#run this in parallel
+        myt.start()
       lres = test(idx)
       res.extend(lres)
       idx+=1
+      if args.sequential:
+        myt.start()
       myt.join()
       testloader = next_dataloader
       dataloader = None
@@ -196,17 +200,20 @@ else:
   for epoch in range(num_epochs):
     if not args.downloadall and dataset_name == 'imagenet':
       lstart, lend = 0, step
-      trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx=split_idx)
+      trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
       idx=0
       for s in range(step, 50000, step):
         localtime = time()
         lstart, lend = s, s+step
         myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
-        myt.start()
+        if not args.sequential:   #run this in parallel
+          myt.start()
         train(epoch)
         print("One training iteration takes: {} seconds".format(time()-localtime))
         print("Index:",idx)
         idx+=1
+        if args.sequential:
+          myt.start()
         myt.join()
         trainloader = next_dataloader
         dataloader = None

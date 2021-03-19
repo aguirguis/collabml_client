@@ -47,6 +47,8 @@ h. use `swift_rebuild.sh` to stop, revbuild, and restart the swift server after 
 
 i. use `sudo python3 setup.py develop` to build the client from source too (make sure to checkout to `ml-swift` branch first)
 
+j. Follow [this guide](https://help.atmail.com/hc/en-us/articles/201566464-Throttling-Bandwidth-using-Traffic-Controller-for-Linux) to test with custom BW throttling.
+
 ## Downloading datasets
 
 `mkdir ~/dataset`
