@@ -17,7 +17,7 @@ class MyAlexNet(AlexNet):
       idx = 0
       all_layers=[]
       remove_sequential(self, all_layers)
-      print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
+#      print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
       for idx in range(start, end):
           if idx >= len(all_layers):		#we avoid out of bounds
               break
@@ -25,7 +25,7 @@ class MyAlexNet(AlexNet):
           if isinstance(m, torch.nn.modules.linear.Linear):
               x = torch.flatten(x, 1)
           x = m(x)
-          print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
+#          print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
           if idx >= end:
               return x
       return x

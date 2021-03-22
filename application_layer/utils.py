@@ -278,9 +278,12 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
       post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
       post_time = time.time()
+      read_bytes=0
       for post_res in swift.post(container='imagenet', objects=post_objects):
+          read_bytes += int(len(post_res['result']))
           print("Executing one post (whose result is of len {} bytes) took {} seconds".format(len(post_res['result']), time.time()-post_time))
           images.extend(pickle.loads(post_res['result']))			#images now should be a list of numpy arrays
+      print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
       print("Executing all posts took {} seconds".format(time.time()-post_time))
       transform=None		#no transform required in this case
   else:		#mode=='vanilla'
@@ -297,13 +300,16 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       queries = objects         #request them one by one then
     else:
       queries = swift.download(container='imagenet', objects=objects, options=opts)
+    read_bytes=0
     for query in queries:
       if sequential:
         query = next(swift.download(container='imagenet', objects=[query], options=opts))
+      read_bytes += int(query['read_length'])
       with open(os.path.join(datadir, query['object']), 'rb') as f:
         image_bytes = f.read()
       img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
       images.append(img)
+    print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
   #use only labels corresponding to the required images
   labels = labels[lstart:lend]
   assert len(images) == len(labels)
