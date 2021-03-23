@@ -6,12 +6,12 @@ execfile = os.path.join(curdir,'main.py')
 #these indeces were got manually with another scripts
 model_dict={
 	    'resnet18': [11,13],
-	    'resnet50': [20,21],
-            'resnet152': [52,55],
+	    'resnet50': [21], #[20,21],
+            'resnet152': [55], #[52,55],
             'vgg16': [31,33],
             'vgg19': [37,39],
-            'alexnet': [9,15],
-            'densenet121': [14,19]
+            'alexnet': [15], #[9,15],
+            'densenet121': [19] #[14,19]
 }
 bw=100		#This is the bandwidth used for testing....we use it here only to annotate the logFile
 logFile = 'splitExp_bw{}mbps'.format(bw)
