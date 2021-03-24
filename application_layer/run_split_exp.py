@@ -13,8 +13,8 @@ model_dict={
             'alexnet': [15], #[9,15],
             'densenet121': [19] #[14,19]
 }
-bw=100		#This is the bandwidth used for testing....we use it here only to annotate the logFile
-logFile = 'splitExp_bw{}mbps'.format(bw)
+bw=150		#This is the bandwidth used for testing....we use it here only to annotate the logFile
+logFile = 'splitExp_bw{}mbps_cpu'.format(bw)
 for (model, split_idcs) in model_dict.items():
   for split_idx in split_idcs:
     #split execution
@@ -26,6 +26,6 @@ for (model, split_idcs) in model_dict.items():
          --num_epochs 1 --batch_size 1000 --split_idx {} --freeze >> {}'.format(execfile,model,split_idx,logFile))
     os.system('echo {} >> {}'.format('='*100,logFile))
 #    app. layer execution sequential
-    os.system('python3 {} --dataset imagenet --model {} \
-         --num_epochs 1 --batch_size 1000 --split_idx {} --freeze --sequential >> {}'.format(execfile,model,split_idx,logFile))
-    os.system('echo {} >> {}'.format('='*100,logFile))
+#    os.system('python3 {} --dataset imagenet --model {} \
+#         --num_epochs 1 --batch_size 1000 --split_idx {} --freeze --sequential >> {}'.format(execfile,model,split_idx,logFile))
+#    os.system('echo {} >> {}'.format('='*100,logFile))
