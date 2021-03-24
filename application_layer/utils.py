@@ -11,7 +11,9 @@ import math
 import torch.nn as nn
 import torch.nn.init as init
 import torchvision.transforms as transforms
-from torchvision.models.densenet import _DenseLayer, _Transition		#only for freeze_sequential of densenet
+from torchvision.models.densenet import _DenseLayer, _Transition
+from torchvision.models.mnasnet import _InvertedResidual
+from torchvision.models.mobilenet import ConvBNReLU, InvertedResidual
 import psutil
 import numpy as np
 import torch
@@ -56,6 +58,10 @@ def get_model(model_str, dataset):
             model = build_my_vgg(model_str, num_classes)
         elif model_str.startswith('dense'):
             model = build_my_densenet(model_str, num_classes)
+        elif model_str.startswith('mnas'):
+            model = build_my_mnasnet(model_str, num_classes)
+        elif model_str.startswith('mobile'):
+            model = build_my_mobilenetv2(num_classes)
         else:
             ValueError("Provided model ({}) is not known!".format(model_str))
     else:
@@ -319,7 +325,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
   print("Streaming imagenet data took {} seconds".format(time.time()-stream_time))
   return dataloader
 
-types = [torch.nn.modules.container.Sequential, _DenseLayer, _Transition]
+types = [torch.nn.modules.container.Sequential, _DenseLayer, _Transition, _InvertedResidual, ConvBNReLU, InvertedResidual]
 
 globalFreezeIndex = 0
 def freeze_sequential(network, all_layers):

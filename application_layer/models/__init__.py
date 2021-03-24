@@ -20,3 +20,5 @@ from .mydensenet import *
 from .myinception import *
 from .myresnet import *
 from .myvgg import *
+from .mymobilenetv2 import *
+from .mymnasnet import *
