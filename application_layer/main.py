@@ -49,6 +49,7 @@ parser.add_argument('--end', default=10000, type=int, help='end index of data to
 parser.add_argument('--split_idx', default=100, type=int, help='index at which computation is split between Swift and app. layer')
 parser.add_argument('--freeze', action='store_true', help='freeze the lower layers of training model')
 parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
+parser.add_argument('--cache', action='store_true', help='cache intermediate results into memory; useful in split mode')
 args = parser.parse_args()
 
 dataset_name = args.dataset
@@ -62,6 +63,7 @@ num_epochs = args.num_epochs
 start = args.start
 end = args.end
 split_idx = args.split_idx
+cache = args.cache
 mode = 'split' if model.startswith("my") else 'vanilla'
 print(args)
 
@@ -170,6 +172,9 @@ def start_now(lstart, lend, transform):
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
 step = max(10000, batch_size)		#using a value less than 1000 is really waste of bandwidth (after some experimentation)
+if cache and mode == 'vanilla':
+  print("WARNING!! Cannot cache values in the vanila mode; will probably run out of memory\r\n Switching to non-cache mode")
+  cache = False
 if args.testonly:
   if not args.downloadall and dataset_name == 'imagenet':
     gstart, gend = start, end
@@ -197,24 +202,43 @@ if args.testonly:
   print("The whole process took {} seconds".format(time()-start_time))
   exit(0)
 else:
+  if cache:
+    dataloaders = []
   for epoch in range(num_epochs):
+    cache_idx = 0
     if not args.downloadall and dataset_name == 'imagenet':
       lstart, lend = 0, step
-      trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
+      if cache and epoch != 0:		#This is the first epoch...I have to get data from Swift
+        trainloader = dataloaders[cache_idx]		#first epoch, get the first batch
+        cache_idx+=1
+      else:
+#        trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
+        start_now(lstart, lend, transform_train)
+        trainloader = next_dataloader
+        if cache:
+          dataloaders.append(trainloader)
       idx=0
       for s in range(step, 50000, step):
         localtime = time()
         lstart, lend = s, s+step
-        myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
-        if not args.sequential:   #run this in parallel
-          myt.start()
+        if cache and epoch != 0:
+          next_dataloader = dataloaders[cache_idx]
+          cache_idx+=1
+        else:
+          myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
+          if not args.sequential:   #run this in parallel
+            myt.start()
         train(epoch)
         print("One training iteration takes: {} seconds".format(time()-localtime))
         print("Index:",idx)
         idx+=1
         if args.sequential:
-          myt.start()
-        myt.join()
+          if not cache or epoch == 0:
+            myt.start()
+        if not cache or epoch == 0:
+          myt.join()
+          if cache:
+            dataloaders.append(next_dataloader)
         trainloader = next_dataloader
         dataloader = None
         print("Then, training+dataloading take {} seconds".format(time()-localtime))
