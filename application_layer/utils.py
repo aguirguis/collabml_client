@@ -269,17 +269,20 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       post_objects = []
       images = []
       post_time = time.time()
-      opts = {"meta": {"Ml-Task:inference",
+      for s in range(lstart, lend, post_step):
+          opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(post_step),
-            "start:{}".format(lstart),"end:{}".format(lend),
+            "Batch-Size:{}".format(int(post_step/10)),
+            "start:{}".format(s),"end:{}".format(s+post_step),
             "Split-Idx:{}".format(split_idx)},
             "header": {"Parent-Dir:{}".format(parent_dir)}}
-      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
-      post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
+          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
+          post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
       post_time = time.time()
       read_bytes=0
       for post_res in swift.post(container='imagenet', objects=post_objects):
+          if 'error' in post_res.keys():
+              print("error: {}, traceback: {}".format(post_res['error'], post_res['traceback']))
           read_bytes += int(len(post_res['result']))
           print("Executing one post (whose result is of len {} bytes) took {} seconds".format(len(post_res['result']), time.time()-post_time))
           images.extend(pickle.loads(post_res['result']))			#images now should be a list of numpy arrays
