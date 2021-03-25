@@ -1,7 +1,7 @@
 from swiftclient.service import SwiftService, SwiftPostObject, SwiftError
 import pickle
 import torchvision
-from pytorch_cifar.utils import get_model
+from application_layer.utils import get_model
 from time import time
 import torch
 import argparse
@@ -13,6 +13,7 @@ parser.add_argument('--task', default='inference', type=str, help='ML task (infe
 parser.add_argument('--batch_size', default=100, type=int, help='batch size for dataloader')
 parser.add_argument('--num_epochs', default=10, type=int, help='number of epochs for training')
 parser.add_argument('--split_idx', default=100, type=int, help='index at which computation is split between Swift and app. layer')
+#In training experiments, I'll use split_idx as "freeze_idx"; Basically, training will not be split but the layers before that index will be frozen
 args = parser.parse_args()
 
 dataset = args.dataset

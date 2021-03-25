@@ -24,9 +24,9 @@ import pickle
 from swiftclient.service import SwiftService, SwiftPostObject
 
 try:
-    from pytorch_cifar.models import *
-    from pytorch_cifar.dataset_utils import *
-    from pytorch_cifar.mnist_utils import *
+    from application_layer.models import *
+    from application_layer.dataset_utils import *
+    from application_layer.mnist_utils import *
 except:
     from models import *
     from dataset_utils import *
