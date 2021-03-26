@@ -1,7 +1,7 @@
 from swiftclient.service import SwiftService, SwiftPostObject, SwiftError
 import pickle
 import torchvision
-from pytorch_cifar.utils import get_model
+from application_layer.utils import get_model
 from time import time
 import torch
 import argparse
