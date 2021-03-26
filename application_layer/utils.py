@@ -269,15 +269,18 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       post_objects = []
       images = []
       post_time = time.time()
-      for s in range(lstart, lend, post_step):
-          opts = {"meta": {"Ml-Task:inference",
+#      for s in range(lstart, lend, post_step):
+      opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(post_step/10)),
-            "start:{}".format(s),"end:{}".format(s+post_step),
+#            "Batch-Size:{}".format(int(post_step/2)),
+#            "start:{}".format(s),"end:{}".format(s+post_step),
+            "Batch-Size:{}".format(post_step),
+            "start:{}".format(lstart),"end:{}".format(lend),
             "Split-Idx:{}".format(split_idx)},
             "header": {"Parent-Dir:{}".format(parent_dir)}}
-          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
-          post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
+#          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
+      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
+      post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
       post_time = time.time()
       read_bytes=0
       for post_res in swift.post(container='imagenet', objects=post_objects):
