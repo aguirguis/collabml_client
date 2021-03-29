@@ -3,6 +3,7 @@ from torchvision.models import ResNet as resnet
 from torchvision.models.resnet import Bottleneck, BasicBlock
 from torch import Tensor
 import torch.nn as nn
+from time import time
 
 types = [torch.nn.modules.container.Sequential]
 def remove_sequential(network, all_layers):
@@ -24,18 +25,21 @@ class MyResNet(resnet):
       print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
       res = []
       res.append(x.element_size() * x.nelement()/1024)
+      time_res = []
       for idx in range(start, end):
           if idx >= len(self.all_layers):		#we avoid out of bounds
               break
           m = self.all_layers[idx]
+          layer_time = time()
           if isinstance(m, torch.nn.modules.linear.Linear):
               x = torch.flatten(x, 1)
           x = m(x)
+          time_res.append(time()-layer_time)
           print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
-              return x,res
-      return x,res
+              return x,res, time_res
+      return x,res, time_res
 
 largs = {'resnet18':[BasicBlock, [2, 2, 2, 2]],
         'resnet34':[BasicBlock, [3, 4, 6, 3]],

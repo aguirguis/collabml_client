@@ -2,6 +2,7 @@ import torch
 from torchvision.models.inception import Inception3, InceptionAux
 from torch import Tensor
 import torch.nn as nn
+from time import time
 
 types = [torch.nn.modules.container.Sequential]
 def remove_sequential(network, all_layers):
@@ -24,6 +25,7 @@ class MyInception(Inception3):
       res = []
       res.append(x.element_size() * x.nelement()/1024)
       aux = None
+      time_res=[]
       for idx in range(start, end):
           if idx >= len(self.all_layers):		#we avoid out of bounds
               break
@@ -31,14 +33,16 @@ class MyInception(Inception3):
           if isinstance(m, InceptionAux):
               aux = m(x)
               continue
+          layer_time = time()
           if isinstance(m, torch.nn.modules.linear.Linear):
               x = torch.flatten(x, 1)
           x = m(x)
+          time_res.append(time()-layer_time)
           print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
-              return x,res
-      return x,res			#TODO: check if we need to return aux also with this
+              return x,res, time_res
+      return x,res, time_res			#TODO: check if we need to return aux also with this
 
 def build_my_inception(num_classes=10):
     return MyInception(num_classes=num_classes)

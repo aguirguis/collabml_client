@@ -13,7 +13,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 #import matplotlib.font_manager as mgr
-fontsize=35
+fontsize=15
 figsize = (15, 8)
 ##Defining all the models we support
 all_models = ["alexnet", 'densenet121','densenet161','densenet169','densenet201',"mobilenetv2",
@@ -40,28 +40,35 @@ def build_model(model_str, num_classes):
     model = build_my_mnasnet(model_str, num_classes)
   return model
 
+width=0.3
 for mod_class, idxs in model_to_idx.items():
-  fig = plt.figure(figsize=figsize) # inches size plot
-  plt.yticks(fontsize=fontsize)
-  figs = []
   a = torch.rand((1,3,224,224))
   for ii,idx in enumerate(idxs):
+#    fig = plt.figure(figsize=figsize) # inches size plot
+    fig, ax1 = plt.subplots()
+    ax2 = ax1.twinx()
+    figs = []
     model_str = all_models[idx]
     print("{}{}{}".format("="*20,model_str,"="*20))
     if model_str == "inception":
       a = torch.rand((2,3,299,299))
     net = build_model(model_str, 1000)
-    _, sizes = net(a, 0,150)		#This will print some stuff
+    _, sizes, times = net(a, 0,150)		#This will print some stuff
     sizes[0] = 132			#correct the input size (before rescaling)...we know that onr ImageNet image is 132 KB on average
+    times.insert(0,0)			#basically the input layer takes no time
+    times = np.array(times)*1000
     ind = np.arange(len(sizes))
     plt.xticks(fontsize=fontsize, fontweight='medium')
-    fig, = plt.plot(ind, sizes, linewidth=5, label=model_str)
-    if ii ==0:
-      fig2 = plt.axhline(132, color='r', linestyle="--", label='input size')
-      figs.append(fig2)
+    ax2.set_yticks(np.arange(0,np.max(times),step=np.max(times)/10))
+    fig = ax1.bar(ind-0.5*width, sizes, width, linewidth=1, label=model_str+"-data-size",hatch="/",edgecolor='black',)
     figs.append(fig)
-  plt.ylabel("Output size per image (KBs)", fontsize=fontsize)
-  plt.xlabel("Layer index", fontsize=fontsize)
-  plt.legend(handles=figs, fontsize=fontsize)
-  plt.tight_layout()
-  plt.savefig('{}.pdf'.format(mod_class))
+    fig3 = ax2.bar(ind+0.5*width, times, width, linewidth=1, color='orange', label=model_str+"-latency",hatch="\\",edgecolor='black',)
+    figs.append(fig3)
+    fig2 = ax1.axhline(132, color='r', linestyle="--", label='input size')
+    figs.append(fig2)
+    ax1.set_ylabel("Output size per image (KBs)", fontsize=fontsize)
+    ax2.set_ylabel("Time to process a layer (ms)", fontsize=fontsize)
+    plt.xlabel("Layer index", fontsize=fontsize)
+    plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
+    plt.tight_layout()
+    plt.savefig('{}.pdf'.format(model_str))
