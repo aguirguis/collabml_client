@@ -13,8 +13,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 #import matplotlib.font_manager as mgr
-fontsize=15
-figsize = (15, 8)
+fontsize=35
+figsize = (30, 20)
 ##Defining all the models we support
 all_models = ["alexnet", 'densenet121','densenet161','densenet169','densenet201',"mobilenetv2",
 		"mnasnet0_5","mnasnet0_75","mnasnet1_0","mnasnet1_3","vgg11","vgg13","vgg16","vgg19",
@@ -40,12 +40,11 @@ def build_model(model_str, num_classes):
     model = build_my_mnasnet(model_str, num_classes)
   return model
 
-width=0.3
+width=0.4
 for mod_class, idxs in model_to_idx.items():
   a = torch.rand((1,3,224,224))
   for ii,idx in enumerate(idxs):
-#    fig = plt.figure(figsize=figsize) # inches size plot
-    fig, ax1 = plt.subplots()
+    fig, ax1 = plt.subplots(figsize=figsize)
     ax2 = ax1.twinx()
     figs = []
     model_str = all_models[idx]
@@ -58,7 +57,6 @@ for mod_class, idxs in model_to_idx.items():
     times.insert(0,0)			#basically the input layer takes no time
     times = np.array(times)*1000
     ind = np.arange(len(sizes))
-    plt.xticks(fontsize=fontsize, fontweight='medium')
     ax2.set_yticks(np.arange(0,np.max(times),step=np.max(times)/10))
     fig = ax1.bar(ind-0.5*width, sizes, width, linewidth=1, label=model_str+"-data-size",hatch="/",edgecolor='black',)
     figs.append(fig)
@@ -68,7 +66,10 @@ for mod_class, idxs in model_to_idx.items():
     figs.append(fig2)
     ax1.set_ylabel("Output size per image (KBs)", fontsize=fontsize)
     ax2.set_ylabel("Time to process a layer (ms)", fontsize=fontsize)
-    plt.xlabel("Layer index", fontsize=fontsize)
+    ax1.set_xlabel('Layer index', fontsize=fontsize)
+    ax1.tick_params(axis='y', labelsize=fontsize)
+    ax2.tick_params(axis='y', labelsize=fontsize)
+    ax1.tick_params(axis='x', labelsize=fontsize)
     plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
     plt.tight_layout()
     plt.savefig('{}.pdf'.format(model_str))
