@@ -129,16 +129,30 @@ def train(epoch):
     train_loss = 0
     correct = 0
     total = 0
+    dataload_time = time()
     for batch_idx, (inputs, targets) in enumerate(trainloader):
+        print("Time of next(dataloader) is: {}".format(time()-dataload_time))
+        copy_time = time()
         inputs, targets = inputs.to(device), targets.to(device)
+        print("Time for copying to cuda: {}".format(time()-copy_time))
         optimizer.zero_grad()
+        forward_time = time()
         if mode == 'split':		#This is transfer learning deceted!
             outputs = net(inputs, split_idx, 100)
         else:
             outputs = net(inputs)
+        print("Time for forward pass: {}".format(time()-forward_time))
+        #TODO: The next lines are only for benchmarking....should be removed otherwise
+        torch.cuda.reset_max_memory_allocated(0)
+        torch.cuda.reset_max_memory_allocated(1)
+        back_time = time()
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
+        print("Time for backpropagation: {}".format(time()-back_time))
+        print("GPU memory for backpropagation: {}         \
+                 \r\n".format((torch.cuda.max_memory_allocated(0)+torch.cuda.max_memory_allocated(1))/(1024*1024*1024)))
+        dataload_time = time()
 
 def test(epoch):
     global testloader, net
@@ -202,7 +216,7 @@ else:
       lstart, lend = 0, step
       trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
       idx=0
-      for s in range(step, 50000, step):
+      for s in range(step, 10000, step):		#TODO: return this "10000" back to "50000"; the current value is only for testing
         localtime = time()
         lstart, lend = s, s+step
         myt = Thread(target=start_now, args=(lstart, lend,transform_train,))

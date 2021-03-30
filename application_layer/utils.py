@@ -264,24 +264,27 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
 def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, sequential=False):
   stream_time = time.time()
   if mode == 'split':
-      post_step = 1000 		#if the batch is smaller, it will be handled on the server
+      parallel_posts = 4	#number of posts request to run in parallel
+      post_step = int((lend-lstart)/parallel_posts) 		#if the batch is smaller, it will be handled on the server
       print("Start {}, end {}, post_step {}\r\n".format(lstart, lend, post_step))
       post_objects = []
       images = []
       post_time = time.time()
-#      for s in range(lstart, lend, post_step):
-      opts = {"meta": {"Ml-Task:inference",
+      for s in range(lstart, lend, post_step):
+          cur_end = s+post_step if s+post_step <= lend else lend
+          cur_step = cur_end - s
+          opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-#            "Batch-Size:{}".format(int(post_step/2)),
-#            "start:{}".format(s),"end:{}".format(s+post_step),
-            "Batch-Size:{}".format(post_step),
-            "start:{}".format(lstart),"end:{}".format(lend),
+            "Batch-Size:{}".format(int(cur_step/25)),
+            "start:{}".format(s),"end:{}".format(cur_end),
+#            "Batch-Size:{}".format(post_step),
+#            "start:{}".format(lstart),"end:{}".format(lend),
             "Split-Idx:{}".format(split_idx)},
             "header": {"Parent-Dir:{}".format(parent_dir)}}
-#          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
-      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
-      post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
-      post_time = time.time()
+          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
+#      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
+          post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
+#      post_time = time.time()
       read_bytes=0
       for post_res in swift.post(container='imagenet', objects=post_objects):
           if 'error' in post_res.keys():
@@ -289,6 +292,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           read_bytes += int(len(post_res['result']))
           print("Executing one post (whose result is of len {} bytes) took {} seconds".format(len(post_res['result']), time.time()-post_time))
           images.extend(pickle.loads(post_res['result']))			#images now should be a list of numpy arrays
+          print("After deserialization, time is: {} seconds".format(time.time()-post_time))
       print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
       print("Executing all posts took {} seconds".format(time.time()-post_time))
       transform=None		#no transform required in this case
@@ -321,7 +325,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
   assert len(images) == len(labels)
   imgs = np.array(images)
   dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode)
-  dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
+  dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8)
   print("Streaming imagenet data took {} seconds".format(time.time()-stream_time))
   return dataloader
 
