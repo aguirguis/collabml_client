@@ -10,12 +10,12 @@ model_dict={
 #            'resnet152': [40,41,42,50,51,52,53,54,55], #[52,55],
 #            'vgg16': [31,33],
 #            'vgg19': [34,35,36,37,38,39],
-            'alexnet': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19] #[15], #[9,15],
+#            'alexnet': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19] #[15], #[9,15],
 #            'densenet121': [19] #[14,19]
 }
 bw='UNLIMITED'		#This is the bandwidth used for testing....we use it here only to annotate the logFile
 #logFile = 'splitExp_bw{}mbps'.format(bw)
-logFile = 'ExpToBenchmarkALLDataMovementCost_bw{}'.format(bw)
+logFile = 'ExpToBenchmarkALLDataMovementCost_bw{}_withParallelPosts_shot4'.format(bw)
 for (model, split_idcs) in model_dict.items():
   for split_idx in split_idcs:
     #split execution
