@@ -13,9 +13,9 @@ model_dict={
 #            'alexnet': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19] #[15], #[9,15],
 #            'densenet121': [19] #[14,19]
 }
-bw='UNLIMITED'		#This is the bandwidth used for testing....we use it here only to annotate the logFile
+bw=150 #'UNLIMITED'		#This is the bandwidth used for testing....we use it here only to annotate the logFile
 #logFile = 'splitExp_bw{}mbps'.format(bw)
-logFile = 'ExpToBenchmarkALLDataMovementCost_bw{}_withParallelPosts_shot4'.format(bw)
+logFile = 'ExpToBenchmarkALLDataMovementCost_bw{}_withParallelPosts'.format(bw)
 for (model, split_idcs) in model_dict.items():
   for split_idx in split_idcs:
     #split execution

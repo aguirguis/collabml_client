@@ -47,10 +47,10 @@ parser.add_argument('--num_epochs', default=10, type=int, help='number of epochs
 parser.add_argument('--start', default=0, type=int, help='start index of data to be processed')
 parser.add_argument('--end', default=10000, type=int, help='end index of data to be processed')
 parser.add_argument('--split_idx', default=100, type=int, help='index at which computation is split between Swift and app. layer')
+parser.add_argument('--freeze_idx', default=0, type=int, help='index at which network is frozen (for transfer learning)')
 parser.add_argument('--freeze', action='store_true', help='freeze the lower layers of training model')
 parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
 args = parser.parse_args()
-
 dataset_name = args.dataset
 if not args.downloadall and (dataset_name == 'mnist' or dataset_name == 'cifar10'):
   print("WARNING: dataset {} is small enough! Will download it only once in the beginning!".format(dataset_name))
@@ -62,6 +62,10 @@ num_epochs = args.num_epochs
 start = args.start
 end = args.end
 split_idx = args.split_idx
+freeze_idx = args.freeze_idx
+if args.freeze and freeze_idx == 0:
+  print("Freeze flag is set, but no freeze_idx was given! Will use the value of split_idx ({}) as a freeze_idx too!".format(split_idx))
+  freeze_idx = split_idx
 mode = 'split' if model.startswith("my") else 'vanilla'
 print(args)
 
@@ -107,8 +111,8 @@ if not args.downloadall and dataset_name == 'imagenet':
 print('==> Building model..')
 net = get_model(model, dataset_name)
 if mode == 'split' or args.freeze:
-    print("Freezing the lower layers of the model ({}) till index {}".format(model, split_idx))
-    freeze_lower_layers(net, split_idx)		#for transfer learning -- no need for backpropagation for upper layers (idx < split_idx)
+    print("Freezing the lower layers of the model ({}) till index {}".format(model, freeze_idx))
+    freeze_lower_layers(net, freeze_idx)		#for transfer learning -- no need for backpropagation for upper layers (idx < split_idx)
 
 net = net.to(device)
 if device == 'cuda':
