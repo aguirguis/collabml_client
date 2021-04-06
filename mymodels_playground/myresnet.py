@@ -26,10 +26,12 @@ class MyResNet(resnet):
       res = []
       res.append(x.element_size() * x.nelement()/1024)
       time_res = []
+      names = []
       for idx in range(start, end):
           if idx >= len(self.all_layers):		#we avoid out of bounds
               break
           m = self.all_layers[idx]
+          names.append(str(type(m)).split('.')[-1][:-2])
           layer_time = time()
           if isinstance(m, torch.nn.modules.linear.Linear):
               x = torch.flatten(x, 1)
@@ -38,8 +40,8 @@ class MyResNet(resnet):
           print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
-              return x,res, time_res
-      return x,res, time_res
+              break
+      return x,res, time_res, names
 
 largs = {'resnet18':[BasicBlock, [2, 2, 2, 2]],
         'resnet34':[BasicBlock, [3, 4, 6, 3]],
