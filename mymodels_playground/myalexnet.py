@@ -24,10 +24,12 @@ class MyAlexNet(AlexNet):
       print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
       res = [x.element_size() * x.nelement()/1024]		#this returns the sizes of the intermediate outputs in the network
       time_res = []
+      names=[]
       for idx in range(start, end):
           if idx >= len(self.all_layers):		#we avoid out of bounds
               break
           m = self.all_layers[idx]
+          names.append(str(type(m)).split('.')[-1][:-2])
           layer_time = time()
           if isinstance(m, torch.nn.modules.linear.Linear):
               x = torch.flatten(x, 1)
@@ -36,8 +38,8 @@ class MyAlexNet(AlexNet):
           print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
-              return x, res, time_res
-      return x, res, time_res
+              break
+      return x, res, time_res, names
 
 def build_my_alexnet(num_classes=10):
     return MyAlexNet(num_classes=num_classes)

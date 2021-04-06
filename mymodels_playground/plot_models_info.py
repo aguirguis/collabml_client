@@ -57,7 +57,8 @@ for mod_class, idxs in model_to_idx.items():
       a = torch.rand((2,3,299,299))
     num_classes=1000
     net = build_model(model_str, num_classes)
-    res, sizes, times = net(a, 0,150)		#This will print some stuff
+    res, sizes, times, names = net(a, 0,150)		#This will print some stuff
+    print(names, len(names))
     target = torch.tensor((10,))
     back_time = time.time()
     loss = criterion(res, target)
@@ -66,8 +67,10 @@ for mod_class, idxs in model_to_idx.items():
     print("Forward iteration takes: ", np.sum(times))
     print("Backward iteration takes: ", back_time)
     times.append(back_time)
+    names.append('Backward')
     sizes[0] = 132			#correct the input size (before rescaling)...we know that onr ImageNet image is 132 KB on average
     times.insert(0,0)			#basically the input layer takes no time
+    names.insert(0,'input')
     times = np.array(times)*1000
     ind = np.arange(len(sizes))
     ax2.set_yticks(np.arange(0,np.max(times),step=np.max(times)/10))
@@ -83,7 +86,8 @@ for mod_class, idxs in model_to_idx.items():
     ax1.set_xlabel('Layer index', fontsize=fontsize)
     ax1.tick_params(axis='y', labelsize=fontsize)
     ax2.tick_params(axis='y', labelsize=fontsize)
-    ax1.tick_params(axis='x', labelsize=fontsize)
+    ax1.tick_params(axis='x', labelsize=fontsize, rotation=90)
+    plt.xticks(ind, names, fontsize=fontsize, rotation=90)
     plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
     plt.tight_layout()
     plt.savefig('{}.pdf'.format(model_str))
