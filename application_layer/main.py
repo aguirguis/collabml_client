@@ -111,6 +111,9 @@ if not args.downloadall and dataset_name == 'imagenet':
 print('==> Building model..')
 net = get_model(model, dataset_name)
 if mode == 'split' or args.freeze:
+    if freeze_idx < split_idx and mode == 'split':
+      print("WARNING! freeze_idx should be >= split_idx; setting freeze_idx to {}".format(split_idx))
+      freeze_idx = split_idx
     print("Freezing the lower layers of the model ({}) till index {}".format(model, freeze_idx))
     freeze_lower_layers(net, freeze_idx)		#for transfer learning -- no need for backpropagation for upper layers (idx < split_idx)
 
@@ -134,6 +137,9 @@ def train(epoch):
     correct = 0
     total = 0
     dataload_time = time()
+    if device == 'cuda':
+        torch.cuda.reset_max_memory_allocated(0)
+        torch.cuda.reset_max_memory_allocated(1)
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         print("Time of next(dataloader) is: {}".format(time()-dataload_time))
         copy_time = time()
@@ -146,15 +152,13 @@ def train(epoch):
         else:
             outputs = net(inputs)
         print("Time for forward pass: {}".format(time()-forward_time))
-        #TODO: The next lines are only for benchmarking....should be removed otherwise
-        torch.cuda.reset_max_memory_allocated(0)
-        torch.cuda.reset_max_memory_allocated(1)
         back_time = time()
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
         print("Time for backpropagation: {}".format(time()-back_time))
-        print("GPU memory for backpropagation: {}         \
+        if device == 'cuda':
+            print("GPU memory for backpropagation: {}         \
                  \r\n".format((torch.cuda.max_memory_allocated(0)+torch.cuda.max_memory_allocated(1))/(1024*1024*1024)))
         dataload_time = time()
 
@@ -220,7 +224,7 @@ else:
       lstart, lend = 0, step
       trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
       idx=0
-      for s in range(step, 10000, step):		#TODO: return this "10000" back to "50000"; the current value is only for testing
+      for s in range(step, 50000, step):
         localtime = time()
         lstart, lend = s, s+step
         myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
