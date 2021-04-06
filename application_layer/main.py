@@ -47,10 +47,10 @@ parser.add_argument('--num_epochs', default=10, type=int, help='number of epochs
 parser.add_argument('--start', default=0, type=int, help='start index of data to be processed')
 parser.add_argument('--end', default=10000, type=int, help='end index of data to be processed')
 parser.add_argument('--split_idx', default=100, type=int, help='index at which computation is split between Swift and app. layer')
+parser.add_argument('--freeze_idx', default=0, type=int, help='index at which network is frozen (for transfer learning)')
 parser.add_argument('--freeze', action='store_true', help='freeze the lower layers of training model')
 parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
 args = parser.parse_args()
-
 dataset_name = args.dataset
 if not args.downloadall and (dataset_name == 'mnist' or dataset_name == 'cifar10'):
   print("WARNING: dataset {} is small enough! Will download it only once in the beginning!".format(dataset_name))
@@ -62,6 +62,10 @@ num_epochs = args.num_epochs
 start = args.start
 end = args.end
 split_idx = args.split_idx
+freeze_idx = args.freeze_idx
+if args.freeze and freeze_idx == 0:
+  print("Freeze flag is set, but no freeze_idx was given! Will use the value of split_idx ({}) as a freeze_idx too!".format(split_idx))
+  freeze_idx = split_idx
 mode = 'split' if model.startswith("my") else 'vanilla'
 print(args)
 
@@ -107,8 +111,8 @@ if not args.downloadall and dataset_name == 'imagenet':
 print('==> Building model..')
 net = get_model(model, dataset_name)
 if mode == 'split' or args.freeze:
-    print("Freezing the lower layers of the model ({}) till index {}".format(model, split_idx))
-    freeze_lower_layers(net, split_idx)		#for transfer learning -- no need for backpropagation for upper layers (idx < split_idx)
+    print("Freezing the lower layers of the model ({}) till index {}".format(model, freeze_idx))
+    freeze_lower_layers(net, freeze_idx)		#for transfer learning -- no need for backpropagation for upper layers (idx < split_idx)
 
 net = net.to(device)
 if device == 'cuda':
@@ -129,16 +133,30 @@ def train(epoch):
     train_loss = 0
     correct = 0
     total = 0
+    dataload_time = time()
     for batch_idx, (inputs, targets) in enumerate(trainloader):
+        print("Time of next(dataloader) is: {}".format(time()-dataload_time))
+        copy_time = time()
         inputs, targets = inputs.to(device), targets.to(device)
+        print("Time for copying to cuda: {}".format(time()-copy_time))
         optimizer.zero_grad()
+        forward_time = time()
         if mode == 'split':		#This is transfer learning deceted!
             outputs = net(inputs, split_idx, 100)
         else:
             outputs = net(inputs)
+        print("Time for forward pass: {}".format(time()-forward_time))
+        #TODO: The next lines are only for benchmarking....should be removed otherwise
+        torch.cuda.reset_max_memory_allocated(0)
+        torch.cuda.reset_max_memory_allocated(1)
+        back_time = time()
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
+        print("Time for backpropagation: {}".format(time()-back_time))
+        print("GPU memory for backpropagation: {}         \
+                 \r\n".format((torch.cuda.max_memory_allocated(0)+torch.cuda.max_memory_allocated(1))/(1024*1024*1024)))
+        dataload_time = time()
 
 def test(epoch):
     global testloader, net
@@ -169,7 +187,7 @@ def start_now(lstart, lend, transform):
 
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
-step = max(10000, batch_size)		#using a value less than 1000 is really waste of bandwidth (after some experimentation)
+step = max(2500, batch_size)		#using a value less than 1000 is really waste of bandwidth (after some experimentation)
 if args.testonly:
   if not args.downloadall and dataset_name == 'imagenet':
     gstart, gend = start, end
@@ -202,7 +220,7 @@ else:
       lstart, lend = 0, step
       trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
       idx=0
-      for s in range(step, 50000, step):
+      for s in range(step, 10000, step):		#TODO: return this "10000" back to "50000"; the current value is only for testing
         localtime = time()
         lstart, lend = s, s+step
         myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
