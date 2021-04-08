@@ -50,6 +50,7 @@ parser.add_argument('--split_idx', default=100, type=int, help='index at which c
 parser.add_argument('--freeze_idx', default=0, type=int, help='index at which network is frozen (for transfer learning)')
 parser.add_argument('--freeze', action='store_true', help='freeze the lower layers of training model')
 parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
+parser.add_argument('--cpuonly', action='store_true', help='do not use GPUs')
 args = parser.parse_args()
 dataset_name = args.dataset
 if not args.downloadall and (dataset_name == 'mnist' or dataset_name == 'cifar10'):
@@ -70,7 +71,7 @@ mode = 'split' if model.startswith("my") else 'vanilla'
 print(args)
 
 start_time = time()
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device = 'cuda' if torch.cuda.is_available() and not args.cpuonly else 'cpu'
 
 # Data
 print('==> Preparing data..')

@@ -28,10 +28,12 @@ class MyDenseNet(DenseNet):
       res=[]
       res.append(x.element_size() * x.nelement()/1024)
       time_res=[]
+      names=[]
       for idx in range(start, end):
           if idx >= len(self.all_layers):		#we avoid out of bounds
               break
           m = self.all_layers[idx]
+          names.append(str(type(m)).split('.')[-1][:-2])
           layer_time = time()
           if isinstance(m, torch.nn.modules.linear.Linear):
               x = F.relu(x, inplace=True)
@@ -42,8 +44,8 @@ class MyDenseNet(DenseNet):
           print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
-              return x,res, time_res
-      return x,res, time_res
+              break
+      return x,res, time_res, names
 
 largs = {'densenet121':[32, (6, 12, 24, 16), 64],
 	'densenet161':[48, (6, 12, 36, 24), 96],

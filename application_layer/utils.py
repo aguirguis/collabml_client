@@ -68,6 +68,7 @@ def get_model(model_str, dataset):
                 'resnet50':torchvision.models.resnet50,
                 'resnet152':torchvision.models.resnet152,
 		'inception':torchvision.models.inception_v3,
+                'vgg11':torchvision.models.vgg11,
 		'vgg16':torchvision.models.vgg16,
 		'vgg19':torchvision.models.vgg19,
 		'preactresnet18': PreActResNet18,
