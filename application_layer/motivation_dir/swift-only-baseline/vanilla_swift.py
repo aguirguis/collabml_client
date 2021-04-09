@@ -5,6 +5,22 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+def ml_requests(swift, objs):
+  #helper function to do ML requests (essentially inference)
+  post_objects=[]
+  for i,obj in enumerate(objs):
+    opts = {"meta": {"Ml-Task:inference",				#First choice: Do inference not training
+      "dataset:imagenet","model:alexnet",			#Second choice: use Alexnet
+      "Batch-Size:1",						#Third choice: batch size of 1
+      "Lossfn:cross-entropy","Optimizer:sgd",
+      "start:%d" % i,"end:%d" % (i+1),				#Fourth choice: do inference for 1 images only
+       },
+      "header": {"Parent-Dir:{}".format('val')}}
+    post_objects.append(SwiftPostObject(obj,opts))
+  for post_res in swift.post(container='imagenet', objects=post_objects):
+    if not post_res['success']:
+      print(post_res)
+
 def post_requests(swift, objs):
   #helper function to post objects
   opts = {"meta": {"comment:dummy"}}
@@ -47,9 +63,11 @@ def send_req(req: str, num_req: int):
     get_requests(swift, objs)
   elif req == 'PUT':
     put_requests(swift, objs)
+  elif req == 'ML':
+    ml_requests(swift, objs)
 
 nums = np.arange(1, 10001, step=100)
-reqs=['PUT', 'POST', 'GET']
+reqs=['PUT', 'POST', 'GET', 'ML']
 res_dict = {}
 for req in reqs:
   res = []
@@ -59,7 +77,9 @@ for req in reqs:
     end_time = time()
     res.append(end_time - start_time)
   res_dict[req] = res
+  print(res)
 
+print(res_dict)
 #######Plotting the results
 fontsize=35
 fig = plt.gcf()
@@ -70,6 +90,6 @@ for req in res_dict:
   fig, = plt.plot(nums, res_dict[req], linewidth=5, label=req)
   figs.append(fig)
 plt.legend(handles=figs, fontsize=fontsize)
-plt.ylabel('Time (sec,)',fontsize=fontsize)
+plt.ylabel('Time (sec.)',fontsize=fontsize)
 plt.xlabel('Number of requests',fontsize=fontsize)
 plt.savefig('swift_performance.pdf')
