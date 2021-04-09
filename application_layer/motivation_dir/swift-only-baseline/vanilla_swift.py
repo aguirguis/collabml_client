@@ -1,10 +1,9 @@
 from swiftclient.service import SwiftService, SwiftPostObject, SwiftError, SwiftUploadObject
-import pickle
-import torchvision
-from application_layer.utils import get_model
 from time import time
-import torch
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 def post_requests(swift, objs):
   #helper function to post objects
@@ -53,10 +52,24 @@ nums = np.arange(1, 10001, step=100)
 reqs=['PUT', 'POST', 'GET']
 res_dict = {}
 for req in reqs:
+  res = []
   for num_req in nums:
     start_time = time()
     send_req(req, num_req)
     end_time = time()
-    res_dict[req+"_"+str(num_req)] = end_time - start_time
-    print("{} {} requests took {} seconds".format(num_req, req, end_time-start_time))
-print(res_dict)
+    res.append(end_time - start_time)
+  res_dict[req] = res
+
+#######Plotting the results
+fontsize=35
+fig = plt.gcf()
+fig.set_size_inches(15, 8)
+plt.subplots_adjust(top=0.95, bottom=0.15, right=0.95, left=0.13)
+figs=[]
+for req in res_dict:
+  fig, = plt.plot(nums, res_dict[req], linewidth=5, label=req)
+  figs.append(fig)
+plt.legend(handles=figs, fontsize=fontsize)
+plt.ylabel('Time (sec,)',fontsize=fontsize)
+plt.xlabel('Number of requests',fontsize=fontsize)
+plt.savefig('swift_performance.pdf')
