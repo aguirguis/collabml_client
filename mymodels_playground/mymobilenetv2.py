@@ -1,6 +1,6 @@
 import torch
 from torchvision.models import MobileNetV2
-from torchvision.models.mobilenet import ConvBNReLU, InvertedResidual
+from torchvision.models.mobilenetv2 import ConvBNReLU, InvertedResidual
 from torch import Tensor
 import torch.nn as nn
 from time import time

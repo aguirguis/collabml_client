@@ -18,11 +18,10 @@ class MyResNet(resnet):
         super(MyResNet, self).__init__(*args, **kwargs)
         self.all_layers = []
         remove_sequential(self, self.all_layers)
-        print("Length of all layers: ", len(self.all_layers))
+#        print("Length of all layers: ", len(self.all_layers))
 
     def forward(self, x:Tensor, start: int, end: int) -> Tensor:
       idx = 0
-      print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
       res = []
       res.append(x.element_size() * x.nelement()/1024)
       time_res = []
@@ -37,7 +36,6 @@ class MyResNet(resnet):
               x = torch.flatten(x, 1)
           x = m(x)
           time_res.append(time()-layer_time)
-          print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
               break

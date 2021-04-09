@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import sys
 
 def ml_requests(swift, objs):
   #helper function to do ML requests (essentially inference)
@@ -78,6 +79,7 @@ for req in reqs:
     res.append(end_time - start_time)
   res_dict[req] = res
   print(res)
+  sys.stdout.flush()
 
 print(res_dict)
 #######Plotting the results
