@@ -1,5 +1,6 @@
 bw=100 #'UNLIMITED'
-f = open('sweepExpAllModels_bw{}CPU'.format(bw),'r')
+filename = 'tempOut' #'sweepExpAllModels_bw{}CPU'.format(bw)
+f = open(filename,'r')
 lines = f.readlines()
 parallel_posts = 4
 all_occ = []
@@ -8,7 +9,7 @@ counter=0
 cur_post_time = 0
 #making "the next variable" False will measure only the time of receiving replies from Swift (used to calculate comm. time)
 measuring_all = False
-gpu_mem = False
+gpu_mem = True
 for line in lines:
 #GPU memory printing
   if gpu_mem:

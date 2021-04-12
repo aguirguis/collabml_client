@@ -40,16 +40,23 @@ def partial_forward(net, split_idx, batch_size, device):
   res, net = res.cpu(), net.cpu()
   target = torch.randint(1, num_classes, (batch_size,))
   ######Start the benchmark from here
+  torch.cuda.empty_cache()
+  torch.cuda.reset_max_memory_allocated(0)
+  torch.cuda.reset_max_memory_allocated(1)
+  gpu_usage_init=(torch.cuda.max_memory_allocated(0)+torch.cuda.max_memory_allocated(1))/(1024*1024*1024)
+#  print("device: {}, gpu_usage: {}".format(device, gpu_usage))
   start_time = time.time()
   res, target, net = res.to(device), target.to(device), net.to(device)
   res, _, _, _ = net(res, split_idx, 150)
   loss = criterion(res, target)
   loss.backward()
   total_time = time.time()-start_time
+  gpu_usage=(torch.cuda.max_memory_allocated(0)+torch.cuda.max_memory_allocated(1))/(1024*1024*1024) - gpu_usage_init
+  print("split_idx: {} device: {}, gpu_usage: {}".format(split_idx, device, gpu_usage))
   #cleaning
   del input, target, res, net
   torch.cuda.empty_cache()
-  return total_time
+  return total_time, gpu_usage
 
 #Dict of model to split indexes
 models_dict={'alexnet': np.arange(1,22), #[16,17,18,19,20,21],
@@ -64,12 +71,15 @@ figsize = (30, 20)
 width=0.4
 for model, split_idxs in models_dict.items():
   res_dict={}
+  gpu_mems=[]
   for device in devices:
     times = []
     for split_idx in split_idxs:
       net = build_model(model, num_classes)
-      total_time = partial_forward(net, split_idx, batch_size, device)
+      total_time, gpu_usage = partial_forward(net, split_idx, batch_size, device)
       times.append(total_time)
+      if device == 'cuda':		#Do this only while using GPU
+        gpu_mems.append(gpu_usage)
     res_dict[device] = times
     print("Computation times of {} on {}: ".format(model, device), times)
   ##Plotting results
@@ -88,3 +98,17 @@ for model, split_idxs in models_dict.items():
   plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
   plt.tight_layout()
   plt.savefig('observation_all_layers_{}.pdf'.format(model))
+  ##Plotting GPU memory usage
+  plt.gcf().clear()
+  fig, ax1 = plt.subplots(figsize=figsize)
+  figs = []
+  fig = ax1.bar(ind, gpu_mems, width, linewidth=1, label="GPU memory",edgecolor='black')
+  figs.append(fig)
+  ax1.set_ylabel("GPU memory (GBs)", fontsize=fontsize)
+  ax1.set_xlabel('Start layer index', fontsize=fontsize)
+  ax1.tick_params(axis='y', labelsize=fontsize)
+  ax1.tick_params(axis='x', labelsize=fontsize)
+  plt.xticks(ind, split_idxs, fontsize=fontsize)
+  plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
+  plt.tight_layout()
+  plt.savefig('observation_gpu_mem_per_layer_{}.pdf'.format(model))

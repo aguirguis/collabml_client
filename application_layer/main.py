@@ -159,7 +159,7 @@ def train(epoch):
         optimizer.step()
         print("Time for backpropagation: {}".format(time()-back_time))
         if device == 'cuda':
-            print("GPU memory for backpropagation: {}         \
+            print("GPU memory for training: {}         \
                  \r\n".format((torch.cuda.max_memory_allocated(0)+torch.cuda.max_memory_allocated(1))/(1024*1024*1024)))
         dataload_time = time()
 
