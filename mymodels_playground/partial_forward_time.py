@@ -52,10 +52,11 @@ def partial_forward(net, split_idx, batch_size, device):
   return total_time
 
 #Dict of model to split indexes
-models_dict={'alexnet': [16,17,18,19,20,21],
-	    'resnet18': [9,10,11,12,13,14],
-	    'vgg11': [24,25,26,27,28,29],
-	    'densenet121': [17,18,19,20,21,22]}
+models_dict={'alexnet': np.arange(1,22), #[16,17,18,19,20,21],
+	    'resnet18': np.arange(1,15), #[9,10,11,12,13,14],
+	    'vgg11': np.arange(1,30), #[24,25,26,27,28,29],
+	    'densenet121': np.arange(1,23) #[17,18,19,20,21,22]
+}
 devices=['cuda', 'cpu']
 batch_size=200
 fontsize=35
@@ -86,4 +87,4 @@ for model, split_idxs in models_dict.items():
   plt.xticks(ind, split_idxs, fontsize=fontsize)
   plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
   plt.tight_layout()
-  plt.savefig('observation_later_layers_{}.pdf'.format(model))
+  plt.savefig('observation_all_layers_{}.pdf'.format(model))

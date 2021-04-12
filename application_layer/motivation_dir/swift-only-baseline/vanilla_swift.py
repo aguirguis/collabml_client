@@ -5,14 +5,15 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import sys
+from multiprocessing import Process
 
 def ml_requests(swift, objs):
   #helper function to do ML requests (essentially inference)
   post_objects=[]
   for i,obj in enumerate(objs):
-    opts = {"meta": {"Ml-Task:inference",				#First choice: Do inference not training
+    opts = {"meta": {"Ml-Task:training",				#First choice: Do inference not training
       "dataset:imagenet","model:alexnet",			#Second choice: use Alexnet
-      "Batch-Size:1",						#Third choice: batch size of 1
+      "Batch-Size:10", "Num-Epochs:1",						#Third choice: batch size of 1
       "Lossfn:cross-entropy","Optimizer:sgd",
       "start:%d" % i,"end:%d" % (i+1),				#Fourth choice: do inference for 1 images only
        },
@@ -58,8 +59,21 @@ def send_req(req: str, num_req: int):
   swift = SwiftService()
   #Check the type of the request
   start_time = time()
+  num_proc = 10
+  total = len(objs)
   if req == 'POST':
-    post_requests(swift, objs)
+    if len(objs) >= num_proc:
+      proc = []
+      step=int(total/num_proc)
+      for i in range(num_proc):
+        start=i*step
+        p = Process(target=post_requests, args=(swift, objs[start:start+step]))
+        p.start()
+        proc.append(p)
+      for p in proc:
+        p.join()
+    else:
+      post_requests(swift, objs)
   elif req == 'GET':
     get_requests(swift, objs)
   elif req == 'PUT':
@@ -68,7 +82,8 @@ def send_req(req: str, num_req: int):
     ml_requests(swift, objs)
 
 nums = np.arange(1, 10001, step=100)
-reqs=['PUT', 'POST', 'GET', 'ML']
+#reqs=['PUT', 'POST', 'GET', 'ML']
+reqs=['ML']
 res_dict = {}
 for req in reqs:
   res = []
@@ -77,6 +92,8 @@ for req in reqs:
     send_req(req, num_req)
     end_time = time()
     res.append(end_time - start_time)
+    print(res)
+    sys.stdout.flush()
   res_dict[req] = res
   print(res)
   sys.stdout.flush()
