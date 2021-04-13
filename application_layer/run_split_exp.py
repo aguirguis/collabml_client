@@ -15,12 +15,12 @@ model_dict={
             'alexnet': [i for i in range(1,20)], #[15], #[9,15],
             'densenet121': [i for i in range(1,22)] #[19] #[14,19]
 }
-bw=100 #'UNLIMITED'		#This is the bandwidth used for testing....we use it here only to annotate the logFile
+bw='UNLIMITED'		#This is the bandwidth used for testing....we use it here only to annotate the logFile
 #logFile = 'splitExp_bw{}mbps'.format(bw)
-logFile = 'sweepExpAllModels_bw{}CPU'.format(bw)
-logFile_base = 'parallelBaselineAllModels_bw{}CPU'.format(bw)
+logFile = 'sweepExpAllModels_bw{}GPUusagelog'.format(bw)
+logFile_base = 'parallelBaselineAllModels_bw{}GPUusagelog'.format(bw)
 for (model, split_idcs) in model_dict.items():
-  freeze_idx = 11 if model == 'resnet18' else 15		#this should be constant all over the experiments
+  freeze_idx = 11 if model == 'resnet18' else 19		#this should be constant all over the experiments
   for split_idx in split_idcs:
     #split execution
     os.system('python3 {} --dataset imagenet --model {} \
