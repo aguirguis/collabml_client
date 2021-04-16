@@ -65,23 +65,24 @@ models_dict={'alexnet': np.arange(1,22), #[16,17,18,19,20,21],
 	    'densenet121': np.arange(1,23) #[17,18,19,20,21,22]
 }
 devices=['cuda', 'cpu']
-batch_size=200
-fontsize=35
+batch_sizes=[50,100,200] #only useful for the GPU mem. plot
+fontsize=80
 figsize = (30, 20)
-width=0.4
+width=0.3
 for model, split_idxs in models_dict.items():
   res_dict={}
   gpu_mems=[]
-  for device in devices:
-    times = []
-    for split_idx in split_idxs:
-      net = build_model(model, num_classes)
-      total_time, gpu_usage = partial_forward(net, split_idx, batch_size, device)
-      times.append(total_time)
-      if device == 'cuda':		#Do this only while using GPU
-        gpu_mems.append(gpu_usage)
-    res_dict[device] = times
-    print("Computation times of {} on {}: ".format(model, device), times)
+  for batch_size in batch_sizes:
+    for device in devices:
+      times = []
+      for split_idx in split_idxs:
+        net = build_model(model, num_classes)
+        total_time, gpu_usage = partial_forward(net, split_idx, batch_size, device)
+        times.append(total_time)
+        if device == 'cuda':		#Do this only while using GPU
+          gpu_mems.append(gpu_usage)
+      res_dict[device] = times
+    print("Computation times of {} on {} with batch size {}: ".format(model, device, batch_size), times)
   ##Plotting results
   fig, ax1 = plt.subplots(figsize=figsize)
   figs = []
@@ -100,10 +101,15 @@ for model, split_idxs in models_dict.items():
   plt.savefig('observation_all_layers_{}.pdf'.format(model))
   ##Plotting GPU memory usage
   plt.gcf().clear()
+  ind = np.arange(len(split_idxs))
   fig, ax1 = plt.subplots(figsize=figsize)
   figs = []
-  fig = ax1.bar(ind, gpu_mems, width, linewidth=1, label="GPU memory",edgecolor='black')
+  fig = ax1.bar(ind - width, gpu_mems[:len(ind)], width, linewidth=1, label="batch = {}".format(batch_sizes[0]),edgecolor='black')
   figs.append(fig)
+  fig2 = ax1.bar(ind, gpu_mems[len(ind):2*len(ind)], width, linewidth=1, label="batch = {}".format(batch_sizes[1]),edgecolor='black')
+  figs.append(fig2)
+  fig3 = ax1.bar(ind + width, gpu_mems[2*len(ind):], width, linewidth=1, label="batch = {}".format(batch_sizes[2]),edgecolor='black')
+  figs.append(fig3)
   ax1.set_ylabel("GPU memory (GBs)", fontsize=fontsize)
   ax1.set_xlabel('Start layer index', fontsize=fontsize)
   ax1.tick_params(axis='y', labelsize=fontsize)
