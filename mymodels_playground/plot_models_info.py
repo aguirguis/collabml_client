@@ -15,7 +15,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 #import matplotlib.font_manager as mgr
-fontsize=35
+fontsize=50
 figsize = (30, 20)
 ##Defining all the models we support
 all_models = ["alexnet", 'densenet121','densenet161','densenet169','densenet201',"mobilenetv2",
@@ -49,7 +49,7 @@ for mod_class, idxs in model_to_idx.items():
   a = torch.rand((1,3,224,224))
   for ii,idx in enumerate(idxs):
     fig, ax1 = plt.subplots(figsize=figsize)
-    ax2 = ax1.twinx()
+#    ax2 = ax1.twinx()
     figs = []
     model_str = all_models[idx]
     print("{}{}{}".format("="*20,model_str,"="*20))
@@ -66,26 +66,26 @@ for mod_class, idxs in model_to_idx.items():
     back_time = time.time()-back_time
     print("Forward iteration takes: ", np.sum(times))
     print("Backward iteration takes: ", back_time)
-    times.append(back_time)
-    names.append('Backward')
+#    times.append(back_time)
+#    names.append('Backward')
     sizes[0] = 132			#correct the input size (before rescaling)...we know that onr ImageNet image is 132 KB on average
     times.insert(0,0)			#basically the input layer takes no time
     names.insert(0,'input')
     times = np.array(times)*1000
     ind = np.arange(len(sizes))
-    ax2.set_yticks(np.arange(0,np.max(times),step=np.max(times)/10))
-    fig = ax1.bar(ind-0.5*width, sizes, width, linewidth=1, label=model_str+"-data-size",hatch="/",edgecolor='black',)
+#    ax2.set_yticks(np.arange(0,np.max(times),step=np.max(times)/10))
+    fig = ax1.bar(ind, sizes, width, linewidth=1,hatch="/", label='Size of output data', edgecolor='black',)
     figs.append(fig)
-    ind = np.append(ind, len(ind))		#to match the backward time
-    fig3 = ax2.bar(ind+0.5*width, times, width, linewidth=1, color='orange', label=model_str+"-latency",hatch="\\",edgecolor='black',)
-    figs.append(fig3)
+#    ind = np.append(ind, len(ind))		#to match the backward time
+#    fig3 = ax2.bar(ind+0.5*width, times, width, linewidth=1, color='orange', label=model_str+"-latency",hatch="\\",edgecolor='black',)
+#    figs.append(fig3)
     fig2 = ax1.axhline(132, color='r', linestyle="--", label='input size')
     figs.append(fig2)
     ax1.set_ylabel("Output size per image (KBs)", fontsize=fontsize)
-    ax2.set_ylabel("Time to process a layer (ms)", fontsize=fontsize)
+#    ax2.set_ylabel("Time to process a layer (ms)", fontsize=fontsize)
     ax1.set_xlabel('Layer index', fontsize=fontsize)
     ax1.tick_params(axis='y', labelsize=fontsize)
-    ax2.tick_params(axis='y', labelsize=fontsize)
+#    ax2.tick_params(axis='y', labelsize=fontsize)
     ax1.tick_params(axis='x', labelsize=fontsize, rotation=90)
     plt.xticks(ind, names, fontsize=fontsize, rotation=90)
     plt.legend(handles=figs, fontsize=fontsize, loc="upper right")

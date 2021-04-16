@@ -9,8 +9,8 @@ all_gpu_mem = []
 counter=0
 cur_post_time = 0
 #making "the next variable" False will measure only the time of receiving replies from Swift (used to calculate comm. time)
-measuring_all = False
-gpu_mem = True
+measuring_all = True
+gpu_mem = False
 temp_mem=[]
 for line in lines:
 #GPU memory printing

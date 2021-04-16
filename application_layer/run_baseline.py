@@ -4,7 +4,7 @@ import numpy as np
 curdir = os.getcwd()
 execfile = os.path.join(curdir,'main.py')
 models=['resnet18', 'resnet50', 'resnet152', 'vgg11','vgg19', 'alexnet', 'densenet121']
-bw=100 #'UNLIMITED'		#This is the bandwidth used for testing....we use it here only to annotate the logFile
+bw='UNLIMITED'		#This is the bandwidth used for testing....we use it here only to annotate the logFile
 logFile_base = 'parallelBaselineMotivation_bw{}'.format(bw)
 for model in models:
   os.system('python3 {} --dataset imagenet --model {} --num_epochs 1 --batch_size 500 >> {}'.format(execfile,model,logFile_base))

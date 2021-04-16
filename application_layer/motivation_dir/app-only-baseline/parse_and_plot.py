@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-fontsize=35
+fontsize=100
 figsize = (30, 20)
 width=0.4
 
@@ -32,7 +32,7 @@ def plot(comp, comm, total, filename):
 bws=['UNLIMITED', 150, 100]
 for bw in bws:				#Bandwidth
   for ext in ["", "CPU"]:		#GPU or CPU
-    filename='parallelBaselineMotivation_bw{}{}'.format(bw, ext)
+    filename='logFiles/parallelBaselineMotivation_bw{}{}'.format(bw, ext)
     print("Processing file: ", filename)
     f = open(filename,'r')
     lines = f.readlines()
