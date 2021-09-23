@@ -32,7 +32,6 @@ class MyBasicBlock(BasicBlock):
             identity = self.downsample(x)
 
         out += identity
-        sizes.append(out.element_size() * out.nelement()/1024)
         out = self.relu(out)
         sizes.append(out.element_size() * out.nelement()/1024)
 
@@ -66,7 +65,6 @@ class MyBottleneck(Bottleneck):
             identity = self.downsample(x)
 
         out += identity
-        sizes.append(out.element_size() * out.nelement()/1024)
         out = self.relu(out)
         sizes.append(out.element_size() * out.nelement()/1024)
         return out, sizes
@@ -80,7 +78,7 @@ class MyResNet(resnet):
     def forward(self, x:Tensor, start: int, end: int) -> Tensor:
       idx = 0
       res = []
-      res.append(x.element_size() * x.nelement()/1024)
+#      res.append(x.element_size() * x.nelement()/1024)
       time_res = []
       names = []
       for idx in range(start, end):
@@ -128,41 +126,10 @@ def build_my_resnet(model, num_classes=10):
     kwargs=lkwargs[model]
     return MyResNet(*args, num_classes=num_classes, **kwargs)
 
-def get_mem_consumption(model, split_idx, server_batch, client_batch):
-    import numpy as np
-    a = torch.rand((1,3,224,224))
-    input_size = np.prod(np.array(a.size()))*4/ (1024*1024)*server_batch
-    x,res1,_,names1 = model(a,0,split_idx)
-    #x is the output, res is the sizes of intermediate outputs in KBs (Kilobytes)
-    intermediate_input_size = np.prod(np.array(x.size()))*4/ (1024*1024)*client_batch
-    x,res2,_,names2 = model(x,split_idx,100)
-    #Calculating the required sizes
-    params=[param for param in model.parameters()]
-    mod_sizes = [np.prod(np.array(p.size())) for p in params]
-    model_size = np.sum(mod_sizes)*4/ (1024*1024)
-    before_inter_sizes = [np.prod(np.array(inter)) for inter in res1]
-    after_inter_sizes = [np.prod(np.array(inter)) for inter in res2]
-    #note that before split, we do only forward pass so, we do not store gradients
-    #after split index, we store gradients so we expect double the storage
-    before_split_size = np.sum(before_inter_sizes)/1024*server_batch - input_size
-    after_split_size = np.sum(after_inter_sizes)/1024*2*client_batch
-    total_server = input_size+model_size+before_split_size
-    total_client = intermediate_input_size+model_size+after_split_size
-#    print("Server side:")
-#    print(f"input size: {input_size} MBs")
-#    print(f"model size: {model_size} MBs")
-#    print(f"intermediate outputs size: {before_split_size} MBs")
-#    print(f"Total GPU memory: {total_server} MBs")
-#    print("="*50)
-#    print("Client side:")
-#    print(f"input size: {intermediate_input_size} MBs")
-#    print(f"model size: {model_size} MBs")
-#    print(f"intermediate outputs size: {after_split_size} MBs")
-#    print(f"Total GPU memory: {total_client} MBs")
-#    print("="*50)
-    return total_server, total_client
+from utils import get_mem_consumption
 
 model = build_my_resnet('resnet18',1000)
-for i in range(50):
-  server,client = get_mem_consumption(model, i, 50, 256)
-  print(f"Total GPU memory consumpton at split layer {i} is {server+client}")
+tot_layers=len(model.all_layers)
+for i in range(tot_layers):
+  server,client,vanilla = get_mem_consumption(model, i, tot_layers-2, 100, 1000)
+  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")

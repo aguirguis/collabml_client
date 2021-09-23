@@ -22,9 +22,9 @@ class MyMobileNetV2(MobileNetV2):
 
     def forward(self, x:Tensor, start: int, end: int) -> Tensor:
       idx = 0
-      print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
+#      print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
       res=[]
-      res.append(x.element_size() * x.nelement()/1024)
+#      res.append(x.element_size() * x.nelement()/1024)
       time_res=[]
       names=[]
       for idx in range(start, end):
@@ -37,7 +37,7 @@ class MyMobileNetV2(MobileNetV2):
               x = nn.functional.adaptive_avg_pool2d(x, (1, 1)).reshape(x.shape[0], -1)
           x = m(x)
           time_res.append(time()-layer_time)
-          print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
+#          print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
               break
@@ -46,8 +46,9 @@ class MyMobileNetV2(MobileNetV2):
 def build_my_mobilenetv2(num_classes=10):
     return MyMobileNetV2(num_classes=num_classes)
 
-#model = build_my_mobilenetv2(1000)
-#a = torch.rand((1,3,224,224))
-#res = model(a,0,10)
-#res = model(res,10,150)
-#print(res.shape)
+from utils import get_mem_consumption
+model = build_my_mobilenetv2(1000)
+tot_layers=len(model.all_layers)
+for i in range(tot_layers):
+  server,client,vanilla = get_mem_consumption(model, i, tot_layers-5, 100, 1000)
+  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")

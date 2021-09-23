@@ -2,6 +2,7 @@ import torch
 from torchvision.models.inception import Inception3, InceptionAux
 from torch import Tensor
 import torch.nn as nn
+from time import time
 
 types = [torch.nn.modules.container.Sequential]
 def remove_sequential(network, all_layers):
@@ -12,27 +13,37 @@ def remove_sequential(network, all_layers):
             all_layers.append(layer)
 
 class MyInception(Inception3):
+    def __init__(self, *args, **kwargs):
+        super(MyInception, self).__init__(*args, **kwargs)
+        self.all_layers = []
+        remove_sequential(self, self.all_layers)
+        print("Length of all layers: ", len(self.all_layers))
 
     def forward(self, x:Tensor, start: int, end: int) -> Tensor:
       idx = 0
-      all_layers=[]
-      remove_sequential(self, all_layers)
-#      print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
+      print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
+      res = []
+      res.append(x.element_size() * x.nelement()/1024)
       aux = None
+      time_res=[]
+      names=[]
       for idx in range(start, end):
-          if idx >= len(all_layers):		#we avoid out of bounds
+          if idx >= len(self.all_layers):		#we avoid out of bounds
               break
-          m = all_layers[idx]
+          m = self.all_layers[idx]
           if isinstance(m, InceptionAux):
               aux = m(x)
               continue
+          layer_time = time()
           if isinstance(m, torch.nn.modules.linear.Linear):
               x = torch.flatten(x, 1)
           x = m(x)
-#          print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
+          time_res.append(time()-layer_time)
+          print("Index {}, layer {}, tensor size {} KBs".format(idx, type(m), x.element_size() * x.nelement()/1024))
+          res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
-              return x
-      return x			#TODO: check if we need to return aux also with this
+              break
+      return x,res, time_res, names
 
 def build_my_inception(num_classes=10):
     return MyInception(num_classes=num_classes)
