@@ -52,6 +52,7 @@ parser.add_argument('--freeze', action='store_true', help='freeze the lower laye
 parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
 parser.add_argument('--cpuonly', action='store_true', help='do not use GPUs')
 args = parser.parse_args()
+
 dataset_name = args.dataset
 if not args.downloadall and (dataset_name == 'mnist' or dataset_name == 'cifar10'):
   print("WARNING: dataset {} is small enough! Will download it only once in the beginning!".format(dataset_name))

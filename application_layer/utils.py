@@ -19,6 +19,7 @@ import torchvision
 from io import BytesIO
 from PIL import Image
 import pickle
+import speedtest
 from swiftclient.service import SwiftService, SwiftPostObject
 
 try:
@@ -120,14 +121,18 @@ def get_mem_consumption(model, input, ouputs_sizes, split_idx, freeze_idx, serve
     return total_server, total_client, vanilla
 
 def choose_split_idx(model, freeze_idx, client_batch, server_batch):
+    #First of all, get the bandwidth
+    speed = speedtest.Speedtest()
+    bw = speed.download()*8		#bw now (after *8) is in Bytes/sec
     #This function chooses the split index based on the intermediate output sizes and memory consumption
     input = torch.rand((1,3,224,224))
-    #Step 1: select the layers whose outputs size is < input size
+    #Step 1: select the layers whose outputs size is < input size && whose output < bw
     input_size = np.prod(np.array(input.size()))*4
     sizes = np.array(_get_intermediate_outputs(model, input))
-    pot_idxs = np.where(sizes < input_size)
+    #note that input_size and sizes are both in Bytes
+    #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
+    pot_idxs = np.where(sizes*server_batch*100 < min(input_size*server_batch*100, bw))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
-    #TODO: I remember when the network is saturated, this becomes a problem....we should have network bandwidth as input to this
     split_idx = freeze_idx
     for idx in pot_idxs:
         if idx > freeze_idx:
