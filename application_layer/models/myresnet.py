@@ -91,7 +91,7 @@ class MyResNet(resnet):
               x = torch.flatten(x, 1)
           if isinstance(m, MyBasicBlock) or isinstance(m, MyBottleneck):
               x,sizes = m(x)
-              res.extend(sizes)
+              res.append(sum(sizes))
           else:
               x = m(x)
               res.append(x.element_size() * x.nelement()/1024)

@@ -111,6 +111,9 @@ if not args.downloadall and dataset_name == 'imagenet':
 # Model
 print('==> Building model..')
 net = get_model(model, dataset_name)
+if mode == 'split':
+    split_idx = choose_split_idx(net, freeze_idx, batch_size, batch_size//400)	#TODO: the server batch is currently client batch/400...check if we need to change this later
+
 if mode == 'split' or args.freeze:
     if freeze_idx < split_idx and mode == 'split':
       print("WARNING! freeze_idx should be >= split_idx; setting freeze_idx to {}".format(split_idx))

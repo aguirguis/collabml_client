@@ -88,18 +88,21 @@ def get_model(model_str, dataset):
         model = models[model_str](num_classes=num_classes)
     return model
 
+def _get_intermediate_outputs(model, input):
+    #returns an array with sizes of intermediate outputs, assuming some input
+    _,sizes,_,_ = model(input,0,150)		#the last parameter is any large number that is bigger than the number of layers
+    return sizes
 #This function gets the memory consumption on both the client and the server sides with a given split_idx, freeze_idx, 
 #client batch size, server bach size, and model
 #The function also returns the estimated memory consumption in the vanilla case
-def get_mem_consumption(model, split_idx, freeze_idx, server_batch, client_batch):
+def get_mem_consumption(model, input, ouputs_sizes, split_idx, freeze_idx, server_batch, client_batch):
     if freeze_idx < split_idx:          #we do not allow split after freeze index
         split_idx = freeze_idx
-    a = torch.rand((1,3,224,224))
-    input_size = np.prod(np.array(a.size()))*4/ (1024*1024)*server_batch
-    x,begtosplit_sizes,_,_ = model(a,0,split_idx)
-    intermediate_input_size = np.prod(np.array(x.size()))*4/ (1024*1024)*client_batch
-    x,splittofreeze_sizes,_,_ = model(x,split_idx,freeze_idx)
-    x,freezetoend_sizes,_,_ = model(x,freeze_idx,100)
+    input_size = np.prod(np.array(input.size()))*4/ (1024*1024)*server_batch
+    begtosplit_sizes = outputs[0:split_idx]
+    intermediate_input_size = outputs[split_idx]/ (1024*1024)*client_batch
+    splittofreeze_sizes = outputs[split_idx:freeze_idx]
+    freezetoend_sizes = outputs[freeze_idx:]
     #Calculating the required sizes
     params=[param for param in model.parameters()]
     mod_sizes = [np.prod(np.array(p.size())) for p in params]
@@ -115,6 +118,25 @@ def get_mem_consumption(model, split_idx, freeze_idx, server_batch, client_batch
     vanilla = input_size*(client_batch/server_batch)+model_size+\
                 (begtosplit_size*(client_batch/server_batch))+splittofreeze_size+freezetoend_size*2
     return total_server, total_client, vanilla
+
+def choose_split_idx(model, freeze_idx, client_batch, server_batch):
+    #This function chooses the split index based on the intermediate output sizes and memory consumption
+    input = torch.rand((1,3,224,224))
+    #Step 1: select the layers whose outputs size is < input size
+    input_size = np.prod(np.array(input.size()))*4
+    sizes = np.array(_get_intermediate_outputs(model, input))
+    pot_idxs = np.where(sizes < input_size)
+    #Step 2: select an index whose memory utilition is less than that in vanilla cases
+    #TODO: I remember when the network is saturated, this becomes a problem....we should have network bandwidth as input to this
+    split_idx = freeze_idx
+    for idx in pot_idxs:
+        if idx > freeze_idx:
+            break
+        split_idx = idx
+        server, client, vanilla = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, server_batch, client_batch)
+        if server+client < vanilla:
+            break
+    return split_idx
 
 def get_mem_usage():
     #returns a dict with memory usage values (in GBs)
