@@ -126,10 +126,10 @@ def build_my_resnet(model, num_classes=10):
     kwargs=lkwargs[model]
     return MyResNet(*args, num_classes=num_classes, **kwargs)
 
-from utils import get_mem_consumption
+#from utils import get_mem_consumption
 
-model = build_my_resnet('resnet18',1000)
-tot_layers=len(model.all_layers)
-for i in range(tot_layers):
-  server,client,vanilla = get_mem_consumption(model, i, tot_layers-2, 100, 1000)
-  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")
+#model = build_my_resnet('resnet18',1000)
+#tot_layers=len(model.all_layers)
+#for i in range(tot_layers):
+#  server,client,vanilla = get_mem_consumption(model, i, tot_layers-2, 100, 1000)
+#  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")

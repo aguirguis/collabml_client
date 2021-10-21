@@ -185,12 +185,12 @@ _, term_width = os.popen('stty size', 'r').read().split()
 term_width = int(term_width)
 
 TOTAL_BAR_LENGTH = 65.
-last_time = time.time()
+last_time = time()
 begin_time = last_time
 def progress_bar(current, total, msg=None):
     global last_time, begin_time
     if current == 0:
-        begin_time = time.time()  # Reset for new bar.
+        begin_time = time()  # Reset for new bar.
 
     cur_len = int(TOTAL_BAR_LENGTH*current/total)
     rest_len = int(TOTAL_BAR_LENGTH - cur_len) - 1
@@ -203,7 +203,7 @@ def progress_bar(current, total, msg=None):
         sys.stdout.write('.')
     sys.stdout.write(']')
 
-    cur_time = time.time()
+    cur_time = time()
     step_time = cur_time - last_time
     last_time = cur_time
     tot_time = cur_time - begin_time
@@ -318,14 +318,14 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
   return trainset, testset
 
 def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, sequential=False):
-  stream_time = time.time()
+  stream_time = time()
   if mode == 'split':
       parallel_posts = 4	#number of posts request to run in parallel
       post_step = int((lend-lstart)/parallel_posts) 		#if the batch is smaller, it will be handled on the server
       print("Start {}, end {}, post_step {}\r\n".format(lstart, lend, post_step))
       post_objects = []
       images = []
-      post_time = time.time()
+      post_time = time()
       for s in range(lstart, lend, post_step):
           cur_end = s+post_step if s+post_step <= lend else lend
           cur_step = cur_end - s
@@ -340,17 +340,17 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
 #      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
           post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
-#      post_time = time.time()
+#      post_time = time()
       read_bytes=0
       for post_res in swift.post(container='imagenet', objects=post_objects):
           if 'error' in post_res.keys():
               print("error: {}, traceback: {}".format(post_res['error'], post_res['traceback']))
           read_bytes += int(len(post_res['result']))
-          print("Executing one post (whose result is of len {} bytes) took {} seconds".format(len(post_res['result']), time.time()-post_time))
+          print("Executing one post (whose result is of len {} bytes) took {} seconds".format(len(post_res['result']), time()-post_time))
           images.extend(pickle.loads(post_res['result']))			#images now should be a list of numpy arrays
-          print("After deserialization, time is: {} seconds".format(time.time()-post_time))
+          print("After deserialization, time is: {} seconds".format(time()-post_time))
       print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
-      print("Executing all posts took {} seconds".format(time.time()-post_time))
+      print("Executing all posts took {} seconds".format(time()-post_time))
       transform=None		#no transform required in this case
   else:		#mode=='vanilla'
     objects = []
@@ -382,7 +382,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
   imgs = np.array(images)
   dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode)
   dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8)
-  print("Streaming imagenet data took {} seconds".format(time.time()-stream_time))
+  print("Streaming imagenet data took {} seconds".format(time()-stream_time))
   return dataloader
 
 types = [torch.nn.modules.container.Sequential, _DenseLayer, _Transition]

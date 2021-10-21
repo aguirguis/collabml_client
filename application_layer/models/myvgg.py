@@ -56,10 +56,10 @@ def build_my_vgg(model, num_classes=10):
     args=largs[model]
     return MyVGG(make_layers(*args), num_classes=num_classes)
 
-from utils import get_mem_consumption
+#from utils import get_mem_consumption
 
-model = build_my_vgg('vgg19',num_classes=1000)
-tot_layers=len(model.all_layers)
-for i in range(tot_layers):
-  server,client,vanilla = get_mem_consumption(model, i, tot_layers-5, 100, 1000)
-  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")
+#model = build_my_vgg('vgg19',num_classes=1000)
+#tot_layers=len(model.all_layers)
+#for i in range(tot_layers):
+#  server,client,vanilla = get_mem_consumption(model, i, tot_layers-5, 100, 1000)
+#  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")
