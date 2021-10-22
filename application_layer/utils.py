@@ -96,7 +96,7 @@ def _get_intermediate_outputs(model, input):
 #This function gets the memory consumption on both the client and the server sides with a given split_idx, freeze_idx, 
 #client batch size, server bach size, and model
 #The function also returns the estimated memory consumption in the vanilla case
-def get_mem_consumption(model, input, ouputs_sizes, split_idx, freeze_idx, server_batch, client_batch):
+def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, server_batch, client_batch):
     if freeze_idx < split_idx:          #we do not allow split after freeze index
         split_idx = freeze_idx
     input_size = np.prod(np.array(input.size()))*4/ (1024*1024)*server_batch
@@ -134,7 +134,8 @@ def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     pot_idxs = np.where(sizes*server_batch*100 < min(input_size*server_batch*100, bw))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     split_idx = freeze_idx
-    for idx in pot_idxs:
+    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
+    for idx in pot_idxs[0]:
         if idx > freeze_idx:
             break
         split_idx = idx
