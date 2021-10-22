@@ -90,10 +90,10 @@ def get_model(model_str, dataset):
     return model
 
 def _get_intermediate_outputs(model, input):
-    #returns an array with sizes of intermediate outputs, assuming some input
+    #returns an array with sizes of intermediate outputs (in KBs), assuming some input
     _,sizes,_,_ = model(input,0,150)		#the last parameter is any large number that is bigger than the number of layers
     return sizes
-#This function gets the memory consumption on both the client and the server sides with a given split_idx, freeze_idx, 
+#This function gets the memory consumption on both the client and the server sides with a given split_idx, freeze_idx,
 #client batch size, server bach size, and model
 #The function also returns the estimated memory consumption in the vanilla case
 def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, server_batch, client_batch):
@@ -128,7 +128,9 @@ def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     input = torch.rand((1,3,224,224))
     #Step 1: select the layers whose outputs size is < input size && whose output < bw
     input_size = np.prod(np.array(input.size()))*4
-    sizes = np.array(_get_intermediate_outputs(model, input))
+    sizes = np.array(_get_intermediate_outputs(model, input))*1024	#sizes is in Bytes (after *1024)
+    print(f"Intermediate output sizes: {sizes*server_batch*100}")
+    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
     #note that input_size and sizes are both in Bytes
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
     pot_idxs = np.where(sizes*server_batch*100 < min(input_size*server_batch*100, bw))
@@ -142,6 +144,7 @@ def choose_split_idx(model, freeze_idx, client_batch, server_batch):
         server, client, vanilla = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, server_batch, client_batch)
         if server+client < vanilla:
             break
+    print(f"Chosen split index is: {split_idx}")
     return split_idx
 
 def get_mem_usage():
