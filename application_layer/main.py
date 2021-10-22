@@ -124,6 +124,7 @@ if mode == 'split' or args.freeze:
 
 net = net.to(device)
 if device == 'cuda':
+#    torch.distributed.init_process_group(backend='nccl')
     net = torch.nn.DataParallel(net)
     cudnn.benchmark = True
 
@@ -153,7 +154,7 @@ def train(epoch):
         optimizer.zero_grad()
         forward_time = time()
         if mode == 'split':		#This is transfer learning deceted!
-            outputs = net(inputs, split_idx, 100)
+            outputs,_ = net(inputs, split_idx, 100)
         else:
             outputs = net(inputs)
         print("Time for forward pass: {}".format(time()-forward_time))
@@ -178,7 +179,7 @@ def test(epoch):
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
             if mode == 'split':              #This is split inference deceted!
-                outputs = net(inputs, split_idx, 100)
+                outputs,_ = net(inputs, split_idx, 100)
             else:
                 outputs = net(inputs)
             loss = criterion(outputs, targets)

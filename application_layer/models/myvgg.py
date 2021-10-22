@@ -26,10 +26,12 @@ class MyVGG(VGG):
 #      res.append(x.element_size() * x.nelement()/1024)
       time_res=[]
       names=[]
+      all_layers = []
+      remove_sequential(self, all_layers)
       for idx in range(start, end):
-          if idx >= len(self.all_layers):		#we avoid out of bounds
+          if idx >= len(all_layers):		#we avoid out of bounds
               break
-          m = self.all_layers[idx]
+          m = all_layers[idx]
           names.append(str(type(m)).split('.')[-1][:-2])
           layer_time = time()
           if isinstance(m, torch.nn.modules.linear.Linear):
@@ -39,7 +41,7 @@ class MyVGG(VGG):
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
               break
-      return x,res, time_res, names
+      return x,torch.Tensor(res).cuda() #, time_res, names
 
 largs = {'vgg11':[cfgs['A'],False],
 	  'vgg11_bn':[cfgs['A'],True],

@@ -91,8 +91,8 @@ def get_model(model_str, dataset):
 
 def _get_intermediate_outputs(model, input):
     #returns an array with sizes of intermediate outputs (in KBs), assuming some input
-    _,sizes,_,_ = model(input,0,150)		#the last parameter is any large number that is bigger than the number of layers
-    return sizes
+    output,sizes = model(input,0,150)		#the last parameter is any large number that is bigger than the number of layers
+    return sizes.tolist()			#note that returned sizes are of type Tensor
 #This function gets the memory consumption on both the client and the server sides with a given split_idx, freeze_idx,
 #client batch size, server bach size, and model
 #The function also returns the estimated memory consumption in the vanilla case
@@ -122,21 +122,22 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, server_bat
 
 def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     #First of all, get the bandwidth
-    speed = speedtest.Speedtest()
+    speed = speedtest.Speedtest(source_address="192.168.0.151")
     bw = speed.download()*8		#bw now (after *8) is in Bytes/sec
+    print(f"Recorded bandwidth: {bw/(1024*1024)} Mbps")
     #This function chooses the split index based on the intermediate output sizes and memory consumption
     input = torch.rand((1,3,224,224))
     #Step 1: select the layers whose outputs size is < input size && whose output < bw
     input_size = np.prod(np.array(input.size()))*4
     sizes = np.array(_get_intermediate_outputs(model, input))*1024	#sizes is in Bytes (after *1024)
-    print(f"Intermediate output sizes: {sizes*server_batch*100}")
-    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
+#    print(f"Intermediate output sizes: {sizes*server_batch*100}")
+#    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
     #note that input_size and sizes are both in Bytes
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
     pot_idxs = np.where(sizes*server_batch*100 < min(input_size*server_batch*100, bw))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     split_idx = freeze_idx
-    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
+#    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
     for idx in pot_idxs[0]:
         if idx > freeze_idx:
             break
