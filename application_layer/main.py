@@ -51,6 +51,7 @@ parser.add_argument('--freeze_idx', default=0, type=int, help='index at which ne
 parser.add_argument('--freeze', action='store_true', help='freeze the lower layers of training model')
 parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
 parser.add_argument('--cpuonly', action='store_true', help='do not use GPUs')
+parser.add_argument('--manual_split', action='store_true', help='If set, we will use the split_idx provided by the user; otherwise, we choose the split index automatically')
 args = parser.parse_args()
 
 dataset_name = args.dataset
@@ -112,9 +113,10 @@ if not args.downloadall and dataset_name == 'imagenet':
 # Model
 print('==> Building model..')
 net = get_model(model, dataset_name)
-if mode == 'split':
+if mode == 'split' and not args.manual_split:
     split_idx = choose_split_idx(net, freeze_idx, batch_size, batch_size//100)	#TODO: the server batch is currently client batch/100...check if we need to change this later
 
+print(f"Using split index: {split_idx}")
 if mode == 'split' or args.freeze:
     if freeze_idx < split_idx and mode == 'split':
       print("WARNING! freeze_idx should be >= split_idx; setting freeze_idx to {}".format(split_idx))

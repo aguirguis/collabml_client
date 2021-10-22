@@ -145,7 +145,7 @@ def choose_split_idx(model, freeze_idx, client_batch, server_batch):
         server, client, vanilla = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, server_batch, client_batch)
         if server+client < vanilla:
             break
-    print(f"Chosen split index is: {split_idx}")
+#    print(f"Chosen split index is: {split_idx}")
     return split_idx
 
 def get_mem_usage():
