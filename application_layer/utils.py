@@ -128,20 +128,23 @@ def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     #This function chooses the split index based on the intermediate output sizes and memory consumption
     input = torch.rand((1,3,224,224))
     #Step 1: select the layers whose outputs size is < input size && whose output < bw
-    input_size = np.prod(np.array(input.size()))*4
+    input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
     sizes = np.array(_get_intermediate_outputs(model, input))*1024	#sizes is in Bytes (after *1024)
 #    print(f"Intermediate output sizes: {sizes*server_batch*100}")
 #    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
     #note that input_size and sizes are both in Bytes
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
+    print(sizes)
+    print(input_size)
     pot_idxs = np.where(sizes*server_batch*100 < min(input_size*server_batch*100, bw))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     split_idx = freeze_idx
 #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
     for idx in pot_idxs[0]:
-        if idx > freeze_idx:
+        candidate_split=idx+1		#to solve the off-by-one error
+        if candidate_split > freeze_idx:
             break
-        split_idx = idx
+        split_idx = candidate_split
         server, client, vanilla = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, server_batch, client_batch)
         if server+client < vanilla:
             break
@@ -336,7 +339,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step/25)),
+            "Batch-Size:{}".format(int(cur_step//1)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
@@ -354,6 +357,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           print("Executing one post (whose result is of len {} bytes) took {} seconds".format(len(post_res['result']), time()-post_time))
           images.extend(pickle.loads(post_res['result']))			#images now should be a list of numpy arrays
           print("After deserialization, time is: {} seconds".format(time()-post_time))
+          sys.stdout.flush()
       print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
       print("Executing all posts took {} seconds".format(time()-post_time))
       transform=None		#no transform required in this case
