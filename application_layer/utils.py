@@ -19,7 +19,7 @@ import torchvision
 from io import BytesIO
 from PIL import Image
 import pickle
-import speedtest
+import iperf3
 from swiftclient.service import SwiftService, SwiftPostObject
 
 try:
@@ -122,9 +122,12 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, server_bat
 
 def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     #First of all, get the bandwidth
-    speed = speedtest.Speedtest(source_address="192.168.0.151")
-    bw = speed.download()*8		#bw now (after *8) is in Bytes/sec
-    print(f"Recorded bandwidth: {bw/(1024*1024)} Mbps")
+    client = iperf3.Client()
+    client.duration = 1
+    client.server_hostname = "192.168.0.242"
+    res = client.run()
+    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
+    print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
     #This function chooses the split index based on the intermediate output sizes and memory consumption
     input = torch.rand((1,3,224,224))
     #Step 1: select the layers whose outputs size is < input size && whose output < bw
@@ -339,7 +342,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step//1)),
+            "Batch-Size:{}".format(int(cur_step//20)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
