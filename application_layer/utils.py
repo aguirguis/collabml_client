@@ -6,6 +6,7 @@
 import os
 import sys
 import time
+from time import sleep
 import math
 
 import torch.nn as nn
@@ -125,8 +126,18 @@ def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     client = iperf3.Client()
     client.duration = 1
     client.server_hostname = "192.168.0.242"
-    res = client.run()
-    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
+    while True:
+        res = client.run()
+        if res.error is None:
+            bw = res.received_bps/8             #bw now (after /8) is in Bytes/sec
+            break
+#        print(f"Error of iperf: {res.error}")
+#        sys.stdout.flush()
+#        res=None
+#        sleep(1)
+        bw = 908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
+        break
+#    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
     print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
     #This function chooses the split index based on the intermediate output sizes and memory consumption
     input = torch.rand((1,3,224,224))
@@ -192,9 +203,9 @@ def init_params(net):
                 init.constant(m.bias, 0)
 
 
-_, term_width = os.popen('stty size', 'r').read().split()
-term_width = int(term_width)
-
+#_, term_width = os.popen('stty size', 'r').read().split()
+#term_width = int(term_width)
+term_width=100
 TOTAL_BAR_LENGTH = 65.
 last_time = time()
 begin_time = last_time
@@ -331,18 +342,18 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
 def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, sequential=False):
   stream_time = time()
   if mode == 'split':
-      parallel_posts = 4	#number of posts request to run in parallel
+      parallel_posts = 2	#number of posts request to run in parallel
       post_step = int((lend-lstart)/parallel_posts) 		#if the batch is smaller, it will be handled on the server
       print("Start {}, end {}, post_step {}\r\n".format(lstart, lend, post_step))
       post_objects = []
       images = []
       post_time = time()
-      for s in range(lstart, lend, post_step):
+      for i, s in enumerate(range(lstart, lend, post_step)):
           cur_end = s+post_step if s+post_step <= lend else lend
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step//20)),
+            "Batch-Size:{}".format(int(cur_step//10)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
