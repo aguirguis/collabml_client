@@ -195,16 +195,16 @@ next_loader= None
 def start_now(lstart, lend, transform):
   global next_dataloader
   next_dataloader = None
-  next_dataloader = stream_imagenet_batch(swift, datadir, "val", labels, transform, batch_size, lstart, lend, model, mode, split_idx, args.sequential)
+  next_dataloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform, batch_size, lstart, lend, model, mode, split_idx, args.sequential)
 
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
-step = max(2000, batch_size)		#using a value less than 1000 is really waste of bandwidth (after some experimentation)
+step = batch_size #max(2000, batch_size)		#using a value less than 1000 is really waste of bandwidth (after some experimentation)
 if args.testonly:
   if not args.downloadall and dataset_name == 'imagenet':
     gstart, gend = start, end
     lstart, lend = gstart, gstart+step if gstart+step < gend else gend
-    testloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_test, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
+    testloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform_test, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
     res = []
     idx = 0
     for s in range(gstart+step, gend, step):
@@ -230,7 +230,7 @@ else:
   for epoch in range(num_epochs):
     if not args.downloadall and dataset_name == 'imagenet':
       lstart, lend = 0, step
-      trainloader = stream_imagenet_batch(swift, datadir, "val", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
+      trainloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
       idx=0
       for s in range(step, 50000, step):
         localtime = time()

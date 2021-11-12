@@ -342,8 +342,9 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
 def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, sequential=False):
   stream_time = time()
   if mode == 'split':
-      parallel_posts = 2	#number of posts request to run in parallel
+      parallel_posts = 3	#number of posts request to run in parallel
       post_step = int((lend-lstart)/parallel_posts) 		#if the batch is smaller, it will be handled on the server
+      lend = 50000 if lend > 50000 else lend
       print("Start {}, end {}, post_step {}\r\n".format(lstart, lend, post_step))
       post_objects = []
       images = []
@@ -353,13 +354,14 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step//10)),
+            "Batch-Size:{}".format(int(cur_step//1)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
             "Split-Idx:{}".format(split_idx)},
             "header": {"Parent-Dir:{}".format(parent_dir)}}
-          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
+#          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
+          obj_name = f"{parent_dir}/vals{s}e{s+500}.zip"
 #      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
           post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
 #      post_time = time()
