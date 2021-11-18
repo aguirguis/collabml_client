@@ -104,6 +104,7 @@ def _get_intermediate_outputs(model, input):
 def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, server_batch, client_batch):
     if freeze_idx < split_idx:          #we do not allow split after freeze index
         split_idx = freeze_idx
+    outputs/=1024			#to make outputs also in KBs (P.S. it comes to here in Bytes)
     input_size = np.prod(np.array(input.size()))*4/ (1024*1024)*server_batch
     begtosplit_sizes = outputs[0:split_idx]
     intermediate_input_size = outputs[split_idx]/ (1024*1024)*client_batch
@@ -174,6 +175,7 @@ def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     #I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
     #Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
     fixed, scale_with_bsz = model_size, input_size/(1024*1024)+begtosplit_mem
+    print(fixed, scale_with_bsz)
     return split_idx, (fixed, scale_with_bsz)
 
 def get_mem_usage():
