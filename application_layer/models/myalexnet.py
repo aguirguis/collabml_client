@@ -25,10 +25,12 @@ class MyAlexNet(AlexNet):
       res = []
       time_res = []
       names=[]
+      all_layers = []
+      remove_sequential(self, all_layers)
       for idx in range(start, end):
-          if idx >= len(self.all_layers):		#we avoid out of bounds
+          if idx >= len(all_layers):		#we avoid out of bounds
               break
-          m = self.all_layers[idx]
+          m = all_layers[idx]
           names.append(str(type(m)).split('.')[-1][:-2])
           layer_time = time()
           if isinstance(m, torch.nn.modules.linear.Linear):
@@ -38,15 +40,15 @@ class MyAlexNet(AlexNet):
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
               break
-      return x, res, time_res, names
+      return x,torch.Tensor(res).cuda() #, time_res, names
 
 def build_my_alexnet(num_classes=10):
     return MyAlexNet(num_classes=num_classes)
 
-from utils import get_mem_consumption
+#from utils import get_mem_consumption
 
-model = build_my_alexnet(1000)
-tot_layers=len(model.all_layers)
-for i in range(tot_layers):
-  server,client,vanilla = get_mem_consumption(model, i, tot_layers-5, 100, 1000)
-  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")
+#model = build_my_alexnet(1000)
+#tot_layers=len(model.all_layers)
+#for i in range(tot_layers):
+#  server,client,vanilla = get_mem_consumption(model, i, tot_layers-5, 100, 1000)
+#  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")
