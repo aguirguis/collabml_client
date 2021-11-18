@@ -5,6 +5,10 @@
 '''
 import os
 import sys
+import socket
+import json
+import concurrent.futures
+import struct
 import time
 from time import sleep
 import math
@@ -119,7 +123,7 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, server_bat
     total_client = intermediate_input_size+model_size+splittofreeze_size+freezetoend_size*2
     vanilla = input_size*(client_batch/server_batch)+model_size+\
                 (begtosplit_size*(client_batch/server_batch))+splittofreeze_size+freezetoend_size*2
-    return total_server, total_client, vanilla
+    return total_server, total_client, vanilla, model_size, begtosplit_size/server_batch
 
 def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     #First of all, get the bandwidth
@@ -154,16 +158,23 @@ def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     split_idx = freeze_idx
 #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
+    model_size, begtosplit_mem = 0, 0
     for idx in pot_idxs[0]:
         candidate_split=idx+1		#to solve the off-by-one error
         if candidate_split > freeze_idx:
             break
         split_idx = candidate_split
-        server, client, vanilla = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, server_batch, client_batch)
+        server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, server_batch, client_batch)
         if server+client < vanilla:
             break
-#    print(f"Chosen split index is: {split_idx}")
-    return split_idx
+    if model_size == 0:
+        _,_,_,model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, server_batch, client_batch)
+    #Note that, now I have all the pieces of memory consumption on the server:
+    #input_size (in bytes), model_size (in MBs), begtosplit_mem (in MBs)
+    #I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
+    #Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
+    fixed, scale_with_bsz = model_size, input_size/(1024*1024)+begtosplit_mem
+    return split_idx, (fixed, scale_with_bsz)
 
 def get_mem_usage():
     #returns a dict with memory usage values (in GBs)
@@ -339,10 +350,40 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
     testset = torchvision.datasets.ImageFolder(root=datadir, transform=transform_test)
   return trainset, testset
 
-def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, sequential=False):
+def recvall(sock, n):
+  #Helper function to receive data from the server
+  data = bytearray()
+  while len(data) < n:
+    packet = sock.recv(n-len(data))
+    data.extend(packet)
+  return data
+
+def send_request(request_dict):
+  #This function sends a request to the intermediate server through its socket and wait for the result
+  #request_dict is the dict object that should be sent to the server
+  HOST = '192.168.0.242'  # The server's hostname or IP address		#TODO: store this somewhere general later
+  PORT = 65432        # The port used by the server
+  #process request_dict
+  options = request_dict['meta'].union(request_dict['header'])
+  request_dict = {}
+  for opt in options:
+    contents = opt.split(":")
+    request_dict[contents[0]] = contents[1]
+  #Create a socket and send the required options
+  with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect((HOST, PORT))
+    s.sendall(json.dumps(request_dict).encode('utf-8'))
+    raw_msglen = recvall(s, 4)
+    msglen = struct.unpack('>I', raw_msglen)[0]
+    data = recvall(s, msglen)
+    print(f"Length of received data: {len(data)}")
+    return data
+
+def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, mem_cons=(0,0), sequential=False, use_intermediate=False):
+  #If use_intermediate is set, we should send our request to the server socket instead of directly to Swift
   stream_time = time()
   if mode == 'split':
-      parallel_posts = 3	#number of posts request to run in parallel
+      parallel_posts = int((lend-lstart)/1000)			#number of posts request to run in parallel
       post_step = int((lend-lstart)/parallel_posts) 		#if the batch is smaller, it will be handled on the server
       lend = 50000 if lend > 50000 else lend
       print("Start {}, end {}, post_step {}\r\n".format(lstart, lend, post_step))
@@ -354,11 +395,13 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step//1)),
+            "Batch-Size:{}".format(int(cur_step//5)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
-            "Split-Idx:{}".format(split_idx)},
+            "Split-Idx:{}".format(split_idx),
+            "Fixed-Mem:{}".format(mem_cons[0]),
+            "Scale-BSZ:{}".format(mem_cons[1])},
             "header": {"Parent-Dir:{}".format(parent_dir)}}
 #          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
           obj_name = f"{parent_dir}/vals{s}e{s+500}.zip"
@@ -366,15 +409,22 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
 #      post_time = time()
       read_bytes=0
-      for post_res in swift.post(container='imagenet', objects=post_objects):
-          if 'error' in post_res.keys():
-              print("error: {}, traceback: {}".format(post_res['error'], post_res['traceback']))
-          read_bytes += int(len(post_res['result']))
-          print("Executing one post (whose result is of len {} bytes) took {} seconds".format(len(post_res['result']), time()-post_time))
-          images.extend(pickle.loads(post_res['result']))			#images now should be a list of numpy arrays
-          print("After deserialization, time is: {} seconds".format(time()-post_time))
-          sys.stdout.flush()
-      print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
+      if use_intermediate:
+          with concurrent.futures.ThreadPoolExecutor() as executor:
+              futures = [executor.submit(send_request, post_obj.options) for post_obj in post_objects]
+              for fut in futures:
+                  res = fut.result()
+                  images.extend(pickle.loads(bytes(res)))
+      else:
+          for post_res in swift.post(container='imagenet', objects=post_objects):
+              if 'error' in post_res.keys():
+                  print("error: {}, traceback: {}".format(post_res['error'], post_res['traceback']))
+              read_bytes += int(len(post_res['result']))
+              print("Executing one post (whose result is of len {} bytes) took {} seconds".format(len(post_res['result']), time()-post_time))
+              images.extend(pickle.loads(post_res['result']))			#images now should be a list of numpy arrays
+              print("After deserialization, time is: {} seconds".format(time()-post_time))
+              sys.stdout.flush()
+          print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
       print("Executing all posts took {} seconds".format(time()-post_time))
       transform=None		#no transform required in this case
   else:		#mode=='vanilla'

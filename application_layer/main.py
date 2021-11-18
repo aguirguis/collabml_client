@@ -52,6 +52,7 @@ parser.add_argument('--freeze', action='store_true', help='freeze the lower laye
 parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
 parser.add_argument('--cpuonly', action='store_true', help='do not use GPUs')
 parser.add_argument('--manual_split', action='store_true', help='If set, we will use the split_idx provided by the user; otherwise, we choose the split index automatically')
+parser.add_argument('--use_intermediate', action='store_true', help='If set, we use intermediate compute server between Swift server and client. Otherwise, ML computation (i.e., feature extraction) will happen inside Swift')
 args = parser.parse_args()
 
 dataset_name = args.dataset
@@ -114,7 +115,7 @@ if not args.downloadall and dataset_name == 'imagenet':
 print('==> Building model..')
 net = get_model(model, dataset_name)
 if mode == 'split' and not args.manual_split:
-    split_idx = choose_split_idx(net, freeze_idx, batch_size, batch_size//100)	#TODO: the server batch is currently client batch/100...check if we need to change this later
+    split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, batch_size//100)	#TODO: the server batch is currently client batch/100...check if we need to change this later
 
 print(f"Using split index: {split_idx}")
 if mode == 'split' or args.freeze:
@@ -195,7 +196,7 @@ next_loader= None
 def start_now(lstart, lend, transform):
   global next_dataloader
   next_dataloader = None
-  next_dataloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform, batch_size, lstart, lend, model, mode, split_idx, args.sequential)
+  next_dataloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform, batch_size, lstart, lend, model, mode, split_idx, mem_cons,  args.sequential, args.use_intermediate)
 
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
@@ -204,7 +205,7 @@ if args.testonly:
   if not args.downloadall and dataset_name == 'imagenet':
     gstart, gend = start, end
     lstart, lend = gstart, gstart+step if gstart+step < gend else gend
-    testloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform_test, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
+    testloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate)
     res = []
     idx = 0
     for s in range(gstart+step, gend, step):
@@ -230,7 +231,7 @@ else:
   for epoch in range(num_epochs):
     if not args.downloadall and dataset_name == 'imagenet':
       lstart, lend = 0, step
-      trainloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,args.sequential)
+      trainloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
       idx=0
       for s in range(step, 50000, step):
         localtime = time()
