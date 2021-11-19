@@ -44,7 +44,7 @@ def main():
   parser.add_argument('--dataset', type=str, help='dataset to be uploaded')
   args = parser.parse_args()
   dataset_name = args.dataset
-  fnames = {'mnist':'mnist', 'cifar10':'cifar-10-batches-py', 'imagenet':'val'}
+  fnames = {'mnist':'mnist', 'cifar10':'cifar-10-batches-py', 'imagenet':'compressed'}
 
   swift = SwiftService()
   try:
