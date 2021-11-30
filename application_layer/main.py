@@ -73,6 +73,8 @@ if args.freeze and freeze_idx == 0:
 mode = 'split' if model.startswith("my") else 'vanilla'
 print(args)
 
+parent_dir = "compressed" if mode == 'split' else "val"
+
 start_time = time()
 device = 'cuda' if torch.cuda.is_available() and not args.cpuonly else 'cpu'
 
@@ -114,6 +116,7 @@ if not args.downloadall and dataset_name == 'imagenet':
 # Model
 print('==> Building model..')
 net = get_model(model, dataset_name)
+mem_cons = 0
 if mode == 'split' and not args.manual_split:
     split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, batch_size//100)	#TODO: the server batch is currently client batch/100...check if we need to change this later
 
@@ -196,7 +199,7 @@ next_loader= None
 def start_now(lstart, lend, transform):
   global next_dataloader
   next_dataloader = None
-  next_dataloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform, batch_size, lstart, lend, model, mode, split_idx, mem_cons,  args.sequential, args.use_intermediate)
+  next_dataloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode, split_idx, mem_cons,  args.sequential, args.use_intermediate)
 
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
@@ -205,7 +208,7 @@ if args.testonly:
   if not args.downloadall and dataset_name == 'imagenet':
     gstart, gend = start, end
     lstart, lend = gstart, gstart+step if gstart+step < gend else gend
-    testloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate)
+    testloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate)
     res = []
     idx = 0
     for s in range(gstart+step, gend, step):
@@ -231,7 +234,7 @@ else:
   for epoch in range(num_epochs):
     if not args.downloadall and dataset_name == 'imagenet':
       lstart, lend = 0, step
-      trainloader = stream_imagenet_batch(swift, datadir, "compressed", labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
+      trainloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
       idx=0
       for s in range(step, 50000, step):
         localtime = time()

@@ -372,6 +372,8 @@ def send_request(request_dict):
     contents = opt.split(":")
     request_dict[contents[0]] = contents[1]
   #Create a socket and send the required options
+  print("Sending request.....")
+  sys.stdout.flush()
   with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     s.sendall(json.dumps(request_dict).encode('utf-8'))
@@ -397,7 +399,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step//5)),
+            "Batch-Size:{}".format(int(cur_step//2)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
