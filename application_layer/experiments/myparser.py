@@ -76,7 +76,7 @@ def get_batch_size_dec(filenames):
             for line in lines:
                 if line.startswith("The requested batch"):
                     a = line.split()
-                    bs.append((int(a[4]),int(a[-1])))
+                    bs.append((int(a[4][:-1]),int(a[-1])))
             bs_dec.append(bs)
     return bs_dec
 
@@ -103,6 +103,6 @@ def get_reduction_bs(filenames):
     for bc_dec in bs_decs:
         reds=[]
         for dec in bc_dec:
-            reds.append((red[0]-red[1])*100.0/red[0])	#reduction = (initial_val - final_val)/initial_val
+            reds.append((dec[0]-dec[1])*100.0/dec[0])	#reduction = (initial_val - final_val)/initial_val
         bs_red.append(sum(reds)/len(reds))		#average of reductions
     return bs_red
