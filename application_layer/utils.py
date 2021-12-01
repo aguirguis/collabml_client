@@ -12,7 +12,8 @@ import struct
 import time
 from time import sleep
 import math
-
+import subprocess
+import shutil
 import torch.nn as nn
 import torch.nn.init as init
 import torchvision.transforms as transforms
@@ -185,6 +186,42 @@ def get_mem_usage():
     return {"available":all_mem[1],	"used":all_mem[3],
 	"free":all_mem[4], "active":all_mem[5],
 	"buffers":all_mem[7],"cached":all_mem[8]}
+
+#copied from https://pytorch-lightning.readthedocs.io/en/latest/_modules/pytorch_lightning/callbacks/gpu_stats_monitor.html#GPUStatsMonitor
+import subprocess
+import shutil
+import threading
+def _get_gpu_stats(gpu_id):
+    """Run nvidia-smi to get the gpu stats"""
+    gpu_query = ",".join(["utilization.gpu", "memory.used", "memory.total"])
+    format = 'csv,nounits,noheader'
+    result = subprocess.run(
+        [shutil.which('nvidia-smi'), f'--query-gpu={gpu_query}', f'--format={format}', f'--id={gpu_id}', '-l 1'],
+        encoding="utf-8",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,  # for backward compatibility with python version 3.6
+        check=True
+    )
+
+    def _to_float(x: str) -> float:
+        try:
+            return float(x)
+        except ValueError:
+            return 0.
+
+    stats = result.stdout.strip().split(os.linesep)
+    stats = [[_to_float(x) for x in s.split(', ')] for s in stats]
+    return stats
+
+def get_periodic_stat(stop):
+    while True:
+        if stop():
+            break
+        res0,  res1 = _get_gpu_stats(0)[0], _get_gpu_stats(1)[0]
+        mem_free = (res0[2]-res0[1], res1[2]-res1[1])
+        mem_used = (res0[1], res1[1])
+        print(f"Memory occpied: {mem_used}")
+        sleep(1)
 
 def get_mean_and_std(dataset):
     '''Compute the mean and std value of dataset.'''
@@ -372,7 +409,7 @@ def send_request(request_dict):
     contents = opt.split(":")
     request_dict[contents[0]] = contents[1]
   #Create a socket and send the required options
-  print("Sending request.....")
+#  print("Sending request.....")
   sys.stdout.flush()
   with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
@@ -380,7 +417,7 @@ def send_request(request_dict):
     raw_msglen = recvall(s, 4)
     msglen = struct.unpack('>I', raw_msglen)[0]
     data = recvall(s, msglen)
-    print(f"Length of received data: {len(data)}")
+#    print(f"Length of received data: {len(data)}")
     return data
 
 def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, mem_cons=(0,0), sequential=False, use_intermediate=False):
@@ -399,7 +436,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step//2)),
+            "Batch-Size:{}".format(int(cur_step//5)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
@@ -418,6 +455,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
               futures = [executor.submit(send_request, post_obj.options) for post_obj in post_objects]
               for fut in futures:
                   res = fut.result()
+                  read_bytes += int(len(res))
                   images.extend(pickle.loads(bytes(res)))
       else:
           for post_res in swift.post(container='imagenet', objects=post_objects):
@@ -428,7 +466,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
               images.extend(pickle.loads(post_res['result']))			#images now should be a list of numpy arrays
               print("After deserialization, time is: {} seconds".format(time()-post_time))
               sys.stdout.flush()
-          print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
+      print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
       print("Executing all posts took {} seconds".format(time()-post_time))
       transform=None		#no transform required in this case
   else:		#mode=='vanilla'

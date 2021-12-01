@@ -195,6 +195,11 @@ def test(epoch):
             res.extend(predicted)
     return res
 
+#Create and start the thread of monitoring GPU memory consumption
+stop_thread = False
+gpu_th = Thread(target=get_periodic_stat, args=(lambda: stop_thread, ))
+gpu_th.start()
+
 next_loader= None
 def start_now(lstart, lend, transform):
   global next_dataloader
@@ -256,5 +261,8 @@ else:
     else:
       train(epoch)
     scheduler.step()
+#Stop GPU thread
+stop_thread = True
+gpu_th.join()
 print("The whole process took {} seconds".format(time()-start_time))
 sys.stdout.flush()
