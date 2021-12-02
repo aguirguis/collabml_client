@@ -209,58 +209,60 @@ def start_now(lstart, lend, transform):
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
 step = batch_size #max(2000, batch_size)		#using a value less than 1000 is really waste of bandwidth (after some experimentation)
-if args.testonly:
-  if not args.downloadall and dataset_name == 'imagenet':
-    gstart, gend = start, end
-    lstart, lend = gstart, gstart+step if gstart+step < gend else gend
-    testloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate)
-    res = []
-    idx = 0
-    for s in range(gstart+step, gend, step):
-      lstart, lend = s,s+step if s+step < gend else gend
-      myt = Thread(target=start_now, args=(lstart, lend,transform_test,))
-      if not args.sequential:	#run this in parallel
-        myt.start()
-      lres = test(idx)
-      res.extend(lres)
-      idx+=1
-      if args.sequential:
-        myt.start()
-      myt.join()
-      testloader = next_dataloader
-      dataloader = None
-    res.extend(test(idx))
-  else:
-    res = test(0)
-  print("Inference done for {} inputs".format(len(res)))
-  print("The whole process took {} seconds".format(time()-start_time))
-  exit(0)
-else:
-  for epoch in range(num_epochs):
+try:
+  if args.testonly:
     if not args.downloadall and dataset_name == 'imagenet':
-      lstart, lend = 0, step
-      trainloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
-      idx=0
-      for s in range(step, 50000, step):
-        localtime = time()
-        lstart, lend = s, s+step
-        myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
-        if not args.sequential:   #run this in parallel
+      gstart, gend = start, end
+      lstart, lend = gstart, gstart+step if gstart+step < gend else gend
+      testloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate)
+      res = []
+      idx = 0
+      for s in range(gstart+step, gend, step):
+        lstart, lend = s,s+step if s+step < gend else gend
+        myt = Thread(target=start_now, args=(lstart, lend,transform_test,))
+        if not args.sequential:	#run this in parallel
           myt.start()
-        train(epoch)
-        print("One training iteration takes: {} seconds".format(time()-localtime))
-        print("Index:",idx)
+        lres = test(idx)
+        res.extend(lres)
         idx+=1
         if args.sequential:
           myt.start()
         myt.join()
-        trainloader = next_dataloader
+        testloader = next_dataloader
         dataloader = None
-        print("Then, training+dataloading take {} seconds".format(time()-localtime))
-      train(epoch)
+      res.extend(test(idx))
     else:
-      train(epoch)
-    scheduler.step()
+      res = test(0)
+    print("Inference done for {} inputs".format(len(res)))
+    print("The whole process took {} seconds".format(time()-start_time))
+  else:
+    for epoch in range(num_epochs):
+      if not args.downloadall and dataset_name == 'imagenet':
+        lstart, lend = 0, step
+        trainloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
+        idx=0
+        for s in range(step, 50000, step):
+          localtime = time()
+          lstart, lend = s, s+step
+          myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
+          if not args.sequential:   #run this in parallel
+            myt.start()
+          train(epoch)
+          print("One training iteration takes: {} seconds".format(time()-localtime))
+          print("Index:",idx)
+          idx+=1
+          if args.sequential:
+            myt.start()
+          myt.join()
+          trainloader = next_dataloader
+          dataloader = None
+          print("Then, training+dataloading take {} seconds".format(time()-localtime))
+        train(epoch)
+      else:
+        train(epoch)
+      scheduler.step()
+except Exception as e:
+  print(f"Exception: {e}")
 #Stop GPU thread
 stop_thread = True
 gpu_th.join()
