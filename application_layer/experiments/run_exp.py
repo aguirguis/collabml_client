@@ -1,7 +1,9 @@
+
 #!/usr/bin/env python3
 # coding: utf-8
 #This library include functions to run experiments
 import os
+import time
 import torch
 from multiprocessing import Process
 homedir = os.path.expanduser("~")
@@ -10,8 +12,10 @@ execfile = os.path.join(projectdir,"main.py")
 logdir = os.path.join(projectdir,"logs")
 
 def empty_gpu():
+    time.sleep(10)
     torch.cuda.empty_cache()
     os.system(f"pkill -f 'python3 {execfile}'")
+    time.sleep(10)
 
 def run_models_exp(batch_size, models, freeze_idxs, CPU=False):
     #Compare the performance of Vanilla and Split with different models on both GPU and CPU on the client side
@@ -49,12 +53,21 @@ def run_bw_exp(BW):
     os.system(f'{wondershaper_exec} -c -a eth0')
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
 
-def _run_split(process_idx, batch_size, num_processes):
+def _run_split(process_idx, batch_size, num_processes, special_dir=""):
     #This helper function runs one ML request (the total number of requests is specified in num_processes)
-    models_dict={0:("myalexnet",17), 1:("myresnet18",11), 2:("myresnet50",21), 3:("myvgg11",25), 4:("myvgg19",36),5:("mydensenet121",19)}
+    models_dict={0:("myalexnet",17), 1:("myresnet18",11), 2:("myresnet50",21), 3:("myvgg11",25), 4:("myvgg19",36),5:("mydensenet121",20)}
     model, freeze_idx = models_dict[process_idx]
+    dir = 'multitenant_exp' if special_dir=="" else special_dir
     os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/multitenant_exp/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/{dir}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
+
+def _run_vanilla(process_idx, batch_size, num_processes,special_dir=""):
+    #This helper function runs one ML request (the total number of requests is specified in num_processes)
+    models_dict={0:("alexnet",17), 1:("resnet18",11), 2:("resnet50",21), 3:("vgg11",25), 4:("vgg19",36),5:("densenet121",20)}
+    model, freeze_idx = models_dict[process_idx]
+    dir = 'vanilla_run' if special_dir=="" else special_dir
+    os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
+                 --freeze --freeze_idx {freeze_idx} > {logdir}/{dir}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
 
 def run_scalability_multitenants(max_tenants, batch_sizes):
     #Test the scalability of our system (i.e., split) with multi-tenants and different batch sizes
@@ -74,22 +87,32 @@ def run_scalability_multitenants(max_tenants, batch_sizes):
 
 if __name__ == '__main__':
 ###################################EXP 1: MODELS EXP#############################################
-#    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-#    freeze_idxs=[11, 21, 25, 36, 17, 19]
-#    bsz = 2000		#This is the largest number I can get that fits in the client GPU
+    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+    freeze_idxs=[11, 21, 25, 36, 17, 20]
+    bsz = 2000		#This is the largest number I can get that fits in the client GPU
 #    run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
-#    run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
+    run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
     #The same experiment but with extremely big batch size
-#    bsz = 8000		#This fails with vanila GPU (but should hopefully work on)
+    bsz = 8000		#This fails with vanila GPU (but should hopefully work on)
 #    run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
-#    run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
-#################################################################################################
+    run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
+################################################################################################
 ###################################EXP 2: BW EXP#################################################
-#    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024]
-#    run_bw_exp(BW[:1])
+    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024]
+    run_bw_exp(BW)
 #################################################################################################
 ###################################EXP 3: Scalability with multi-tenants EXP#####################
 #    max_tenants = 6
-#    batch_sizes = [1000,2000,3000,4000,6000,8000]
-#    run_scalability_multitenants(max_tenants, batch_sizes[1:2])
-#################################################################################################
+#    batch_sizes = [500,1000,2000,4000]
+#    run_scalability_multitenants(max_tenants, batch_sizes[:1])
+###############################################################################################
+##############################EXP 4: Data reduction with different batch sizes#################
+####Not really a complete experiment, yet this is useful to compare vanilla to split###########
+#Note that: for this experiment only, I'm setting the server batch size to 500
+    batch_sizes = [1000,2000,3000,4000,6000,7000,8000]
+    for bsz in batch_sizes:
+        empty_gpu()
+        _run_vanilla(0, bsz, 1)
+#        empty_gpu()
+#        _run_split(0, bsz, 1,special_dir='withbatchAdatp_exp')		#note that: the dir without batch adaptation is: 'batchAdatp_exp'
+###############################################################################################

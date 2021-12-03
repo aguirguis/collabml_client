@@ -5,9 +5,15 @@ def get_total_exec_time(filenames):
     #returns times: list of total execution time (len(times)=len(filenames)) of each output file
     times = []
     for filename in filenames:
+        print(f"Processing file: {filename}")
         with open(filename, "r") as f:
             lines = f.readlines()
             line = lines[-1]
+            if not line.startswith("The whole"):
+                for l in lines:
+                    if l.startswith("The whole"):
+                        line = l
+                        break
             assert line.startswith("The whole")
             times.append(float(line.split()[-2]))
     return times
@@ -17,6 +23,7 @@ def get_split_idx(filenames):
     #returns idxs: list of split idxs chosen by different output files (len(idxs)=len(filenames))
     idxs = []
     for filename in filenames:
+        print(f"Processing file: {filename}")
         with open(filename, "r") as f:
             lines = f.readlines()
             for line in lines:
@@ -31,6 +38,7 @@ def get_output_size(filenames):
     #Note: the result is returned in MBs
     outputs = []
     for filename in filenames:
+        print(f"Processing file: {filename}")
         with open(filename, "r") as f:
             lines = f.readlines()
             sizes = []
@@ -46,13 +54,14 @@ def get_gpu_mem_cons_time(filenames):
     #Note that this can be used in either client or server sides
     gpu_mems = []
     for filename in filenames:
+        print(f"Processing file: {filename}")
         with open(filename, "r") as f:
             lines = f.readlines()
             mem_inst = []
             for line in lines:
                 if line.startswith("Memory occpied:"):
                     a = line.split()
-                    mem_inst.append(float(a[-2][1:-1]) + float(a[-1][:-1]))
+                    mem_inst.append(float(a[2][1:-1]) + float(a[3][:-1]))
             gpu_mems.append(mem_inst)
     return gpu_mems
 
@@ -70,6 +79,7 @@ def get_batch_size_dec(filenames):
     #Note that: this is used only with the server logs (rather than the client)
     bs_dec = []
     for filename in filenames:
+        print(f"Processing file: {filename}")
         with open(filename, "r") as f:
             lines = f.readlines()
             bs = []

@@ -44,7 +44,7 @@ def plot_lines(X, Y, sys_legends, linestyles, xlabel, ylabel, output_file):
 def plot_bars(Y, sys_legends, xtick_labels, hatches, xlabel, ylabel, output_file):
     #This function plots bars defined in Y (which is list of lists) for multiple systems (i.e., competitors)
     #sys_legends define the systems' names and xtick_labels define the labels on the x-axis
-    assert len(Y) == len(sys_legends) and len(Y[0]) == len(xtick_labels)
+    assert len(Y) <= len(sys_legends) and len(Y[0]) == len(xtick_labels)
     ind = np.arange(len(xtick_labels))
     #next, we calculate the positions of the bars (with align = 'left' always)
     start = -len(sys_legends)/2.0
