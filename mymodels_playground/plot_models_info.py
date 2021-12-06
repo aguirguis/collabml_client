@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 from myresnet import build_my_resnet
@@ -13,10 +14,19 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import pandas as pd
-#import matplotlib.font_manager as mgr
-fontsize=50
-figsize = (30, 20)
+import matplotlib.font_manager as mgr
+plt.rcParams['pdf.fonttype'] = 42
+homedir = os.path.expanduser("~")
+projectdir = os.path.join(homedir, "swift_playground/application_layer")
+font_dirs = [os.path.join(projectdir, 'experiments','./latin-modern-roman')]
+font_files = mgr.findSystemFonts(fontpaths=font_dirs)
+for font_file in font_files:
+    mgr.fontManager.addfont(font_file)
+#font_list = mgr.createFontList(font_files)
+#mgr.fontManager.ttflist.extend(font_list)
+plt.rcParams['font.family'] = 'Latin Modern Roman'
+fontsize=40
+figsize = (15, 8)
 ##Defining all the models we support
 all_models = ["alexnet", 'densenet121','densenet161','densenet169','densenet201',"mobilenetv2",
 		"mnasnet0_5","mnasnet0_75","mnasnet1_0","mnasnet1_3","vgg11","vgg13","vgg16","vgg19",
@@ -48,8 +58,7 @@ criterion = nn.CrossEntropyLoss()
 for mod_class, idxs in model_to_idx.items():
   a = torch.rand((1,3,224,224))
   for ii,idx in enumerate(idxs):
-    fig, ax1 = plt.subplots(figsize=figsize)
-#    ax2 = ax1.twinx()
+    figr = plt.figure(figsize=figsize)
     figs = []
     model_str = all_models[idx]
     print("{}{}{}".format("="*20,model_str,"="*20))
@@ -73,21 +82,18 @@ for mod_class, idxs in model_to_idx.items():
     names.insert(0,'input')
     times = np.array(times)*1000
     ind = np.arange(len(sizes))
-#    ax2.set_yticks(np.arange(0,np.max(times),step=np.max(times)/10))
-    fig = ax1.bar(ind, sizes, width, linewidth=1,hatch="/", label='Size of output data', edgecolor='black',)
+    fig = plt.bar(ind, sizes, width, linewidth=1,hatch="/", label='Size of output data', edgecolor='black',)
     figs.append(fig)
 #    ind = np.append(ind, len(ind))		#to match the backward time
 #    fig3 = ax2.bar(ind+0.5*width, times, width, linewidth=1, color='orange', label=model_str+"-latency",hatch="\\",edgecolor='black',)
 #    figs.append(fig3)
-    fig2 = ax1.axhline(132, color='r', linestyle="--", label='input size')
+    fig2 = plt.axhline(132, color='r', linestyle="--", label='Input size')
     figs.append(fig2)
-    ax1.set_ylabel("Output size per image (KBs)", fontsize=fontsize)
+    plt.ylabel("Output size per image (KBs)", fontsize=fontsize)
 #    ax2.set_ylabel("Time to process a layer (ms)", fontsize=fontsize)
-    ax1.set_xlabel('Layer index', fontsize=fontsize)
-    ax1.tick_params(axis='y', labelsize=fontsize)
-#    ax2.tick_params(axis='y', labelsize=fontsize)
-    ax1.tick_params(axis='x', labelsize=fontsize, rotation=90)
-    plt.xticks(ind, names, fontsize=fontsize, rotation=90)
+    plt.xlabel('Layer index', fontsize=fontsize)
+#    .tick_params(axis='x', labelsize=fontsize, rotation=90)
+    plt.xticks(ind, [name.title() for name in names], fontsize=20, rotation=90)	#especially small font size because labels are big!
     plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
     plt.tight_layout()
     plt.savefig('{}.pdf'.format(model_str))

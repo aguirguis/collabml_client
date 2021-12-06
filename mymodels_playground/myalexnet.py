@@ -21,8 +21,7 @@ class MyAlexNet(AlexNet):
 
     def forward(self, x:Tensor, start: int, end: int) -> Tensor:
       idx = 0
-#      res = [x.element_size() * x.nelement()/1024]		#this returns the sizes of the intermediate outputs in the network
-      res = []
+      res = [x.element_size() * x.nelement()/1024]		#this returns the sizes of the intermediate outputs in the network
       time_res = []
       names=[]
       for idx in range(start, end):
@@ -43,10 +42,8 @@ class MyAlexNet(AlexNet):
 def build_my_alexnet(num_classes=10):
     return MyAlexNet(num_classes=num_classes)
 
-from utils import get_mem_consumption
-
-model = build_my_alexnet(1000)
-tot_layers=len(model.all_layers)
-for i in range(tot_layers):
-  server,client,vanilla = get_mem_consumption(model, i, tot_layers-5, 100, 1000)
-  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")
+#model = build_my_alexnet(1000)
+#a = torch.rand((1,3,224,224))
+#res = model(a,0,10)
+#res = model(res,10,100)
+#print(res.shape)

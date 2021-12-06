@@ -1,9 +1,24 @@
 from swiftclient.service import SwiftService, SwiftPostObject, SwiftError, SwiftUploadObject
 from time import time
+import os
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as mgr
+plt.rcParams['pdf.fonttype'] = 42
+homedir = os.path.expanduser("~")
+projectdir = os.path.join(homedir, "swift_playground/application_layer")
+font_dirs = [os.path.join(projectdir, 'experiments','./latin-modern-roman')]
+font_files = mgr.findSystemFonts(fontpaths=font_dirs)
+for font_file in font_files:
+    mgr.fontManager.addfont(font_file)
+#font_list = mgr.createFontList(font_files)
+#mgr.fontManager.ttflist.extend(font_list)
+plt.rcParams['font.family'] = 'Latin Modern Roman'
+fontsize=40
+figsize = (15, 8)
+width=0.4
 import sys
 from multiprocessing import Process
 
@@ -83,26 +98,30 @@ def send_req(req: str, num_req: int):
 
 nums = np.arange(1, 10001, step=100)
 #reqs=['PUT', 'POST', 'GET', 'ML']
-reqs=['ML']
-res_dict = {}
-for req in reqs:
-  res = []
-  for num_req in nums:
-    start_time = time()
-    send_req(req, num_req)
-    end_time = time()
-    res.append(end_time - start_time)
-    print(res)
-    sys.stdout.flush()
-  res_dict[req] = res
-  print(res)
-  sys.stdout.flush()
+#reqs=['ML']
+#res_dict = {}
+#for req in reqs:
+#  res = []
+#  for num_req in nums:
+#    start_time = time()
+#    send_req(req, num_req)
+#    end_time = time()
+#    res.append(end_time - start_time)
+#    print(res)
+#    sys.stdout.flush()
+#  res_dict[req] = res
+#  print(res)
+#  sys.stdout.flush()
 
-print(res_dict)
+#print(res_dict)
+#Instead of rerunning, let's read the stored data in the log file
+f = open("logFiles/stressTestLog", "r")
+lines = f.readlines()
+import json
+res_dict = json.loads(lines[-1])
 #######Plotting the results
-fontsize=35
 fig = plt.gcf()
-fig.set_size_inches(15, 8)
+figr = plt.figure(figsize=figsize)
 plt.subplots_adjust(top=0.95, bottom=0.15, right=0.95, left=0.13)
 figs=[]
 for req in res_dict:
@@ -111,4 +130,6 @@ for req in res_dict:
 plt.legend(handles=figs, fontsize=fontsize)
 plt.ylabel('Time (sec.)',fontsize=fontsize)
 plt.xlabel('Number of requests',fontsize=fontsize)
+plt.xticks(fontsize=fontsize)
+plt.yticks(fontsize=fontsize)
 plt.savefig('swift_performance.pdf')

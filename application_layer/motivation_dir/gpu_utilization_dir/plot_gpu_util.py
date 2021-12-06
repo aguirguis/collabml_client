@@ -3,23 +3,34 @@ import matplotlib
 import os
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-fontsize=80
-figsize = (30, 20)
+import matplotlib.font_manager as mgr
+plt.rcParams['pdf.fonttype'] = 42
+homedir = os.path.expanduser("~")
+projectdir = os.path.join(homedir, "swift_playground/application_layer")
+font_dirs = [os.path.join(projectdir, 'experiments','./latin-modern-roman')]
+font_files = mgr.findSystemFonts(fontpaths=font_dirs)
+for font_file in font_files:
+    mgr.fontManager.addfont(font_file)
+#font_list = mgr.createFontList(font_files)
+#mgr.fontManager.ttflist.extend(font_list)
+plt.rcParams['font.family'] = 'Latin Modern Roman'
+fontsize=40
+figsize = (15, 8)
 width=0.4
+
 def plot(xaxis, swift, app, total, filename):
   #Plot the GPU memory of both swift and app layers on top of each other in a bar plot and output it to {filename}.pdf
-  fig, ax1 = plt.subplots(figsize=figsize)
+  figr = plt.figure(figsize=figsize)
   figs = []
   ind = np.arange(len(xaxis))
-  fig1 = ax1.bar(ind, swift, width, linewidth=1,label='Object storage',hatch="/",edgecolor='black')
+  fig1 = plt.bar(ind, swift, width, linewidth=1,label='Object storage',hatch="/",edgecolor='black')
   figs.append(fig1)
-  fig2 = ax1.bar(ind, app, width, bottom=swift, linewidth=1, color='orange', label="Application layer",hatch="\\",edgecolor='black')
+  fig2 = plt.bar(ind, app, width, bottom=swift, linewidth=1, color='orange', label="Application layer",hatch="\\",edgecolor='black')
   figs.append(fig2)
-  ax1.set_ylabel("GPU utilization (GBs)", fontsize=fontsize)
-  ax1.set_xlabel('Layer index', fontsize=fontsize)
-  ax1.tick_params(axis='y', labelsize=fontsize)
-  ax1.tick_params(axis='x', labelsize=fontsize)
+  plt.ylabel("GPU utilization (GBs)", fontsize=fontsize)
+  plt.xlabel('Layer index', fontsize=fontsize)
   plt.xticks(ind, xaxis, fontsize=fontsize)
+  plt.yticks(fontsize=fontsize)
   plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
   plt.tight_layout()
   plt.savefig('{}.pdf'.format(filename))

@@ -1,7 +1,7 @@
 import torch
 import torchvision.models as models
 from torchvision.models import DenseNet
-from torchvision.models.densenet import _DenseLayer, _Transition, _DenseBlock
+from torchvision.models.densenet import _DenseLayer, _Transition
 from torch import Tensor
 import torch.nn as nn
 import torch.nn.functional as F
@@ -25,7 +25,7 @@ class MyDenseNet(DenseNet):
     def forward(self, x:Tensor, start: int, end: int) -> Tensor:
       idx = 0
       res=[]
-#      res.append(x.element_size() * x.nelement()/1024)
+      res.append(x.element_size() * x.nelement()/1024)
       time_res=[]
       names=[]
       for idx in range(start, end):
@@ -56,10 +56,8 @@ def build_my_densenet(model, num_classes=10):
     args=largs[model]
     return MyDenseNet(*args, num_classes=num_classes)
 
-from utils import get_mem_consumption
-
-model = build_my_densenet('densenet201',1000)
-tot_layers=len(model.all_layers)
-for i in range(tot_layers):
-  server,client,vanilla = get_mem_consumption(model, i, tot_layers-10, 100, 1000)
-  print(f"Total GPU memory consumpton at split layer {i} is {server/1024} & {client/1024}, vanilla={vanilla/1024} GBs")
+#model = build_my_densenet('densenet201',1000)
+#a = torch.rand((1,3,224,224))
+#res = model(a,0,10)
+#res = model(res,10,100)
+#print(res.shape)

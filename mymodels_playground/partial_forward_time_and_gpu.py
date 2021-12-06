@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 from myresnet import build_my_resnet
@@ -13,6 +14,19 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as mgr
+plt.rcParams['pdf.fonttype'] = 42
+homedir = os.path.expanduser("~")
+projectdir = os.path.join(homedir, "swift_playground/application_layer")
+font_dirs = [os.path.join(projectdir, 'experiments','./latin-modern-roman')]
+font_files = mgr.findSystemFonts(fontpaths=font_dirs)
+for font_file in font_files:
+    mgr.fontManager.addfont(font_file)
+#font_list = mgr.createFontList(font_files)
+#mgr.fontManager.ttflist.extend(font_list)
+plt.rcParams['font.family'] = 'Latin Modern Roman'
+fontsize=40
+figsize = (15, 8)
 
 def build_model(model_str, num_classes):
   if model_str.startswith('alex'):
@@ -35,7 +49,8 @@ def partial_forward(net, split_idx, batch_size, device):
   #helper function to measure the time it takes to do forward of the last few layers
   #TODO: backward should be limited only to the last few layers (not to the input layer)
   input = torch.rand((batch_size,3,224,224))
-  input, net = input.cuda(), net.cuda()
+  if device == "cuda":		#uncommenting this line makes computation very slow!
+      input, net = input.cuda(), net.cuda()
   res, _, _, _ = net(input, 0,split_idx)              #This will print some stuff
   res, net = res.cpu(), net.cpu()
   target = torch.randint(1, num_classes, (batch_size,))
@@ -44,7 +59,6 @@ def partial_forward(net, split_idx, batch_size, device):
   torch.cuda.reset_max_memory_allocated(0)
   torch.cuda.reset_max_memory_allocated(1)
   gpu_usage_init=(torch.cuda.max_memory_allocated(0)+torch.cuda.max_memory_allocated(1))/(1024*1024*1024)
-#  print("device: {}, gpu_usage: {}".format(device, gpu_usage))
   start_time = time.time()
   res, target, net = res.to(device), target.to(device), net.to(device)
   res, _, _, _ = net(res, split_idx, 150)
@@ -64,15 +78,16 @@ models_dict={'alexnet': np.arange(1,22), #[16,17,18,19,20,21],
 	    'vgg11': np.arange(1,30), #[24,25,26,27,28,29],
 	    'densenet121': np.arange(1,23) #[17,18,19,20,21,22]
 }
-devices=['cuda', 'cpu']
 batch_sizes=[50,100,200] #only useful for the GPU mem. plot
-fontsize=80
-figsize = (30, 20)
-width=0.3
+width=0.4
 for model, split_idxs in models_dict.items():
   res_dict={}
   gpu_mems=[]
   for batch_size in batch_sizes:
+    if batch_size == 200:
+      devices = ['cuda'] #, 'cpu']		#we don't need the CPU....the time values were already stored hard-coded in the other file
+    else:
+      devices = ['cuda']
     for device in devices:
       times = []
       for split_idx in split_idxs:
@@ -84,17 +99,16 @@ for model, split_idxs in models_dict.items():
       res_dict[device] = times
     print("Computation times of {} on {} with batch size {}: ".format(model, device, batch_size), times)
   ##Plotting results
-  fig, ax1 = plt.subplots(figsize=figsize)
+  fig = plt.figure(figsize=figsize)
   figs = []
   ind = np.arange(len(split_idxs))
-  fig = ax1.bar(ind-0.5*width, res_dict['cpu'], width, linewidth=1, label="CPU",hatch="/",edgecolor='black')
+  fig = plt.bar(ind-0.5*width, res_dict['cpu'], width, linewidth=1, label="CPU",hatch="/",edgecolor='black')
   figs.append(fig)
-  fig = ax1.bar(ind+0.5*width, res_dict['cuda'], width, linewidth=1, label="GPU",hatch="\\",edgecolor='black')
+  fig = plt.bar(ind+0.5*width, res_dict['cuda'], width, linewidth=1, label="GPU",hatch="\\",edgecolor='black')
   figs.append(fig)
-  ax1.set_ylabel("Time (sec.)", fontsize=fontsize)
-  ax1.set_xlabel('Layer index', fontsize=fontsize)
-  ax1.tick_params(axis='y', labelsize=fontsize)
-  ax1.tick_params(axis='x', labelsize=fontsize)
+  plt.ylabel("Time (sec.)", fontsize=fontsize)
+  plt.xlabel('Layer index', fontsize=fontsize)
+  plt.yticks(fontsize=fontsize)
   plt.xticks(ind, split_idxs, fontsize=fontsize)
   plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
   plt.tight_layout()
@@ -102,18 +116,17 @@ for model, split_idxs in models_dict.items():
   ##Plotting GPU memory usage
   plt.gcf().clear()
   ind = np.arange(len(split_idxs))
-  fig, ax1 = plt.subplots(figsize=figsize)
+  fig = plt.figure(figsize=figsize)
   figs = []
-  fig = ax1.bar(ind - width, gpu_mems[:len(ind)], width, linewidth=1, label="batch = {}".format(batch_sizes[0]),edgecolor='black')
+  fig = plt.bar(ind - width, gpu_mems[:len(ind)], width, linewidth=1, label="Batch = {}".format(batch_sizes[0]),edgecolor='black')
   figs.append(fig)
-  fig2 = ax1.bar(ind, gpu_mems[len(ind):2*len(ind)], width, linewidth=1, label="batch = {}".format(batch_sizes[1]),edgecolor='black')
+  fig2 = plt.bar(ind, gpu_mems[len(ind):2*len(ind)], width, linewidth=1, label="Batch = {}".format(batch_sizes[1]),edgecolor='black')
   figs.append(fig2)
-  fig3 = ax1.bar(ind + width, gpu_mems[2*len(ind):], width, linewidth=1, label="batch = {}".format(batch_sizes[2]),edgecolor='black')
+  fig3 = plt.bar(ind + width, gpu_mems[2*len(ind):], width, linewidth=1, label="Batch = {}".format(batch_sizes[2]),edgecolor='black')
   figs.append(fig3)
-  ax1.set_ylabel("GPU memory (GBs)", fontsize=fontsize)
-  ax1.set_xlabel('Start layer index', fontsize=fontsize)
-  ax1.tick_params(axis='y', labelsize=fontsize)
-  ax1.tick_params(axis='x', labelsize=fontsize)
+  plt.ylabel("GPU memory (GBs)", fontsize=fontsize)
+  plt.xlabel('Start layer index', fontsize=fontsize)
+  plt.yticks(fontsize=fontsize)
   plt.xticks(ind, split_idxs, fontsize=fontsize)
   plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
   plt.tight_layout()

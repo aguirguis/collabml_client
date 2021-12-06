@@ -87,19 +87,19 @@ def run_scalability_multitenants(max_tenants, batch_sizes):
 
 if __name__ == '__main__':
 ###################################EXP 1: MODELS EXP#############################################
-    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-    freeze_idxs=[11, 21, 25, 36, 17, 20]
-    bsz = 2000		#This is the largest number I can get that fits in the client GPU
+#    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+#    freeze_idxs=[11, 21, 25, 36, 17, 20]
+#    bsz = 2000		#This is the largest number I can get that fits in the client GPU
 #    run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
-    run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
+#    run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
     #The same experiment but with extremely big batch size
-    bsz = 8000		#This fails with vanila GPU (but should hopefully work on)
+#    bsz = 8000		#This fails with vanila GPU (but should hopefully work on)
 #    run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
-    run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
+#    run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
 ################################################################################################
 ###################################EXP 2: BW EXP#################################################
-    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024]
-    run_bw_exp(BW)
+#    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 15*1024*1024]
+#    run_bw_exp(BW)
 #################################################################################################
 ###################################EXP 3: Scalability with multi-tenants EXP#####################
 #    max_tenants = 6
@@ -109,10 +109,11 @@ if __name__ == '__main__':
 ##############################EXP 4: Data reduction with different batch sizes#################
 ####Not really a complete experiment, yet this is useful to compare vanilla to split###########
 #Note that: for this experiment only, I'm setting the server batch size to 500
-    batch_sizes = [1000,2000,3000,4000,6000,7000,8000]
-    for bsz in batch_sizes:
-        empty_gpu()
-        _run_vanilla(0, bsz, 1)
+#    batch_sizes = [1000,2000,3000,4000, 5000, 6000,7000,8000]
+#    for bsz in batch_sizes:
+#        empty_gpu()
+#        _run_vanilla(0, bsz, 1)
 #        empty_gpu()
 #        _run_split(0, bsz, 1,special_dir='withbatchAdatp_exp')		#note that: the dir without batch adaptation is: 'batchAdatp_exp'
 ###############################################################################################
+    _run_split(0, 5000, 1,special_dir='withbatchAdatp_exp')

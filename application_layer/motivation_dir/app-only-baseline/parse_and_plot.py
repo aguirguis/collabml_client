@@ -1,9 +1,21 @@
 import numpy as np
+import os
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-fontsize=100
-figsize = (30, 20)
+import matplotlib.font_manager as mgr
+plt.rcParams['pdf.fonttype'] = 42
+homedir = os.path.expanduser("~")
+projectdir = os.path.join(homedir, "swift_playground/application_layer")
+font_dirs = [os.path.join(projectdir, 'experiments','./latin-modern-roman')]
+font_files = mgr.findSystemFonts(fontpaths=font_dirs)
+for font_file in font_files:
+    mgr.fontManager.addfont(font_file)
+#font_list = mgr.createFontList(font_files)
+#mgr.fontManager.ttflist.extend(font_list)
+plt.rcParams['font.family'] = 'Latin Modern Roman'
+fontsize=40
+figsize = (15, 8)
 width=0.4
 
 #used models in these experiments:
@@ -11,23 +23,20 @@ models=['resnet18', 'resnet50', 'resnet152', 'vgg11', 'vgg19', 'alexnet', 'dense
 ind = np.arange(len(models))
 def plot(comp, comm, total, filename):
   #Plot computation and communication time in a bar plot and output it to {filename}.pdf
-  fig, ax1 = plt.subplots(figsize=figsize)
+  figr = plt.figure(figsize=figsize)
   figs = []
-#  ax2.set_yticks()
-  fig1 = ax1.bar(ind, comp, width, linewidth=1, label="Computation",hatch="/",edgecolor='black')
+  fig1 = plt.bar(ind, comp, width, linewidth=1, label="Computation",hatch="/",edgecolor='black')
   figs.append(fig1)
-  fig2 = ax1.bar(ind, np.array(total)-np.array(comp), width, bottom=comp, linewidth=1, color='orange', label="Communication",hatch="\\",edgecolor='black')
+  fig2 = plt.bar(ind, np.array(total)-np.array(comp), width, bottom=comp, linewidth=1, color='orange', label="Communication",hatch="\\",edgecolor='black')
   figs.append(fig2)
-  ax1.set_ylabel("One-epoch latency (sec.)", fontsize=fontsize)
-#  ax2.set_ylabel("Time to process a layer (ms)", fontsize=fontsize)
-  ax1.set_xlabel('Models', fontsize=fontsize)
-  ax1.tick_params(axis='y', labelsize=fontsize)
-#  ax2.tick_params(axis='y', labelsize=fontsize)
-  ax1.tick_params(axis='x', labelsize=fontsize, rotation=90)
-  plt.xticks(ind, models, fontsize=fontsize, rotation=90)
+  plt.ylabel("One-epoch latency (sec.)", fontsize=fontsize)
+  plt.xlabel('Models', fontsize=fontsize)
+  plt.xticks(ind, [model.title() for model in models], fontsize=fontsize)
+  plt.yticks(fontsize=fontsize)
   plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
   plt.tight_layout()
   plt.savefig('{}.pdf'.format(filename))
+  plt.gcf().clear()
 
 bws=['UNLIMITED', 150, 100]
 for bw in bws:				#Bandwidth

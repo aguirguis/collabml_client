@@ -14,8 +14,11 @@ def get_total_exec_time(filenames):
                     if l.startswith("The whole"):
                         line = l
                         break
-            assert line.startswith("The whole")
-            times.append(float(line.split()[-2]))
+            try:
+                assert line.startswith("The whole")
+                times.append(float(line.split()[-2]))
+            except Exception as e:	#This has probably crashed with OOM
+                times.append(0)
     return times
 
 def get_split_idx(filenames):
@@ -70,7 +73,7 @@ def get_gpu_mem_cons(filenames):
     #returns gpu_mems: list of highest memory consumption (over time) in each output file (len(gpu_mems)=len(filenames))
     #Note that this can be used in either client or server sides
     gpu_mems = get_gpu_mem_cons_time(filenames)
-    gpu_mems = [max(mem) for mem in gpu_mems]
+    gpu_mems = [max(mem, default=0) for mem in gpu_mems]
     return gpu_mems
 
 def get_batch_size_dec(filenames):
@@ -101,7 +104,7 @@ def get_percent_mismatch_bs(filenames):
         for dec in bc_dec:
             if dec[0] != dec[1]:
                 mismatch+=1
-        bs_mismatch.append(mismatch*100.0/len(bc_dec))
+        bs_mismatch.append(mismatch*100.0/len(bc_dec) if len(bc_dec) != 0 else 0)
     return bs_mismatch
 
 def get_reduction_bs(filenames):
@@ -114,5 +117,5 @@ def get_reduction_bs(filenames):
         reds=[]
         for dec in bc_dec:
             reds.append((dec[0]-dec[1])*100.0/dec[0])	#reduction = (initial_val - final_val)/initial_val
-        bs_red.append(sum(reds)/len(reds))		#average of reductions
+        bs_red.append(sum(reds)/len(reds) if len(reds) != 0 else 0)		#average of reductions
     return bs_red
