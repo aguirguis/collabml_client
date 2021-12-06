@@ -44,7 +44,7 @@ def build_model(model_str, num_classes):
   return model
 
 criterion = nn.CrossEntropyLoss()
-num_classes= 500
+num_classes= 1000
 def partial_forward(net, split_idx, batch_size, device):
   #helper function to measure the time it takes to do forward of the last few layers
   #TODO: backward should be limited only to the last few layers (not to the input layer)
@@ -80,6 +80,7 @@ models_dict={'alexnet': np.arange(1,22), #[16,17,18,19,20,21],
 }
 batch_sizes=[50,100,200] #only useful for the GPU mem. plot
 width=0.4
+logFile = open("gpu_mem_log","w")
 for model, split_idxs in models_dict.items():
   res_dict={}
   gpu_mems=[]
@@ -99,20 +100,23 @@ for model, split_idxs in models_dict.items():
       res_dict[device] = times
     print("Computation times of {} on {} with batch size {}: ".format(model, device, batch_size), times)
   ##Plotting results
-  fig = plt.figure(figsize=figsize)
-  figs = []
-  ind = np.arange(len(split_idxs))
-  fig = plt.bar(ind-0.5*width, res_dict['cpu'], width, linewidth=1, label="CPU",hatch="/",edgecolor='black')
-  figs.append(fig)
-  fig = plt.bar(ind+0.5*width, res_dict['cuda'], width, linewidth=1, label="GPU",hatch="\\",edgecolor='black')
-  figs.append(fig)
-  plt.ylabel("Time (sec.)", fontsize=fontsize)
-  plt.xlabel('Layer index', fontsize=fontsize)
-  plt.yticks(fontsize=fontsize)
-  plt.xticks(ind, split_idxs, fontsize=fontsize)
-  plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
-  plt.tight_layout()
-  plt.savefig('observation_all_layers_{}.pdf'.format(model))
+#  fig = plt.figure(figsize=figsize)
+#  figs = []
+#  ind = np.arange(len(split_idxs))
+#  fig = plt.bar(ind-0.5*width, res_dict['cpu'], width, linewidth=1, label="CPU",hatch="/",edgecolor='black')
+#  figs.append(fig)
+#  fig = plt.bar(ind+0.5*width, res_dict['cuda'], width, linewidth=1, label="GPU",hatch="\\",edgecolor='black')
+#  figs.append(fig)
+#  plt.ylabel("Time (sec.)", fontsize=fontsize)
+#  plt.xlabel('Layer index', fontsize=fontsize)
+#  plt.yticks(fontsize=fontsize)
+#  plt.xticks(ind, split_idxs, fontsize=fontsize)
+#  plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
+#  plt.tight_layout()
+#  plt.savefig('observation_all_layers_{}.pdf'.format(model))
+  #For reference, keeping the values (so that we do not rerun)
+  print(f"{model}:{gpu_mems}")
+  logFile.write(f"{model}:{gpu_mems}\r\n")
   ##Plotting GPU memory usage
   plt.gcf().clear()
   ind = np.arange(len(split_idxs))
@@ -131,3 +135,4 @@ for model, split_idxs in models_dict.items():
   plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
   plt.tight_layout()
   plt.savefig('observation_gpu_mem_per_layer_{}.pdf'.format(model))
+logFile.close()
