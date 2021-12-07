@@ -78,6 +78,24 @@ sys_legends = [f"B={bsz}" for bsz in batch_sizes]
 xtick_labels = list(np.arange(1, max_tenants+1))
 plot_bars(Y, sys_legends, xtick_labels, hatches, "Number of Tenants", "Average Execution Time (sec.)", f"results/{exp_name}")
 #################################################################################################
+#3a: throughput comparison: split to Vanilla with up to 6 tenants (batch size of 500)
+Y = []
+sys_legends = ["vanilla", "split"]
+max_tenants = 6
+Y=[]
+for system in sys_legends:
+    specific_dir = os.path.join(logdir, "multitenant_exp" is system == "split" else "multitenant_exp_vanilla")
+    times = []
+    for t in range(max_tenants):
+        num_tenants = t+1
+        filenames = [os.path.join(specific,f"process_{idx+1}_of_{num_tenants}_bs500") for idx in range(num_tenants)]
+        exec_time=get_total_exec_time(filenames)
+        avg = sum(exec_time)/len(exec_time)
+        times.append(avg)
+    Y.append(times)
+xtick_labels = list(np.arange(1, max_tenants+1))
+plot_bars(Y, [system.title() for system in sys_legends], xtick_labels, hatches, "Number of Tenants", "Average Execution Time (sec.)", f"results/{throughput_vanilla_split}")
+#################################################################################################
 #EXP4: Data Reduction experiment
 batch_sizes = [1000,2000,3000,4000,6000,8000]
 Y=[]

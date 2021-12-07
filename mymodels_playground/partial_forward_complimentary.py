@@ -46,15 +46,16 @@ for (model,values), split_idxs in zip(models.items(), models_split):
 import json
 model_to_mems = json.load(open("gpu_mem_log"))
 batch_sizes = [50,100,200]
+width=0.3
 for (model, gpu_mems), split_idxs in zip(model_to_mems.items(), models_split):
   ind = np.arange(len(split_idxs))
   fig = plt.figure(figsize=figsize)
   figs = []
-  fig = plt.bar(ind - width, gpu_mems[:len(ind)], width, linewidth=1, label="Batch = {}".format(batch_sizes[0]),edgecolor='black')
+  fig = plt.bar(ind - width, gpu_mems[:len(ind)], width, linewidth=1, label="Batch = {}".format(batch_sizes[0]), hatch="/", edgecolor='black')
   figs.append(fig)
-  fig2 = plt.bar(ind, gpu_mems[len(ind):2*len(ind)], width, linewidth=1, label="Batch = {}".format(batch_sizes[1]),edgecolor='black')
+  fig2 = plt.bar(ind, gpu_mems[len(ind):2*len(ind)], width, linewidth=1, label="Batch = {}".format(batch_sizes[1]), hatch="\\",edgecolor='black')
   figs.append(fig2)
-  fig3 = plt.bar(ind + width, gpu_mems[2*len(ind):], width, linewidth=1, label="Batch = {}".format(batch_sizes[2]),edgecolor='black')
+  fig3 = plt.bar(ind + width, gpu_mems[2*len(ind):], width, linewidth=1, label="Batch = {}".format(batch_sizes[2]), hatch="x",edgecolor='black')
   figs.append(fig3)
   plt.ylabel("GPU memory (GBs)", fontsize=fontsize)
   plt.xlabel('Start layer index', fontsize=fontsize)

@@ -69,20 +69,26 @@ def _run_vanilla(process_idx, batch_size, num_processes,special_dir=""):
     os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
                  --freeze --freeze_idx {freeze_idx} > {logdir}/{dir}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
 
-def run_scalability_multitenants(max_tenants, batch_sizes):
+def run_scalability_multitenants(max_tenants, batch_sizes, target="split"):
     #Test the scalability of our system (i.e., split) with multi-tenants and different batch sizes
     #Default parameters: (model, freeze_idx)=(multiple values), BW=1Gbps
     for t in range(max_tenants):
         num_tenant=t+1
+        if num_tenant == 1:
+            continue
         for bsz in batch_sizes:
             process = []
             empty_gpu()
             for i in range(num_tenant):
-                p = Process(target=_run_split, args=(i,bsz,num_tenant))
+                if target == "vanilla":
+                    p = Process(target=_run_vanilla, args=(i,bsz,num_tenant,"multitenant_exp_vanilla"))
+                else:
+                    p = Process(target=_run_split, args=(i,bsz,num_tenant))
                 p.start()
                 process.append(p)
             for p in process:
                 p.join()
+
 
 
 if __name__ == '__main__':
@@ -102,9 +108,9 @@ if __name__ == '__main__':
 #    run_bw_exp(BW)
 #################################################################################################
 ###################################EXP 3: Scalability with multi-tenants EXP#####################
-#    max_tenants = 6
-#    batch_sizes = [500,1000,2000,4000]
-#    run_scalability_multitenants(max_tenants, batch_sizes[:1])
+    max_tenants = 6
+    batch_sizes = [500,1000,2000,4000]
+    run_scalability_multitenants(max_tenants, batch_sizes[:1], "vanilla")
 ###############################################################################################
 ##############################EXP 4: Data reduction with different batch sizes#################
 ####Not really a complete experiment, yet this is useful to compare vanilla to split###########
@@ -116,4 +122,3 @@ if __name__ == '__main__':
 #        empty_gpu()
 #        _run_split(0, bsz, 1,special_dir='withbatchAdatp_exp')		#note that: the dir without batch adaptation is: 'batchAdatp_exp'
 ###############################################################################################
-    _run_split(0, 5000, 1,special_dir='withbatchAdatp_exp')

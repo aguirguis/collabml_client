@@ -476,7 +476,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       idstr = str(idx+1)
       obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
       objects.append(obj_name)
-    opts = {'out_directory':datadir}       #so that we can have it directly in memory
+    opts = {'out_directory':os.path.join(os.environ['HOME'],"temp")}		#It does not matter....I have all the images anyway
     #read all requested images
     images = []
     if sequential:
