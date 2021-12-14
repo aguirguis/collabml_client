@@ -8,6 +8,9 @@ def get_total_exec_time(filenames):
         print(f"Processing file: {filename}")
         with open(filename, "r") as f:
             lines = f.readlines()
+            if len(lines) == 0:
+                times.append(0)
+                continue
             line = lines[-1]
             if not line.startswith("The whole"):
                 for l in lines:

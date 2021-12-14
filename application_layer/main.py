@@ -116,7 +116,7 @@ if not args.downloadall and dataset_name == 'imagenet':
 # Model
 print('==> Building model..')
 net = get_model(model, dataset_name)
-mem_cons = 0
+mem_cons = [10,10]
 if mode == 'split' and not args.manual_split:
     split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, batch_size//100)	#TODO: the server batch is currently client batch/100...check if we need to change this later
 
@@ -241,7 +241,7 @@ try:
         lstart, lend = 0, step
         trainloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
         idx=0
-        for s in range(step, 50000, step):
+        for s in range(step, step, step):			#TODO: change this later!!! replace the middle "step" with 50000
           localtime = time()
           lstart, lend = s, s+step
           myt = Thread(target=start_now, args=(lstart, lend,transform_train,))

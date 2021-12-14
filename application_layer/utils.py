@@ -129,21 +129,22 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, server_bat
 
 def choose_split_idx(model, freeze_idx, client_batch, server_batch):
     #First of all, get the bandwidth
-    client = iperf3.Client()
-    client.duration = 1
-    client.server_hostname = "192.168.0.242"
-    while True:
-        res = client.run()
-        if res.error is None:
-            bw = res.received_bps/8             #bw now (after /8) is in Bytes/sec
-            break
+#    client = iperf3.Client()
+#    client.duration = 1
+#    client.server_hostname = "192.168.0.242"
+#    while True:
+#        res = client.run()
+#        if res.error is None:
+#            bw = res.received_bps/8             #bw now (after /8) is in Bytes/sec
+#            break
 #        print(f"Error of iperf: {res.error}")
 #        sys.stdout.flush()
 #        res=None
 #        sleep(1)
-        bw = 908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
-        break
+#        bw = 908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
+#        break
 #    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
+    bw = 908.2855256674147*1024*1024/8
     print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
     #This function chooses the split index based on the intermediate output sizes and memory consumption
     input = torch.rand((1,3,224,224))
@@ -415,9 +416,10 @@ def send_request(request_dict):
     s.connect((HOST, PORT))
     s.sendall(json.dumps(request_dict).encode('utf-8'))
     raw_msglen = recvall(s, 4)
+    print("Raw message len: ", raw_msglen)
     msglen = struct.unpack('>I', raw_msglen)[0]
     data = recvall(s, msglen)
-#    print(f"Length of received data: {len(data)}")
+    print(f"Length of received data: {len(data)}")
     return data
 
 def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, mem_cons=(0,0), sequential=False, use_intermediate=False):
@@ -436,7 +438,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step//5)),
+            "Batch-Size:{}".format(int(cur_step//10)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),

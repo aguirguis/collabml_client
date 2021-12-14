@@ -12,6 +12,8 @@ parser.add_argument('--model', default='convnet', type=str, help='model to be us
 parser.add_argument('--task', default='inference', type=str, help='ML task (inference or training)')
 parser.add_argument('--batch_size', default=100, type=int, help='batch size for dataloader')
 parser.add_argument('--num_epochs', default=10, type=int, help='number of epochs for training')
+parser.add_argument('--freeze_idx', default=1000, type=int, help='the last layer of feature extraction; training starts from the subsequent layer')
+parser.add_argument('--gpu_id', default=0, type=int, help='which GPU on the server to run on; added for load balancing')
 args = parser.parse_args()
 
 dataset = args.dataset
@@ -19,6 +21,8 @@ model = args.model
 task = args.task
 batch_size = args.batch_size
 num_epochs = args.num_epochs
+freeze_idx = args.freeze_idx
+gpu_id = args.gpu_id
 print(args)
 
 parent_dirs = {'imagenet':'val', 'mnist':'mnist', 'cifar10':'cifar-10-batches-py'}
@@ -52,6 +56,8 @@ for start in range(0,dataset_size,step):
         "Batch-Size:{}".format(batch_size),"Num-Epochs:{}".format(num_epochs),
         "Lossfn:cross-entropy","Optimizer:sgd",
 	"start:{}".format(start),"end:{}".format(end),
+        "Split-Idx:{}".format(freeze_idx),
+        "GPU-ID:{}".format(gpu_id)
          },
 	"header": {"Parent-Dir:{}".format(parent_dir)}}
   post_objects = [SwiftPostObject(o,opts) for o in objects]

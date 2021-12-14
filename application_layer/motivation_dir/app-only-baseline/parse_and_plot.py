@@ -17,7 +17,7 @@ plt.rcParams['font.family'] = 'Latin Modern Roman'
 fontsize=40
 figsize = (15, 8)
 width=0.4
-
+colors = ["blue", "orange", "darkblue","darkorange"]
 #used models in these experiments:
 models=['resnet18', 'resnet50', 'resnet152', 'vgg11', 'vgg19', 'alexnet', 'densenet121']
 ind = np.arange(len(models))
@@ -25,13 +25,20 @@ def plot(comp, comm, total, filename):
   #Plot computation and communication time in a bar plot and output it to {filename}.pdf
   figr = plt.figure(figsize=figsize)
   figs = []
-  fig1 = plt.bar(ind, comp, width, linewidth=1, label="Computation",hatch="/",edgecolor='black')
+  fig1 = plt.bar(ind, comp, width, linewidth=1, label="Computation",hatch="/",edgecolor='black', color=colors[0])
   figs.append(fig1)
-  fig2 = plt.bar(ind, np.array(total)-np.array(comp), width, bottom=comp, linewidth=1, color='orange', label="Communication",hatch="\\",edgecolor='black')
+  fig2 = plt.bar(ind, np.array(total)-np.array(comp), width, bottom=comp, linewidth=1, color=colors[1], label="Communication",hatch="\\",edgecolor='black')
   figs.append(fig2)
-  plt.ylabel("One-epoch latency (sec.)", fontsize=fontsize)
+  #put 'X' on crashing bars...
+  text = []
+  for t in total:
+      text.append("X" if t==0 else "")
+  for s,rect in zip(text,fig2):
+      height = rect.get_height()
+      plt.text(rect.get_x() + rect.get_width()/2.0, height, s, ha='center', va='bottom', weight='bold', color="red", fontsize=30)
+  plt.ylabel("Execution Time (sec.)", fontsize=fontsize)
   plt.xlabel('Models', fontsize=fontsize)
-  plt.xticks(ind, [model.title() for model in models], fontsize=fontsize)
+  plt.xticks(ind, [model.title() for model in models], fontsize=fontsize, rotation=30)
   plt.yticks(fontsize=fontsize)
   plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
   plt.tight_layout()

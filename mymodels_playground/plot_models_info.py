@@ -26,7 +26,7 @@ for font_file in font_files:
 #mgr.fontManager.ttflist.extend(font_list)
 plt.rcParams['font.family'] = 'Latin Modern Roman'
 fontsize=40
-figsize = (15, 8)
+figsize = (15, 12)
 ##Defining all the models we support
 all_models = ["alexnet", 'densenet121','densenet161','densenet169','densenet201',"mobilenetv2",
 		"mnasnet0_5","mnasnet0_75","mnasnet1_0","mnasnet1_3","vgg11","vgg13","vgg16","vgg19",
@@ -56,6 +56,8 @@ def build_model(model_str, num_classes):
 width=0.4
 criterion = nn.CrossEntropyLoss()
 for mod_class, idxs in model_to_idx.items():
+#  if mod_class != 'densenet':
+#    continue
   a = torch.rand((1,3,224,224))
   for ii,idx in enumerate(idxs):
     figr = plt.figure(figsize=figsize)
@@ -77,23 +79,30 @@ for mod_class, idxs in model_to_idx.items():
     print("Backward iteration takes: ", back_time)
 #    times.append(back_time)
 #    names.append('Backward')
-    sizes[0] = 132			#correct the input size (before rescaling)...we know that onr ImageNet image is 132 KB on average
-    times.insert(0,0)			#basically the input layer takes no time
-    names.insert(0,'input')
+#    sizes[0] = 132			#correct the input size (before rescaling)...we know that onr ImageNet image is 132 KB on average
+#    times.insert(0,0)			#basically the input layer takes no time
+#    names.insert(0,'input')
+    del sizes[0]
     times = np.array(times)*1000
     ind = np.arange(len(sizes))
-    fig = plt.bar(ind, sizes, width, linewidth=1,hatch="/", label='Size of output data', edgecolor='black',)
+    fig = plt.bar(ind, sizes, width, linewidth=1, hatch="/", label='Size of output data', edgecolor='black', color='blue')
     figs.append(fig)
 #    ind = np.append(ind, len(ind))		#to match the backward time
 #    fig3 = ax2.bar(ind+0.5*width, times, width, linewidth=1, color='orange', label=model_str+"-latency",hatch="\\",edgecolor='black',)
 #    figs.append(fig3)
-    fig2 = plt.axhline(132, color='r', linestyle="--", label='Input size')
+    figtemp, = plt.plot(ind, [132]*len(ind), color='r', linestyle="--", marker="v", ms=15)
+    fig2 = plt.axhline(132, color='r', linestyle="--", label='Imagenet image size', marker="v", ms=15)
     figs.append(fig2)
-    plt.ylabel("Output size per image (KBs)", fontsize=fontsize)
-#    ax2.set_ylabel("Time to process a layer (ms)", fontsize=fontsize)
-    plt.xlabel('Layer index', fontsize=fontsize)
-#    .tick_params(axis='x', labelsize=fontsize, rotation=90)
-    plt.xticks(ind, [name.title() for name in names], fontsize=20, rotation=90)	#especially small font size because labels are big!
+    figtemp = plt.plot(ind, [360]*len(ind), color='y', linestyle="-", marker="^", ms=15)
+    fig3 = plt.axhline(360, color='y', linestyle="-",  label='iNatura image size', marker="^", ms=15)
+    figs.append(fig3)
+    figtemp = plt.plot(ind, [1586]*len(ind), color='g', linestyle=":", marker="o", ms=15)
+    fig4 = plt.axhline(1586, color='g', linestyle=":", label='PlantLeaves image size', marker="o", ms=15)
+    figs.append(fig4)
+    plt.ylabel("Output Size (KBs)", fontsize=fontsize)
+    plt.xlabel('Layers', fontsize=fontsize)
+    plt.xticks(ind, [name.title() for name in names], fontsize=fontsize, rotation=90)	#especially small font size because labels are big!
+    plt.yticks(fontsize=fontsize)
     plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
     plt.tight_layout()
     plt.savefig('{}.pdf'.format(model_str))
