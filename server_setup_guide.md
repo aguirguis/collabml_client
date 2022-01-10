@@ -9,10 +9,10 @@ We use `Ubuntu 20.04.2 LTS` on the server.
 cd $HOME
 git clone https://github.com/aguirguis/swift.git
 #checkout the ml-swift branch
-git checkout ml-swift
+cd swift; git checkout ml-swift; cd -
 #For testing purposes, download the python-swiftclient custom code:
 git clone https://github.com/aguirguis/python-swiftclient.git
-git checkout ml-swift
+cd python-swiftclient; git checkout ml-swift; cd -
 #Although the client code is not used on the server (obviously), some individual scripts there are still useful
 git clone https://github.com/aguirguis/collabml_client.git
 ```
@@ -32,7 +32,6 @@ sudo apt-get install python3-coverage python3-dev python3-nose \
                      python3-netifaces python3-pip python3-dnspython \
                      python3-mock
 #python packages
-cd $HOME/python-swiftclient; sudo python3 setup.py develop; cd -
 cd $HOME/python-swiftclient; sudo pip3 install -r requirements.txt; sudo python3 setup.py develop; cd -
 cd $HOME/swift; sudo pip3 install --no-binary cryptography -r requirements.txt; sudo python3 setup.py develop; cd -
 ```
