@@ -6,7 +6,7 @@ import numpy as np
 from myparser import *
 from myplotter import *
 homedir = os.path.expanduser("~")
-projectdir = os.path.join(homedir, "swift_playground/application_layer")
+projectdir = os.path.join(homedir, "collabml_client/application_layer")
 logdir = os.path.join(projectdir,"logs")
 hatches = ['//','\\','x','o',"*",".", "--", "O","+"]
 linestyles = ['-', '--', '-.', ':', (0, (3, 1, 1, 1, 1, 1)), 'solid', '--']

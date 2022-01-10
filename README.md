@@ -1,6 +1,8 @@
-# swift_playground
+# collabml_client
 
-Playing with OpenStack swift, the open-source object storage
+This is the code of the client side of HAPI, a processing system for transfer learning that spans the compute and the object storage tiers.
+HAPI is presented in the paper "Accelerating Transfer Learning with Cloud Object Stores", co-authored by Arsany Guirguis, Florin Dinu, Do Le Quoc, Javier Picorel, and Rachid Guerraoui.
+HAPI is build on top of OpenStack swift, the open-source object storage, and PyTorch for ML computations.
 
 ## Instalation
 

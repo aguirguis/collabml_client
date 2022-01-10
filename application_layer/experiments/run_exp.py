@@ -7,7 +7,7 @@ import time
 import torch
 from multiprocessing import Process
 homedir = os.path.expanduser("~")
-projectdir = os.path.join(homedir, "swift_playground/application_layer")
+projectdir = os.path.join(homedir, "collabml_client/application_layer")
 execfile = os.path.join(projectdir,"main.py")
 logdir = os.path.join(projectdir,"logs")
 

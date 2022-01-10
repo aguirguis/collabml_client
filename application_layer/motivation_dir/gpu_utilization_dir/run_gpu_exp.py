@@ -29,11 +29,11 @@ def get_gpu_mem_cons(filenames):
 filenames = []
 for split in range(11,29):
     freeze = 25 if split < 25 else split
-    os.system(f"python3 /root/swift_playground/application_layer/main.py --dataset imagenet\
+    os.system(f"python3 /root/collabml_client/application_layer/main.py --dataset imagenet\
 		 --model myvgg11 --num_epochs 1 --batch_size 1000 --freeze --freeze_idx {freeze}\
 		 --use_intermediate --split_idx {split} --manual_split | tee temp/vgg11_manual_split_{split}")
     filenames.append(f"temp/vgg11_manual_split_{split}")
-os.system("python3 /root/swift_playground/application_layer/main.py --dataset imagenet\
+os.system("python3 /root/collabml_client/application_layer/main.py --dataset imagenet\
 	 --model vgg11 --num_epochs 1 --batch_size 1000 --freeze --freeze_idx 25 | tee temp/vanilla_vgg11")
 filenames.append("temp/vanilla_vgg11")
 

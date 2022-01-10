@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as mgr
 plt.rcParams['pdf.fonttype'] = 42
 homedir = os.path.expanduser("~")
-projectdir = os.path.join(homedir, "swift_playground/application_layer")
+projectdir = os.path.join(homedir, "collabml_client/application_layer")
 font_dirs = [os.path.join(projectdir, 'experiments','./latin-modern-roman')]
 font_files = mgr.findSystemFonts(fontpaths=font_dirs)
 for font_file in font_files:
