@@ -51,7 +51,7 @@ for (model,values), split_idxs in zip(models.items(), models_split):
   fig = plt.bar(ind+0.5*width, times, width, linewidth=1, label="GPU",hatch="\\",edgecolor='black', color='orange')
   figs.append(fig)
   plt.ylabel("Execution Time (sec.)", fontsize=fontsize)
-  plt.xlabel('Layer Index', fontsize=fontsize)
+  plt.xlabel('Layer index', fontsize=fontsize)
   plt.yticks(fontsize=fontsize)
   plt.xticks(ind, split_idxs, fontsize=25)
   plt.legend(handles=figs, fontsize=fontsize, loc="upper right")
