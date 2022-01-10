@@ -33,3 +33,4 @@ echo "export ST_KEY=testing" >> $HOME/.bashrc
 #test that everything is Ok
 swift stat
 ```
+**Important**: make sure to update the server IP in [this line](https://github.com/aguirguis/collabml_client/blob/main/application_layer/utils.py#L404).
