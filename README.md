@@ -4,94 +4,35 @@ This is the code of the client side of HAPI, a processing system for transfer le
 HAPI is presented in the paper "Accelerating Transfer Learning with Cloud Object Stores", co-authored by Arsany Guirguis, Florin Dinu, Do Le Quoc, Javier Picorel, and Rachid Guerraoui.
 HAPI is build on top of OpenStack swift, the open-source object storage, and PyTorch for ML computations.
 
-## Instalation
+## Setup
+HAPI is composed of two components: `server` and `client`. In our experiments, we test with 2 machines, each host a separate component.
+Please use the [server guide](server_setup_guide.md) to set up the server and the [client guide](client_setup_guide.md) to set up the client.
 
-1. Installed the requirements given [here](https://docs.openstack.org/swift/latest/getting_started.html)
+## Running the server
+After a successful setup of the server, run `rebuildswift` to start it. You can run `swift-init all stop` to stop it.
 
-2. Followed the guide [here](https://docs.openstack.org/swift/latest/development_saio.html) (using loopback device for storage)
-
-## Notes
-
-a. Used pip3 instead of pip and python3 instead of python all over the places.
-
-b. In step 2 above, `sudo pip3 install -r requirements.txt` did not work. 
-I ran it without `sudo` and then manually copied two packages to `/usr/local/lib....../dist-packages`
-
-c. To rebuild the server, run
-
+To run the HAPI server outside of the proxy server (refer to the paper for more information), run on the server machine:
 ```
-cd ~/swift; sudo python3 setup.py develop
-cd ~/swift; sudo chown -R ${USER}:${USER} swift.egg-info
-startmain
+python3 $HOME/swift/swift/proxy/mllib/server.py
 ```
+**Important**: make sure to update the server IP in [this line](https://github.com/aguirguis/swift/blob/ml-swift/swift/proxy/mllib/server.py#L325).
 
-d. To stop the server run, `swift-init all stop`
-
-e. How to get Auth_token? (I put the following exports to .bashrc on the development server for faster testing)
-
-curl -v -H 'X-Storage-User: test:tester' -H 'X-Storage-Pass: testing' http://127.0.0.1:8080/auth/v1.0
-
-You can set the following environment variables to access the storage directly 
-(note that the service layer in the python client use these environment variables)
-
+## Sample runs
+On the client side, you can run the following examples:
 ```
-export ST_AUTH_VERSION=1.0
-export ST_AUTH=http://10.221.117.112:8080/auth/v1.0
-export ST_USER=test:tester
-export ST_KEY=testing
+#split experiment
+cd $HOME/collabml_client/application_layer; python3 main.py --dataset imagenet --model myalexnet --num_epochs 1 --batch_size 8000 --freeze --freeze_idx 17 --use_intermediate; cd -
+#vanilla experiment
+cd $HOME/collabml_client/application_layer; python3 main.py --dataset imagenet --model alexnet --num_epochs 1 --batch_size 8000 --freeze --freeze_idx 17; cd -
+#swift-only baseline (called ALL_IN_COS in our paper)
+cd $HOME/collabml_client; python3 mlswift_playground.py --dataset imagenet --model alexnet --num_epochs 1 --batch_size 1000 --task training --freeze_idx 17; cd -
 ```
 
-f. CLI documentation [here](https://docs.openstack.org/python-swiftclient/latest/cli/index.html)
+## Paper experiments
+The scripts to reproduce the results and the plots of our paper can be found in [the experiments directory](application_layer/experiments). Please see `run_exp.py` for all scripts that we use to run the paper experiments and `main.py` for the plotting scripts.
 
-g. The client Service API documentation [here](https://docs.openstack.org/python-swiftclient/latest/service-api.html)
+## References
+CLI documentation can be found [here](https://docs.openstack.org/python-swiftclient/latest/cli/index.html) and the client Service API documentation is [here](https://docs.openstack.org/python-swiftclient/latest/service-api.html).
 
-h. Run `swift_rebuild.sh` to stop, revbuild, and restart the swift server after changing the source code
-
-i. Run `sudo python3 setup.py develop` to build the client from source too (make sure to checkout to `ml-swift` branch first)
-
-j. We use [WonderShaper](https://github.com/magnific0/wondershaper) to test with custom BW values.
-
-## Downloading datasets
-
-`mkdir ~/dataset`
-
-### Cifar10
-```
-cd ~/dataset
-mkdir cifar10; cd cifar10
-axel http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
-tar xzvf cifar-10-python.tar.gz
-rm cifar-10-python.tar.gz
-cd ~
-```
-
-### MNIST
-```
-cd ~/dataset
-mkdir mnist; cd mnist
-mkdir mnist; cd mnist		#This is not a typo; we do this so that we have the same structure as the other datasets
-axel http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz; gzip train-images-idx3-ubyte.gz
-axel http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz; gzip train-labels-idx1-ubyte.gz
-axel http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz; gzip t10k-images-idx3-ubyte.gz
-axel http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz; gzip t10k-labels-idx1-ubyte.gz
-cd ~
-```
-
-### Imagenet
-
-```
-cd ~/dataset
-mkdir imagenet; cd imagenet
-wget http://www.image-net.org/challenges/LSVRC/2010/ILSVRC2010_test_ground_truth.txt
-mkdir val; cd val;
-cp ../ILSVRC2010_test_ground_truth.txt ./; mv ILSVRC2010_test_ground_truth.txt ILSVRC2012_validation_ground_truth.txt
-axel -n 30 http://image-net.org/challenges/LSVRC/2012/dd31405981ef5f776aa17412e1f0c112/ILSVRC2012_img_val.tar
-tar xvf ILSVRC2012_img_val.tar; rm ILSVRC2012_img_val.tar; cd ..
-axel -n 30 http://image-net.org/challenges/LSVRC/2010/d5ef8751a0a1077596a929e9a224ee01/non-pub/ILSVRC2010_images_test.tar
-tar xvf ILSVRC2010_images_test.tar; rm ILSVRC2010_images_test.tar
-mkdir train; cd train;
-axel -n 30 http://image-net.org/challenges/LSVRC/2010/d5ef8751a0a1077596a929e9a224ee01/non-pub/ILSVRC2010_images_train.tar
-tar xvf ILSVRC2010_images_train.tar; rm ILSVRC2010_images_train.tar
-cd ~
-```
-The `valprep.sh` script can be found [here](https://raw.githubusercontent.com/soumith/imagenetloader.torch/master/valprep.sh)
+## Questions
+If you have any question, do not hesitate to contact me on arsany.guirguis@epfl.ch
