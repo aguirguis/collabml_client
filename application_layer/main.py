@@ -73,7 +73,7 @@ if args.freeze and freeze_idx == 0:
 mode = 'split' if model.startswith("my") else 'vanilla'
 print(args)
 
-parent_dir = "compressed" if mode == 'split' else "val"
+parent_dir = "compressed" # if mode == 'split' else "val"
 
 start_time = time()
 device = 'cuda' if torch.cuda.is_available() and not args.cpuonly else 'cpu'
@@ -241,7 +241,7 @@ try:
         lstart, lend = 0, step
         trainloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
         idx=0
-        for s in range(step, step, step):			#TODO: change this later!!! replace the middle "step" with 50000
+        for s in range(step, 50000, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
           localtime = time()
           lstart, lend = s, s+step
           myt = Thread(target=start_now, args=(lstart, lend,transform_train,))

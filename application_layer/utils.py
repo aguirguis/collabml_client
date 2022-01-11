@@ -23,9 +23,12 @@ import numpy as np
 import torch
 import torchvision
 from io import BytesIO
+import zipfile
 from PIL import Image
 import pickle
 import iperf3
+import functools
+import operator
 from swiftclient.service import SwiftService, SwiftPostObject
 
 try:
@@ -438,7 +441,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step//10)),
+            "Batch-Size:{}".format(int(cur_step//5)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
@@ -473,12 +476,17 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       transform=None		#no transform required in this case
   else:		#mode=='vanilla'
     objects = []
+    num_objs = int((lend-lstart)/1000)
+    step = int((lend-lstart)/num_objs)
+    lend = 50000 if lend > 50000 else lend
     #prepare images that should be read
-    for idx in range(lstart, lend):
-      idstr = str(idx+1)
-      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
+    for idx in range(lstart, lend, step):
+#      idstr = str(idx+1)
+#      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
+      obj_name = f"{parent_dir}/vals{idx}e{idx+1000}.zip"
       objects.append(obj_name)
     opts = {'out_directory':os.path.join(os.environ['HOME'],"temp")}		#It does not matter....I have all the images anyway
+#    opts = {'out_file':'-'}
     #read all requested images
     images = []
     if sequential:
@@ -486,14 +494,36 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
     else:
       queries = swift.download(container='imagenet', objects=objects, options=opts)
     read_bytes=0
+    infolists = []
     for query in queries:
       if sequential:
         query = next(swift.download(container='imagenet', objects=[query], options=opts))
+#      print(query)
       read_bytes += int(query['read_length'])
-      with open(os.path.join(datadir, query['object']), 'rb') as f:
-        image_bytes = f.read()
-      img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
-      images.append(img)
+#      print("Time till before unzipping {} seconds".format(time()-stream_time))
+#      with open(os.path.join(datadir, query['object']), 'rb') as f:
+#        image_bytes = f.read()
+#      img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
+#      images.append(img)
+      #read the downloaded zip file (note that we use the out directory we passed up in opts)
+      with open(os.path.join(os.environ['HOME'],"temp", query['object']), 'rb') as f:
+          bytes = f.read()
+#      zipbytes = query['contents']
+#      f2 = BytesIO(b''.join(zipbytes))
+      f2 = BytesIO(bytes)
+      zipff = zipfile.ZipFile(f2, 'r') #as zipf:
+          #infolist = zipf.infolist().copy()
+      infolists.append(zipff)
+#              imgs = [np.array(Image.open(BytesIO(zipf.open(f3).read())).convert('RGB')) for f3 in infolist]
+#              for file in zipf.infolist():
+#                  with zipf.open(file) as f3:
+#                      img = np.array(Image.open(BytesIO(f3.read())).convert('RGB'))
+#                      images.append(img)
+#      print("Time after unzipping {} seconds".format(time()-stream_time))
+    listToImages = lambda zipff: [np.array(Image.open(BytesIO(zipff.open(f3).read())).convert('RGB')) for f3 in zipff.infolist()]
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        images = list(executor.map(listToImages, infolists))
+    images = functools.reduce(operator.iconcat, images, [])
     print("Read {} MBs for this batch".format(read_bytes/(1024*1024)))
   #use only labels corresponding to the required images
   labels = labels[lstart:lend]
