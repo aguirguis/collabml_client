@@ -118,7 +118,7 @@ print('==> Building model..')
 net = get_model(model, dataset_name)
 mem_cons = [10,10]
 if mode == 'split' and not args.manual_split:
-    split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, batch_size//100)	#TODO: the server batch is currently client batch/100...check if we need to change this later
+    split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size)
 
 print(f"Using split index: {split_idx}")
 if mode == 'split' or args.freeze:
@@ -185,7 +185,7 @@ def test(epoch):
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
             if mode == 'split':              #This is split inference deceted!
-                outputs,_ = net(inputs, split_idx, 100)
+                outputs,_,_ = net(inputs, split_idx, 100)
             else:
                 outputs = net(inputs)
             loss = criterion(outputs, targets)

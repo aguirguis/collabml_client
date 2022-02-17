@@ -40,6 +40,7 @@ except:
     from dataset_utils import *
     from mnist_utils import *
 
+SERVER_BATCH=25
 def get_model(model_str, dataset):
     """
     Returns a model of choice from the library, adapted also to the passed dataset
@@ -98,14 +99,14 @@ def get_model(model_str, dataset):
         model = models[model_str](num_classes=num_classes)
     return model
 
-def _get_intermediate_outputs(model, input):
+def _get_intermediate_outputs_and_time(model, input):
     #returns an array with sizes of intermediate outputs (in KBs), assuming some input
-    output,sizes = model(input,0,150)		#the last parameter is any large number that is bigger than the number of layers
-    return sizes.tolist()			#note that returned sizes are of type Tensor
+    output,sizes, int_time = model(input,0,150, need_time=True)		#the last parameter is any large number that is bigger than the number of layers
+    return sizes.tolist(), int_time			#note that returned sizes are of type Tensor
 #This function gets the memory consumption on both the client and the server sides with a given split_idx, freeze_idx,
 #client batch size, server bach size, and model
 #The function also returns the estimated memory consumption in the vanilla case
-def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, server_batch, client_batch):
+def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_batch, server_batch=SERVER_BATCH):
     if freeze_idx < split_idx:          #we do not allow split after freeze index
         split_idx = freeze_idx
     outputs/=1024			#to make outputs also in KBs (P.S. it comes to here in Bytes)
@@ -130,51 +131,65 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, server_bat
                 (begtosplit_size*(client_batch/server_batch))+splittofreeze_size+freezetoend_size*2
     return total_server, total_client, vanilla, model_size, begtosplit_size/server_batch
 
-def choose_split_idx(model, freeze_idx, client_batch, server_batch):
+def choose_split_idx(model, freeze_idx, client_batch):
     #First of all, get the bandwidth
-#    client = iperf3.Client()
-#    client.duration = 1
-#    client.server_hostname = "192.168.0.242"
-#    while True:
-#        res = client.run()
-#        if res.error is None:
-#            bw = res.received_bps/8             #bw now (after /8) is in Bytes/sec
-#            break
-#        print(f"Error of iperf: {res.error}")
-#        sys.stdout.flush()
-#        res=None
-#        sleep(1)
-#        bw = 908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
-#        break
+    client = iperf3.Client()
+    client.duration = 1
+    client.server_hostname = "192.168.0.242"
+    while True:
+        res = client.run()
+        if res.error is None:
+            bw = res.received_bps/8             #bw now (after /8) is in Bytes/sec
+            break
+        print(f"Error of iperf: {res.error}")
+        sys.stdout.flush()
+        res=None
+        sleep(1)
+        bw = 908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
+        break
 #    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
-    bw = 908.2855256674147*1024*1024/8
+#    bw = 908.2855256674147*1024*1024/8
     print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
     #This function chooses the split index based on the intermediate output sizes and memory consumption
-    input = torch.rand((1,3,224,224))
+    input = torch.rand((client_batch,3,224,224))	#TODO: this might crash! replace "client_batch" with "1" for guaranteed non-crash. If you do so, please revise carefully all the lines with "client_batch" below
     #Step 1: select the layers whose outputs size is < input size && whose output < bw
-    input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
-    sizes = np.array(_get_intermediate_outputs(model, input))*1024	#sizes is in Bytes (after *1024)
+    input_size = np.prod(np.array(input.size()))*4/(4.5*client_batch)		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
+    sizes, int_time = _get_intermediate_outputs_and_time(model, input)
+    #TODO: if you remove client_batch from the above, remove client_batch as well from the next line
+    sizes = np.array(sizes)/client_batch*1024	#sizes is in Bytes (after *1024)
+    #note that int_time is the time to process each layer.. to estimate the computation time on the client, you need to compute the aggregate
+    aggregate_computation_time=[0]*len(int_time)
+    aggregate_computation_time[0]=sum(int_time)
+    for i in range(1,len(int_time)):
+        aggregate_computation_time[i]=aggregate_computation_time[i-1]-int_time[i-1]
 #    print(f"Intermediate output sizes: {sizes*server_batch*100}")
 #    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
     #note that input_size and sizes are both in Bytes
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
     print(sizes)
     print(input_size)
-    pot_idxs = np.where(sizes*server_batch*100 < min(input_size*server_batch*100, bw))
+#    pot_idxs = np.where(sizes*client_batch < min(input_size*client_batch, bw))		#Old version
+    pot_idxs = np.where(sizes < input_size)		#New version
+    #search at which index the communication time will be less than the computation time!
+    print("All candidates indexes: ", pot_idxs)
+    print("Communication time: ", np.array(sizes)*client_batch/bw)
+    print("Computation time: ", aggregate_computation_time)
+    pot_idxs = [i for i in pot_idxs[0] if sizes[i]*client_batch/bw <= aggregate_computation_time[i]]
+    print("Indexes that satisfies the communication less than computation: ", pot_idxs)
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     split_idx = freeze_idx
 #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
     model_size, begtosplit_mem = 0, 0
-    for idx in pot_idxs[0]:
+    for idx in pot_idxs:
         candidate_split=idx+1		#to solve the off-by-one error
         if candidate_split > freeze_idx:
             break
         split_idx = candidate_split
-        server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, server_batch, client_batch)
+        server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
         if server+client < vanilla:
             break
     if model_size == 0:
-        _,_,_,model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, server_batch, client_batch)
+        _,_,_,model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
     #Note that, now I have all the pieces of memory consumption on the server:
     #input_size (in bytes), model_size (in MBs), begtosplit_mem (in MBs)
     #I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
@@ -419,17 +434,19 @@ def send_request(request_dict):
     s.connect((HOST, PORT))
     s.sendall(json.dumps(request_dict).encode('utf-8'))
     raw_msglen = recvall(s, 4)
-    print("Raw message len: ", raw_msglen)
+#    print("Raw message len: ", raw_msglen)
     msglen = struct.unpack('>I', raw_msglen)[0]
     data = recvall(s, msglen)
-    print(f"Length of received data: {len(data)}")
+#    print(f"Length of received data: {len(data)}")
     return data
 
 def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, mem_cons=(0,0), sequential=False, use_intermediate=False):
   #If use_intermediate is set, we should send our request to the server socket instead of directly to Swift
   stream_time = time()
+  COMP_FILE_SIZE = 1000				#defines how many image per object (after compression)
+  print("The mode is: ", mode)
   if mode == 'split':
-      parallel_posts = int((lend-lstart)/1000)			#number of posts request to run in parallel
+      parallel_posts = int((lend-lstart)/COMP_FILE_SIZE)			#number of posts request to run in parallel
       post_step = int((lend-lstart)/parallel_posts) 		#if the batch is smaller, it will be handled on the server
       lend = 50000 if lend > 50000 else lend
       print("Start {}, end {}, post_step {}\r\n".format(lstart, lend, post_step))
@@ -441,7 +458,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            "Batch-Size:{}".format(int(cur_step//5)),
+            f"Batch-Size:{SERVER_BATCH}", #{}".format(int(cur_step//5)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
@@ -450,7 +467,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
             "Scale-BSZ:{}".format(mem_cons[1])},
             "header": {"Parent-Dir:{}".format(parent_dir)}}
 #          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
-          obj_name = f"{parent_dir}/vals{s}e{s+500}.zip"
+          obj_name = f"{parent_dir}/vals{s}e{s+COMP_FILE_SIZE}.zip"
 #      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
           post_objects.append(SwiftPostObject(obj_name,opts))		#Create multiple posts
 #      post_time = time()
@@ -461,7 +478,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
               for fut in futures:
                   res = fut.result()
                   read_bytes += int(len(res))
-                  images.extend(pickle.loads(bytes(res)))
+                  images.extend(pickle.loads(res))
       else:
           for post_res in swift.post(container='imagenet', objects=post_objects):
               if 'error' in post_res.keys():
@@ -476,14 +493,14 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       transform=None		#no transform required in this case
   else:		#mode=='vanilla'
     objects = []
-    num_objs = int((lend-lstart)/1000)
+    num_objs = int((lend-lstart)/COMP_FILE_SIZE)
     step = int((lend-lstart)/num_objs)
     lend = 50000 if lend > 50000 else lend
     #prepare images that should be read
     for idx in range(lstart, lend, step):
 #      idstr = str(idx+1)
 #      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
-      obj_name = f"{parent_dir}/vals{idx}e{idx+1000}.zip"
+      obj_name = f"{parent_dir}/vals{idx}e{idx+COMP_FILE_SIZE}.zip"
       objects.append(obj_name)
     opts = {'out_directory':os.path.join(os.environ['HOME'],"temp")}		#It does not matter....I have all the images anyway
 #    opts = {'out_file':'-'}
@@ -495,6 +512,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       queries = swift.download(container='imagenet', objects=objects, options=opts)
     read_bytes=0
     infolists = []
+    decompress_time=0
     for query in queries:
       if sequential:
         query = next(swift.download(container='imagenet', objects=[query], options=opts))
@@ -506,6 +524,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
 #      img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
 #      images.append(img)
       #read the downloaded zip file (note that we use the out directory we passed up in opts)
+      decompt = time()
       with open(os.path.join(os.environ['HOME'],"temp", query['object']), 'rb') as f:
           bytes = f.read()
 #      zipbytes = query['contents']
@@ -520,6 +539,8 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
 #                      img = np.array(Image.open(BytesIO(f3.read())).convert('RGB'))
 #                      images.append(img)
 #      print("Time after unzipping {} seconds".format(time()-stream_time))
+      decompress_time += (time()-decompt)
+    decompt=time()
     listToImages = lambda zipff: [np.array(Image.open(BytesIO(zipff.open(f3).read())).convert('RGB')) for f3 in zipff.infolist()]
     with concurrent.futures.ThreadPoolExecutor() as executor:
         images = list(executor.map(listToImages, infolists))
@@ -532,6 +553,8 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
   dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode)
   dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8)
   print("Streaming imagenet data took {} seconds".format(time()-stream_time))
+#  decompress_time += (time()-decompt)
+#  print("Time taken for post processing the received compressed file: {} seconds".format(decompress_time))
   return dataloader
 
 types = [torch.nn.modules.container.Sequential, _DenseLayer, _Transition]

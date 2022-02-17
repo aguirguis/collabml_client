@@ -58,7 +58,7 @@ exp_name="bw_exp"
 specific_dir = os.path.join(logdir, exp_name)
 BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024, 5*1024*1024, 10*1024*1024, 15*1024*1024]
 Y=[]
-Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}") for bw in BW])
+Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_alexnet") for bw in BW])
 Y.append([os.path.join(specific_dir,f"split_{bw/1024}") for bw in BW])
 exec_time = [get_total_exec_time(filenames) for filenames in Y]
 print(f"Bandwidth speedup: {np.array(exec_time[0])/np.array(exec_time[1])}")

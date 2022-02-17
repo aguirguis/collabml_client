@@ -3,6 +3,7 @@ from torchvision.models import AlexNet
 from torch import Tensor
 import torch.nn as nn
 from time import time
+import sys
 
 types = [torch.nn.modules.container.Sequential]
 def remove_sequential(network, all_layers):
@@ -19,7 +20,7 @@ class MyAlexNet(AlexNet):
         remove_sequential(self, self.all_layers)
 #        print("Length of all layers: ", len(self.all_layers))
 
-    def forward(self, x:Tensor, start: int, end: int) -> Tensor:
+    def forward(self, x:Tensor, start: int, end: int, need_time=False) -> Tensor:
       idx = 0
 #      res = [x.element_size() * x.nelement()/1024]		#this returns the sizes of the intermediate outputs in the network
       res = []
@@ -40,7 +41,9 @@ class MyAlexNet(AlexNet):
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
               break
-      return x,torch.Tensor(res).cuda() #, time_res, names
+      if need_time:
+          return x,torch.Tensor(res).cuda(), time_res #, names
+      return x,torch.Tensor(res).cuda()
 
 def build_my_alexnet(num_classes=10):
     return MyAlexNet(num_classes=num_classes)

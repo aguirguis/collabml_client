@@ -15,11 +15,12 @@ for font_file in font_files:
 #mgr.fontManager.ttflist.extend(font_list)
 plt.rcParams['font.family'] = 'Latin Modern Roman'
 fontsize=40
-figsize = (15, 8)
+figsize = (15, 10)
 width=0.4
 colors = ["blue", "orange", "darkblue","darkorange"]
 #used models in these experiments:
 models=['resnet18', 'resnet50', 'resnet152', 'vgg11', 'vgg19', 'alexnet', 'densenet121']
+#models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet']
 ind = np.arange(len(models))
 def plot(comp, comm, total, filename):
   #Plot computation and communication time in a bar plot and output it to {filename}.pdf

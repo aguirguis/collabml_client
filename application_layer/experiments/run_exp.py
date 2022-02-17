@@ -60,12 +60,12 @@ def run_bw_exp(BW, model, freeze_idx):
         os.system(f'{wondershaper_exec} -a eth0 -d {bw} -u {bw}')
         empty_gpu()
         #run vanilla
-        os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size 3000\
+        os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size 2000\
                  --freeze --freeze_idx {freeze_idx} > {logdir}/bw_exp/vanilla_{bw/1024}_{model}')
-        empty_gpu()
+#        empty_gpu()
         #run split
-        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size 3000\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/bw_exp/split_{bw/1024}_{model}')
+#        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size 2000\
+#                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/bw_exp/split_{bw/1024}_{model}')
     #Back to the default BW (1Gbps)
     os.system(f'{wondershaper_exec} -c -a eth0')
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
@@ -117,8 +117,8 @@ if __name__ == '__main__':
 #    run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
 ################################################################################################
 ###################################EXP 2: BW EXP#################################################
-#    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 15*1024*1024]
-#    run_bw_exp(BW, "alexnet", 17)
+    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 15*1024*1024]
+    run_bw_exp(BW, "alexnet", 17)
 #################################################################################################
 ###################################EXP 3: Scalability with multi-tenants EXP#####################
 #    max_tenants = 11

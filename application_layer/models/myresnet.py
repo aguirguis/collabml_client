@@ -75,7 +75,7 @@ class MyResNet(resnet):
         remove_sequential(self, self.all_layers)
 #        print("Length of all layers: ", len(self.all_layers))
 
-    def forward(self, x:Tensor, start: int, end: int) -> Tensor:
+    def forward(self, x:Tensor, start: int, end: int, need_time=False) -> Tensor:
       all_layers = []
       remove_sequential(self, all_layers)
       idx = 0
@@ -100,7 +100,9 @@ class MyResNet(resnet):
           time_res.append(time()-layer_time)
           if idx >= end:
               break
-      return x,torch.Tensor(res).cuda() #, time_res, names
+      if need_time:
+          return x,torch.Tensor(res).cuda(), time_res #, names
+      return x,torch.Tensor(res).cuda()
 
 largs = {'resnet18':[MyBasicBlock, [2, 2, 2, 2]],
         'resnet34':[MyBasicBlock, [3, 4, 6, 3]],

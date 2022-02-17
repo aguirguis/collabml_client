@@ -20,7 +20,7 @@ class MyVGG(VGG):
         remove_sequential(self, self.all_layers)
 #        print("Length of all layers: ", len(self.all_layers))
 
-    def forward(self, x:Tensor, start: int, end: int) -> Tensor:
+    def forward(self, x:Tensor, start: int, end: int, need_time=False) -> Tensor:
       idx = 0
       res=[]
 #      res.append(x.element_size() * x.nelement()/1024)
@@ -41,7 +41,9 @@ class MyVGG(VGG):
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
               break
-      return x,torch.Tensor(res).cuda() #, time_res, names
+      if need_time:
+          return x,torch.Tensor(res).cuda(), time_res #, names
+      return x,torch.Tensor(res).cuda()
 
 largs = {'vgg11':[cfgs['A'],False],
 	  'vgg11_bn':[cfgs['A'],True],

@@ -19,7 +19,7 @@ class MyInception(Inception3):
         remove_sequential(self, self.all_layers)
         print("Length of all layers: ", len(self.all_layers))
 
-    def forward(self, x:Tensor, start: int, end: int) -> Tensor:
+    def forward(self, x:Tensor, start: int, end: int, need_time=False) -> Tensor:
       idx = 0
       print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
       res = []
@@ -43,7 +43,9 @@ class MyInception(Inception3):
           res.append(x.element_size() * x.nelement()/1024)
           if idx >= end:
               break
-      return x,res, time_res, names
+      if need_time:
+          return x,torch.Tensor(res).cuda(), time_res #, names
+      return x,torch.Tensor(res).cuda()
 
 def build_my_inception(num_classes=10):
     return MyInception(num_classes=num_classes)
