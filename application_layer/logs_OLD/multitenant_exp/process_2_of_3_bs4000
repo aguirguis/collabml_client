@@ -1,0 +1,124 @@
+Namespace(batch_size=4000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=11, manual_split=False, model='myresnet18', num_epochs=1, sequential=False, split_idx=100, start=0, testonly=False, use_intermediate=True)
+==> Preparing data..
+==> Building model..
+Recorded bandwidth: 908.2542090738514 Mbps
+[3.211264e+06 3.211264e+06 3.211264e+06 8.028160e+05 4.816896e+06
+ 4.816896e+06 2.408448e+06 2.408448e+06 1.204224e+06 1.204224e+06
+ 6.021120e+05 6.021120e+05 2.048000e+03 4.000000e+03]
+133802.66666666666
+44.591949462890625 26.733072916666668
+Using split index: 11
+Freezing the lower layers of the model (myresnet18) till index 11
+Start 0, end 4000, post_step 1000
+
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3734.0, 3.0)
+Memory occpied: (3798.0, 354.0)
+Memory occpied: (3830.0, 1015.0)
+Memory occpied: (3830.0, 1793.0)
+Memory occpied: (4448.0, 2675.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4712.0, 2893.0)
+Memory occpied: (4874.0, 2901.0)
+Memory occpied: (4874.0, 2901.0)
+Read 382.9922523498535 MBs for this batch
+Executing all posts took 43.39535427093506 seconds
+Streaming imagenet data took 43.53777360916138 seconds
+Start 4000, end 8000, post_step 1000
+
+
+Epoch: 0
+Memory occpied: (4874.0, 2901.0)
+Time of next(dataloader) is: 0.5537729263305664
+Time for copying to cuda: 0.10128402709960938
+Memory occpied: (5258.0, 3356.0)
+Memory occpied: (5258.0, 3780.0)
+Memory occpied: (15092.0, 14062.0)
+Memory occpied: (15058.0, 14070.0)
+Time for forward pass: 4.920175790786743
+Memory occpied: (15066.0, 14038.0)
+Memory occpied: (15066.0, 14038.0)
+Time for backpropagation: 2.583756923675537
+GPU memory for training: 19.75068759918213                          
+
+One training iteration takes: 8.268335342407227 seconds
+Index: 0
+Memory occpied: (15070.0, 4238.0)
+Memory occpied: (15070.0, 4238.0)
+Memory occpied: (15070.0, 4238.0)
+Memory occpied: (15070.0, 4238.0)
+Memory occpied: (15070.0, 4238.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Memory occpied: (15098.0, 4246.0)
+Read 382.9922523498535 MBs for this batch
+Executing all posts took 29.786701917648315 seconds
+Streaming imagenet data took 29.933323860168457 seconds
+Then, training+dataloading take 29.952817678451538 seconds
+Start 8000, end 12000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.7488553524017334
+Time for copying to cuda: 0.09965062141418457
+Memory occpied: (15098.0, 4246.0)
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/root/swift_playground/application_layer/models/myresnet.py", line 95, in forward
+    x,sizes = m(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/root/swift_playground/application_layer/models/myresnet.py", line 19, in forward
+    out = self.conv1(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 446, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 442, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+RuntimeError: cuDNN error: CUDNN_STATUS_NOT_INITIALIZED
+
+The whole process took 81.3797357082367 seconds
+Read 382.9922523498535 MBs for this batch
+Executing all posts took 39.97291946411133 seconds
+Streaming imagenet data took 40.12212419509888 seconds

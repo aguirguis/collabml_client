@@ -13,7 +13,7 @@ import argparse
 import sys
 from utils import *
 from mnist_utils import *
-from time import time
+import time
 from threading import Thread
 
 from swiftclient.service import SwiftService, SwiftError
@@ -75,7 +75,7 @@ print(args)
 
 parent_dir = "compressed" # if mode == 'split' else "val"
 
-start_time = time()
+start_time = time.time()
 device = 'cuda' if torch.cuda.is_available() and not args.cpuonly else 'cpu'
 
 # Data
@@ -86,12 +86,12 @@ datadir = os.path.join(homedir,"dataset",dataset_name)
 #first fetch data....we assume here that data does not exist locally
 swift = SwiftService()
 if args.downloadall:
-  start_download_t = time()
+  start_download_t = time.time()
   try:
     download_dataset(swift, dataset_name, datadir)
   except ClientException as e:
     print("Got an exeption while downloading the dataset ", e)
-  print('data downloaded...time elapsed: {}'.format(time()-start_download_t))
+  print('data downloaded...time elapsed: {}'.format(time.time()-start_download_t))
 
 #prepare transformation
 transform_train, transform_test = prepare_transforms(dataset_name)
@@ -107,6 +107,7 @@ if not args.downloadall and dataset_name == 'imagenet':
   #We can download the labels file once and for all (it's small enough)
   opts = {'out_file':'-'}	#so that we can have it directly in memory
   query = swift.download(container=dataset_name, objects=['val/ILSVRC2012_validation_ground_truth.txt'], options=opts)
+  print(query)
   reader = next(query)['contents']
   labelstr = b''.join(reader)
   labels = labelstr.decode("utf-8").split("\n")[:-1]		#remove extra '' at the end
@@ -148,31 +149,31 @@ def train(epoch):
     train_loss = 0
     correct = 0
     total = 0
-    dataload_time = time()
+    dataload_time = time.time()
     if device == 'cuda':
         torch.cuda.reset_max_memory_allocated(0)
         torch.cuda.reset_max_memory_allocated(1)
     for batch_idx, (inputs, targets) in enumerate(trainloader):
-        print("Time of next(dataloader) is: {}".format(time()-dataload_time))
-        copy_time = time()
+        print("Time of next(dataloader) is: {}".format(time.time()-dataload_time))
+        copy_time = time.time()
         inputs, targets = inputs.to(device), targets.to(device)
-        print("Time for copying to cuda: {}".format(time()-copy_time))
+        print("Time for copying to cuda: {}".format(time.time()-copy_time))
         optimizer.zero_grad()
-        forward_time = time()
+        forward_time = time.time()
         if mode == 'split':		#This is transfer learning deceted!
             outputs,_ = net(inputs, split_idx, 100)
         else:
             outputs = net(inputs)
-        print("Time for forward pass: {}".format(time()-forward_time))
-        back_time = time()
+        print("Time for forward pass: {}".format(time.time()-forward_time))
+        back_time = time.time()
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
-        print("Time for backpropagation: {}".format(time()-back_time))
+        print("Time for backpropagation: {}".format(time.time()-back_time))
         if device == 'cuda':
             print("GPU memory for training: {}         \
                  \r\n".format((torch.cuda.max_memory_allocated(0)+torch.cuda.max_memory_allocated(1))/(1024*1024*1024)))
-        dataload_time = time()
+        dataload_time = time.time()
 
 def test(epoch):
     global testloader, net
@@ -234,21 +235,23 @@ try:
     else:
       res = test(0)
     print("Inference done for {} inputs".format(len(res)))
-    print("The whole process took {} seconds".format(time()-start_time))
+    print("The whole process took {} seconds".format(time.time()-start_time))
   else:
     for epoch in range(num_epochs):
       if not args.downloadall and dataset_name == 'imagenet':
         lstart, lend = 0, step
+        print("LOADING DATA !!!")
         trainloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
+        print("FINISHED LOADING DATA !!!")
         idx=0
         for s in range(step, 50000, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
-          localtime = time()
+          localtime = time.time()
           lstart, lend = s, s+step
           myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
           if not args.sequential:   #run this in parallel
             myt.start()
           train(epoch)
-          print("One training iteration takes: {} seconds".format(time()-localtime))
+          print("One training iteration takes: {} seconds".format(time.time()-localtime))
           print("Index:",idx)
           idx+=1
           if args.sequential:
@@ -256,7 +259,7 @@ try:
           myt.join()
           trainloader = next_dataloader
           dataloader = None
-          print("Then, training+dataloading take {} seconds".format(time()-localtime))
+          print("Then, training+dataloading take {} seconds".format(time.time()-localtime))
         train(epoch)
       else:
         train(epoch)
@@ -266,5 +269,5 @@ except Exception as e:
 #Stop GPU thread
 stop_thread = True
 gpu_th.join()
-print("The whole process took {} seconds".format(time()-start_time))
+print("The whole process took {} seconds".format(time.time()-start_time))
 sys.stdout.flush()
