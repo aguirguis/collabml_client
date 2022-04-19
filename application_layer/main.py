@@ -106,7 +106,7 @@ if args.downloadall:
 if not args.downloadall and dataset_name == 'imagenet':
   #We can download the labels file once and for all (it's small enough)
   opts = {'out_file':'-'}	#so that we can have it directly in memory
-  query = swift.download(container=dataset_name, objects=['val/ILSVRC2012_validation_ground_truth.txt'], options=opts)
+  query = swift.download(container=dataset_name, objects=['compressed/ILSVRC2012_validation_ground_truth.txt'], options=opts)
   print(query)
   reader = next(query)['contents']
   labelstr = b''.join(reader)
@@ -240,9 +240,7 @@ try:
     for epoch in range(num_epochs):
       if not args.downloadall and dataset_name == 'imagenet':
         lstart, lend = 0, step
-        print("LOADING DATA !!!")
         trainloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
-        print("FINISHED LOADING DATA !!!")
         idx=0
         for s in range(step, 50000, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
           localtime = time.time()
