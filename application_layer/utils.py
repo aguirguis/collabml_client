@@ -466,8 +466,8 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            #f"Batch-Size:{SERVER_BATCH}", #{}".format(int(cur_step//5)),
-            "Batch-Size:{}".format(int(cur_step//5)),
+            f"Batch-Size:{SERVER_BATCH}", #{}".format(int(cur_step//5)),
+            #"Batch-Size:{}".format(int(cur_step//5)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
@@ -566,7 +566,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
 #  print("Time taken for post processing the received compressed file: {} seconds".format(decompress_time))
   return dataloader
 
-types = [torch.nn.modules.container.Sequential, _DenseLayer, _Transition]
+types = [torch.nn.modules.container.Sequential, _DenseLayer, _Transition, PatchEmbed]
 
 globalFreezeIndex = 0
 def freeze_sequential(network, all_layers):
