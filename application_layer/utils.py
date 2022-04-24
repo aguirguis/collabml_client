@@ -171,8 +171,8 @@ def choose_split_idx(model, freeze_idx, client_batch):
 #    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
     #note that input_size and sizes are both in Bytes
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
-    print(sizes)
-    print(input_size)
+    #print(sizes)
+    #print(input_size)
 #    pot_idxs = np.where(sizes*client_batch < min(input_size*client_batch, bw))		#Old version
     pot_idxs = np.where(sizes < input_size)		#New version
     #search at which index the communication time will be less than the computation time!

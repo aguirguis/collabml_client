@@ -96,7 +96,6 @@ class MyViT(vision_transformer.VisionTransformer):
                             if isinstance(cc, vision_transformer.Block):
                                 # TODO change afterwards
                                 res.append(16594.171875)
-                                print("HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                             else:
                                 res.append(x.element_size() * x.nelement() / 1024)
                     if isinstance(child, torch.nn.Sequential):

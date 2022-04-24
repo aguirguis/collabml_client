@@ -107,7 +107,7 @@ if not args.downloadall and dataset_name == 'imagenet':
   #We can download the labels file once and for all (it's small enough)
   opts = {'out_file':'-'}	#so that we can have it directly in memory
   query = swift.download(container=dataset_name, objects=['compressed/ILSVRC2012_validation_ground_truth.txt'], options=opts)
-  print(query)
+  #print(query)
   reader = next(query)['contents']
   labelstr = b''.join(reader)
   labels = labelstr.decode("utf-8").split("\n")[:-1]		#remove extra '' at the end
