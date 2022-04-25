@@ -42,7 +42,6 @@ def flatten(model: torch.nn.Module):
     return flatt_children
 
 class MyViT(vision_transformer.VisionTransformer):
-    features_size_block = {}
 
     def forward(self, x, start=0, end=10000, need_time=False):
         res = []
@@ -96,10 +95,7 @@ class MyViT(vision_transformer.VisionTransformer):
                             time_res.append(time.time() - layer_time)
                             if isinstance(cc, vision_transformer.Block):
                                 # TODO change afterwards
-                                sum_sizes = sum(self.features_size_block[list(self.features_size_block.keys())[0]])
-                                #res.append(16594.171875)
-                                #print(sum_sizes)
-                                res.append(sum_sizes)
+                                res.append(16594.171875)
                             else:
                                 res.append(x.element_size() * x.nelement() / 1024)
                     if isinstance(child, torch.nn.Sequential):
@@ -111,17 +107,4 @@ class MyViT(vision_transformer.VisionTransformer):
 
 
 def build_my_vit(num_classes=10):
-    def get_features(i, features_size):
-        def hook(model, input, output):
-            if i in features_size:
-                features_size[i].append(output.element_size() * output.nelement() / 1024)
-            else:
-                features_size[i] = [output.element_size() * output.nelement() / 1024]
-        return hook
-
-    m = MyViT(num_classes=num_classes)
-    for i, block in enumerate(m.blocks):
-        for lay in flatten(block):
-            lay.register_forward_hook(get_features(i, m.features_size_block))
-    return m
-
+    return MyViT(num_classes=num_classes)

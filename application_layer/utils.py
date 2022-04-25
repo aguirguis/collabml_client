@@ -151,42 +151,25 @@ def choose_split_idx(model, freeze_idx, client_batch):
         sleep(1)
         bw = 908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
         break
-#    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
-#    bw = 908.2855256674147*1024*1024/8
     print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
     #This function chooses the split index based on the intermediate output sizes and memory consumption
-    #input = torch.rand((client_batch,3,224,224))	#TODO: this might crash! replace "client_batch" with "1" for guaranteed non-crash. If you do so, please revise carefully all the lines with "client_batch" below
-    input = torch.rand((1,3,224,224))	#TODO: this might crash! replace "client_batch" with "1" for guaranteed non-crash. If you do so, please revise carefully all the lines with "client_batch" below
+    input = torch.rand((1,3,224,224))
     #Step 1: select the layers whose outputs size is < input size && whose output < bw
-    input_size = np.prod(np.array(input.size()))*4/(4.5*client_batch)		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
+    input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
     sizes, int_time = _get_intermediate_outputs_and_time(model, input)
-    #TODO: if you remove client_batch from the above, remove client_batch as well from the next line
-    sizes = np.array(sizes)/client_batch*1024	#sizes is in Bytes (after *1024)
-    #note that int_time is the time to process each layer.. to estimate the computation time on the client, you need to compute the aggregate
-    aggregate_computation_time=[0]*len(int_time)
-    aggregate_computation_time[0]=sum(int_time)
-    for i in range(1,len(int_time)):
-        aggregate_computation_time[i]=aggregate_computation_time[i-1]-int_time[i-1]
+    sizes = np.array(sizes)*1024	#sizes is in Bytes (after *1024)
 #    print(f"Intermediate output sizes: {sizes*server_batch*100}")
 #    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
     #note that input_size and sizes are both in Bytes
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
-    #print(sizes)
-    #print(input_size)
-#    pot_idxs = np.where(sizes*client_batch < min(input_size*client_batch, bw))		#Old version
-    pot_idxs = np.where(sizes < input_size)		#New version
-    #search at which index the communication time will be less than the computation time!
-    print("All candidates indexes: ", pot_idxs)
-    print("Communication time: ", np.array(sizes)*client_batch/bw)
-    print("Computation time: ", aggregate_computation_time)
-    pot_idxs = [i for i in pot_idxs[0] if sizes[i]*client_batch <= bw]
-    #pot_idxs = [i for i in pot_idxs[0] if sizes[i]*client_batch/bw <= aggregate_computation_time[i]]
-    print("Indexes that satisfies the communication less than computation: ", pot_idxs)
+    print(sizes)
+    print(input_size)
+    pot_idxs = np.where(sizes*client_batch*100 < min(input_size*client_batch*100, bw))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     split_idx = freeze_idx
 #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
     model_size, begtosplit_mem = 0, 0
-    for idx in pot_idxs:
+    for idx in pot_idxs[0]:
         candidate_split=idx+1		#to solve the off-by-one error
         if candidate_split > freeze_idx:
             break
@@ -203,6 +186,58 @@ def choose_split_idx(model, freeze_idx, client_batch):
     fixed, scale_with_bsz = model_size, input_size/(1024*1024)+begtosplit_mem
     print(fixed, scale_with_bsz)
     return split_idx, (fixed, scale_with_bsz)
+#    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
+#    bw = 908.2855256674147*1024*1024/8
+#    print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
+#    #This function chooses the split index based on the intermediate output sizes and memory consumption
+#    #input = torch.rand((client_batch,3,224,224))	#TODO: this might crash! replace "client_batch" with "1" for guaranteed non-crash. If you do so, please revise carefully all the lines with "client_batch" below
+#    input = torch.rand((1,3,224,224))	#TODO: this might crash! replace "client_batch" with "1" for guaranteed non-crash. If you do so, please revise carefully all the lines with "client_batch" below
+#    #Step 1: select the layers whose outputs size is < input size && whose output < bw
+#    input_size = np.prod(np.array(input.size()))*4/(4.5*client_batch)		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
+#    sizes, int_time = _get_intermediate_outputs_and_time(model, input)
+#    #TODO: if you remove client_batch from the above, remove client_batch as well from the next line
+#    sizes = np.array(sizes)/client_batch*1024	#sizes is in Bytes (after *1024)
+#    #note that int_time is the time to process each layer.. to estimate the computation time on the client, you need to compute the aggregate
+#    aggregate_computation_time=[0]*len(int_time)
+#    aggregate_computation_time[0]=sum(int_time)
+#    for i in range(1,len(int_time)):
+#        aggregate_computation_time[i]=aggregate_computation_time[i-1]-int_time[i-1]
+##    print(f"Intermediate output sizes: {sizes*server_batch*100}")
+##    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
+#    #note that input_size and sizes are both in Bytes
+#    #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
+#    #print(sizes)
+#    #print(input_size)
+##    pot_idxs = np.where(sizes*client_batch < min(input_size*client_batch, bw))		#Old version
+#    pot_idxs = np.where(sizes < input_size)		#New version
+#    #search at which index the communication time will be less than the computation time!
+#    print("All candidates indexes: ", pot_idxs)
+#    print("Communication time: ", np.array(sizes)*client_batch/bw)
+#    print("Computation time: ", aggregate_computation_time)
+#    pot_idxs = [i for i in pot_idxs[0] if sizes[i]*client_batch <= bw]
+#    #pot_idxs = [i for i in pot_idxs[0] if sizes[i]*client_batch/bw <= aggregate_computation_time[i]]
+#    print("Indexes that satisfies the communication less than computation: ", pot_idxs)
+#    #Step 2: select an index whose memory utilition is less than that in vanilla cases
+#    split_idx = freeze_idx
+##    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
+#    model_size, begtosplit_mem = 0, 0
+#    for idx in pot_idxs:
+#        candidate_split=idx+1		#to solve the off-by-one error
+#        if candidate_split > freeze_idx:
+#            break
+#        split_idx = candidate_split
+#        server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
+#        if server+client < vanilla:
+#            break
+#    if model_size == 0:
+#        _,_,_,model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
+#    #Note that, now I have all the pieces of memory consumption on the server:
+#    #input_size (in bytes), model_size (in MBs), begtosplit_mem (in MBs)
+#    #I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
+#    #Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
+#    fixed, scale_with_bsz = model_size, input_size/(1024*1024)+begtosplit_mem
+#    print(fixed, scale_with_bsz)
+#    return split_idx, (fixed, scale_with_bsz)
 
 def get_mem_usage():
     #returns a dict with memory usage values (in GBs)
@@ -466,8 +501,8 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
           cur_step = cur_end - s
           opts = {"meta": {"Ml-Task:inference",
             "dataset:imagenet","model:{}".format(model),
-            f"Batch-Size:{SERVER_BATCH}", #{}".format(int(cur_step//5)),
-            #"Batch-Size:{}".format(int(cur_step//5)),
+            #f"Batch-Size:{SERVER_BATCH}", #{}".format(int(cur_step//5)),
+            "Batch-Size:{}".format(int(cur_step)),
             "start:{}".format(s),"end:{}".format(cur_end),
 #            "Batch-Size:{}".format(post_step),
 #            "start:{}".format(lstart),"end:{}".format(lend),
@@ -487,6 +522,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
               for fut in futures:
                   res = fut.result()
                   read_bytes += int(len(res))
+                  print(f"Results : {int(len(res))}")
                   images.extend(pickle.loads(res))
       else:
           for post_res in swift.post(container='imagenet', objects=post_objects):
