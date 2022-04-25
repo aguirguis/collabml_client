@@ -134,8 +134,10 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_bat
 
 
     # Just for debug
-    total_size_one_input = input_size + model_size + np.sum(outputs)/1024
-    print("Total size ", total_size_one_input)
+    print("Intermediate: ", intermediate_input_size)
+    print(begtosplit_size/server_batch)
+    total_layers_size = np.sum(outputs)/1024
+    print("Total layers size ", total_layers_size)
 
     total_server = input_size+model_size+begtosplit_size
     total_client = intermediate_input_size+model_size+splittofreeze_size+freezetoend_size*2
@@ -144,6 +146,8 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_bat
     return total_server, total_client, vanilla, model_size, begtosplit_size/server_batch
 
 def choose_split_idx(model, freeze_idx, client_batch):
+    a=torch.cuda.FloatTensor(1)
+    print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
     #First of all, get the bandwidth
     client = iperf3.Client()
     client.duration = 1
@@ -164,7 +168,7 @@ def choose_split_idx(model, freeze_idx, client_batch):
     input = torch.rand((1,3,224,224))
     #Step 1: select the layers whose outputs size is < input size && whose output < bw
     #input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
-    input_size = np.prod(np.array(input.size()))*4		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
+    input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
     sizes, int_time = _get_intermediate_outputs_and_time(model, input)
     sizes = np.array(sizes)*1024	#sizes is in Bytes (after *1024)
     print("Done intermediate outputs and time")
@@ -199,6 +203,7 @@ def choose_split_idx(model, freeze_idx, client_batch):
     #Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
     fixed, scale_with_bsz = model_size, input_size/(1024*1024)+begtosplit_mem
     print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
+    print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
     return split_idx, (fixed, scale_with_bsz)
 #    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
 #    bw = 908.2855256674147*1024*1024/8
@@ -536,7 +541,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
               for fut in futures:
                   res = fut.result()
                   read_bytes += int(len(res))
-                  print(f"Results : {int(len(res))}")
+                  #print(f"Results : {int(len(res))}")
                   images.extend(pickle.loads(res))
       else:
           for post_res in swift.post(container='imagenet', objects=post_objects):
