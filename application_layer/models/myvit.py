@@ -122,6 +122,80 @@ def build_my_vit(num_classes=10):
     m = MyViT(num_classes=num_classes)
     for i, block in enumerate(m.blocks):
         for lay in flatten(block):
+#            if i == 0:
+#                print(lay)
             lay.register_forward_hook(get_features(i, m.features_size_block))
     return m
 
+
+import subprocess
+import shutil
+import threading
+def _get_gpu_stats(gpu_id):
+    """Run nvidia-smi to get the gpu stats"""
+    gpu_query = ",".join(["utilization.gpu", "memory.used", "memory.total"])
+    format = 'csv,nounits,noheader'
+    result = subprocess.run(
+        [shutil.which('nvidia-smi'), f'--query-gpu={gpu_query}', f'--format={format}', f'--id={gpu_id}', '-l 1'],
+        encoding="utf-8",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,  # for backward compatibility with python version 3.6
+        check=True
+    )
+
+    def _to_float(x: str) -> float:
+        try:
+            return float(x)
+        except ValueError:
+            return 0.
+
+    stats = result.stdout.strip().split(os.linesep)
+    stats = [[_to_float(x) for x in s.split(', ')] for s in stats]
+    return stats
+
+# Define transforms for test
+IMG_SIZE = (224, 224)
+NORMALIZE_MEAN = (0.5, 0.5, 0.5)
+NORMALIZE_STD = (0.5, 0.5, 0.5)
+transforms = [
+    T.Resize(IMG_SIZE),
+    T.ToTensor(),
+    T.Normalize(NORMALIZE_MEAN, NORMALIZE_STD),
+]
+
+transforms = T.Compose(transforms)
+
+# ImageNet Labels
+#imagenet_labels = dict(enumerate(open('ilsvrc2012_wordnet_lemmas.txt')))
+
+from gpu_mem_track import MemTracker
+
+gpu_t = MemTracker()
+gpu_t.track()
+print(_get_gpu_stats(0), _get_gpu_stats(1))
+# Demo Image
+img = PIL.Image.open('santorini.png')
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+img_tensor = transforms(img).unsqueeze(0).to(device)
+print(img_tensor.size())
+img_tensor = img_tensor.repeat(10,1,1,1)
+print(img_tensor.size())
+gpu_t.track()
+print(_get_gpu_stats(0), _get_gpu_stats(1))
+
+model_test = build_my_vit(1000)
+if torch.cuda.is_available():
+    model_test.cuda()
+gpu_t.track()
+print(_get_gpu_stats(0), _get_gpu_stats(1))
+# print(flatten(model_test))
+
+output = model_test(img_tensor)
+output = model_test(img_tensor)
+gpu_t.track()
+print(_get_gpu_stats(0), _get_gpu_stats(1))
+#print(output)
+# print(imagenet_labels[int(torch.argmax(output))])
+# print(model_test(img_tensor))
+
+print()
