@@ -107,16 +107,20 @@ def run_scalability_multitenants(max_tenants, batch_sizes, target="split"):
 if __name__ == '__main__':
 ###################################EXP 1: MODELS EXP#############################################
     #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-    models=['vit']
+    #models=['vit']
+    models=['alexnet']
     #freeze_idxs=[11, 21, 25, 36, 17, 20]
     freeze_idxs=[17]
     #bsz = 2000		#This is the largest number I can get that fits in the client GPU
-    bsz = 200
+    #bsz = 200
+    bsz = 1000
     run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
     #run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
    #The same experiment but with extremely big batch size
-    bsz = 1000		#This fails with vanila GPU (but should hopefully work on)
-    run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    #bsz = 1000		#This fails with vanila GPU (but should hopefully work on)
+    #bsz = 1000		#This fails with vanila GPU (but should hopefully work on)
+    #run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    #run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
     #run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
 ################################################################################################
 ###################################EXP 2: BW EXP#################################################

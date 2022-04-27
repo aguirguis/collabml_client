@@ -1,0 +1,86 @@
+Beginning of exp
+nvidia-smi gpu utilization  3.0
+torch cuda memory allocated  0.0
+torch cuda max memory allocated  0.0
+torch cuda memory reserved  0.0
+
+Input size  0.57421875
+After loading input to cuda, input batch size 1
+nvidia-smi gpu utilization  1250.0
+torch cuda memory allocated  0.57421875
+torch cuda max memory allocated  1.1484375
+torch cuda memory reserved  2.0
+
+Model_size:  330.2294006347656
+After loading model to cuda 
+nvidia-smi gpu utilization  1630.0
+torch cuda memory allocated  330.8037109375
+torch cuda max memory allocated  330.8037109375
+torch cuda memory reserved  382.0
+
+Layer sizes, total sum tensor([5.7422e-01, 0.0000e+00, 0.0000e+00, 8.6572e+00, 8.6572e+00, 8.6572e+00,
+        8.6572e+00, 8.6572e+00, 8.6572e+00, 8.6572e+00, 8.6572e+00, 8.6572e+00,
+        8.6572e+00, 8.6572e+00, 8.6572e+00, 2.9297e-03, 2.9297e-03, 2.9297e-03,
+        3.8147e-03], device='cuda:0') tensor(104.4735, device='cuda:0')
+Expected (input+layers+model):  tensor(435.2772, device='cuda:0')
+After inference eval mode
+nvidia-smi gpu utilization  1752.0
+torch cuda memory allocated  469.24560546875
+torch cuda max memory allocated  469.2490234375
+torch cuda memory reserved  484.0
+
+Layer sizes, total sum tensor([5.7422e-01, 0.0000e+00, 0.0000e+00, 1.7314e+01, 1.7314e+01, 1.7314e+01,
+        1.7314e+01, 1.7314e+01, 1.7314e+01, 1.7314e+01, 1.7314e+01, 1.7314e+01,
+        1.7314e+01, 1.7314e+01, 1.7314e+01, 2.9297e-03, 2.9297e-03, 2.9297e-03,
+        3.8147e-03], device='cuda:0') tensor(208.3603, device='cuda:0')
+Expected (input+2*layers+model):  tensor(747.5242, device='cuda:0')
+After inference train mode
+nvidia-smi gpu utilization  1894.0
+torch cuda memory allocated  465.49072265625
+torch cuda max memory allocated  603.9326171875
+torch cuda memory reserved  626.0
+
+
+Beginning of exp
+nvidia-smi gpu utilization  1812.0
+torch cuda memory allocated  465.49072265625
+torch cuda max memory allocated  603.9326171875
+torch cuda memory reserved  544.0
+
+Input size  5.7421875
+After loading input to cuda, input batch size 10
+nvidia-smi gpu utilization  1812.0
+torch cuda memory allocated  471.31103515625
+torch cuda max memory allocated  603.9326171875
+torch cuda memory reserved  544.0
+
+Model_size:  330.2294006347656
+After loading model to cuda 
+nvidia-smi gpu utilization  2152.0
+torch cuda memory allocated  801.54052734375
+torch cuda max memory allocated  801.54052734375
+torch cuda memory reserved  884.0
+
+Layer sizes, total sum tensor([5.7422e+00, 0.0000e+00, 0.0000e+00, 1.0389e+02, 1.0389e+02, 1.0389e+02,
+        1.0389e+02, 1.0389e+02, 1.0389e+02, 1.0389e+02, 1.0389e+02, 1.0389e+02,
+        1.0389e+02, 1.0389e+02, 1.0389e+02, 2.9297e-02, 2.9297e-02, 2.9297e-02,
+        3.8147e-02], device='cuda:0') tensor(1252.5088, device='cuda:0')
+Expected (input+layers+model):  tensor(1588.4803, device='cuda:0')
+After inference eval mode
+nvidia-smi gpu utilization  3556.0
+torch cuda memory allocated  1710.5380859375
+torch cuda max memory allocated  2176.02880859375
+torch cuda memory reserved  2288.0
+
+Layer sizes, total sum tensor([5.7422e+00, 0.0000e+00, 0.0000e+00, 1.9046e+02, 1.9046e+02, 1.9046e+02,
+        1.9046e+02, 1.9046e+02, 1.9046e+02, 1.9046e+02, 1.9046e+02, 1.9046e+02,
+        1.9046e+02, 1.9046e+02, 1.9046e+02, 2.9297e-02, 2.9297e-02, 2.9297e-02,
+        3.8147e-02], device='cuda:0') tensor(2291.3760, device='cuda:0')
+Expected (input+2*layers+model):  tensor(4918.7236, device='cuda:0')
+After inference train mode
+nvidia-smi gpu utilization  4536.0
+torch cuda memory allocated  1700.9482421875
+torch cuda max memory allocated  3075.4365234375
+torch cuda memory reserved  3268.0
+
+
