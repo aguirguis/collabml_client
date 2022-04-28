@@ -199,7 +199,9 @@ img = PIL.Image.open('santorini.png')
 for batch_size in batch_sizes:
     torch.cuda.empty_cache()
     print_stats("Beginning of exp")
+    model_time = time.time()
     img_tensor = transforms(img).unsqueeze(0).to(device)
+    print("Time to load first vector: {}\r\n".format(time.time()-model_time))
     img_tensor = img_tensor.repeat(batch_size, 1, 1, 1)
     input_size = img_tensor.element_size() * img_tensor.nelement() / (1024**2)
     print("Input size ", input_size)
@@ -208,9 +210,10 @@ for batch_size in batch_sizes:
     print_stats(f"After loading input to cuda, input batch size {bs}")
 
     model_test = build_my_vit(1000)
+    model_time = time.time()
     if torch.cuda.is_available():
         model_test.cuda()
-
+    print("Time to load model: {}\r\n".format(time.time()-model_time))
     params=[param for param in model_test.parameters()]
     mod_sizes = [np.prod(np.array(p.size())) for p in params]
     model_size = np.sum(mod_sizes)*4/ (1024*1024)
