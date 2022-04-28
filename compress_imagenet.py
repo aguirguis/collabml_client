@@ -6,7 +6,7 @@ from os.path import expanduser
 import io
 home=expanduser("~")
 #prepare files
-step = 1000
+step = 50000
 for i in range(0,50000,step):
     start, end = i,i+step
     print(f"Compressing images from {start} to {end}")
