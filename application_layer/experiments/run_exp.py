@@ -81,7 +81,8 @@ def run_bw_exp(BW, model, freeze_idx):
         empty_gpu()
         #run split
         os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size 8000\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/bw_exp/split_{bw/1024}_{model}')
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate')
+                 #--freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/bw_exp/split_{bw/1024}_{model}')
     #Back to the default BW (1Gbps)
     os.system(f'{wondershaper_exec} -c -a eth0')
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
@@ -148,7 +149,7 @@ if __name__ == '__main__':
 #################################################################################################
 ###################################EXP 2: BW EXP#################################################
     #BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
-    BW = [50*1024]
+    BW = [12*1024*1024]
     #BW = [1024*1024, 12*1024*1024]
 #    run_bw_exp(BW, "vit", 17)
     run_bw_exp(BW, "alexnet", 17)
