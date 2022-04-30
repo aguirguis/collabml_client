@@ -1,0 +1,96 @@
+Namespace(batch_size=4000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=17, manual_split=False, model='myvit', num_epochs=1, sequential=False, split_idx=100, start=0, testonly=False, use_intermediate=True)
+==> Preparing data..
+==> Building model..
+INIT  104.0 3.0
+Error of iperf: unable to connect to server: 
+Recorded bandwidth: 908.2855256674147 Mbps
+In _get_intermediate_outputs_and_time
+Done intermediate outputs and time
+Sizes  [6.02112e+05 0.00000e+00 0.00000e+00 9.07776e+06 9.07776e+06 9.07776e+06
+ 9.07776e+06 9.07776e+06 9.07776e+06 9.07776e+06 9.07776e+06 9.07776e+06
+ 9.07776e+06 9.07776e+06 9.07776e+06 3.07200e+03 3.07200e+03 3.07200e+03
+ 4.00000e+03]
+Input_size  133802.66666666666
+All candidates indexes:  (array([1, 2]),)
+Intermediate:  0.0
+0.57421875
+Total layers size  104.47354125976562
+Candidate split  2
+Server, client, server+client, vanilla  358.9403381347656 415954.49697875977 416313.43731689453 420548.24697875977
+Model size  330.2294006347656
+Fixed, scale_with_bsz  330.2294006347656 0.7018229166666666
+Mem usage  1250.0 3.0
+Using split index: 2
+Freezing the lower layers of the model (myvit) till index 17
+The mode is:  split
+4
+Start 0, end 4000, post_step 1000
+
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Read 2308.7658729553223 MBs for this batch
+Executing all posts took 40.56722664833069 seconds
+Memory occpied: (1630.0, 3.0)
+Streaming imagenet data took 41.507789850234985 seconds
+The mode is:  split
+4
+Start 4000, end 8000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 1.7349679470062256
+Time for copying to cuda: 0.5900018215179443
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/root/collabml_client/application_layer/models/myvit.py", line 107, in forward
+    x = cc(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 238, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 199, in forward
+    attn = (q @ k.transpose(-2, -1)) * self.scale
+RuntimeError: CUDA out of memory. Tried to allocate 3.47 GiB (GPU 0; 14.76 GiB total capacity; 10.56 GiB already allocated; 2.92 GiB free; 10.61 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+Memory occpied: (1630.0, 12088.0)
+The whole process took 56.97799205780029 seconds
+Read 2308.7658729553223 MBs for this batch
+Executing all posts took 38.83352041244507 seconds
+Streaming imagenet data took 39.70198893547058 seconds

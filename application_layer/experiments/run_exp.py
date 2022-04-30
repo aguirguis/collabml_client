@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 # coding: utf-8
 #This library include functions to run experiments
@@ -33,6 +32,23 @@ def run_models_exp(batch_size, models, freeze_idxs, CPU=False):
         os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
                  --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
 		 > {logdir}/models_exp/split_{model}_bs{batch_size}_{"cpu" if CPU else "gpu"}')
+
+def vit_run_models_exp(batch_size, models, freeze_idxs, CPU=False):
+    #Compare the performance of Vanilla and Split with different models on both GPU and CPU on the client side
+    #The default BW here is 1Gbps
+    assert len(models) == len(freeze_idxs)
+    for model, freeze_idx in zip(models, freeze_idxs):
+        empty_gpu()
+        #run vanilla
+        os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
+		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
+		 > {logdir}/vit_models_exp/vanilla_{model}_bs{batch_size}_{"cpu" if CPU else "gpu"}')
+        empty_gpu()
+        #run split
+        #TWO IMPORTANT NOTES HERE: (1) we use the intermediate server for this experiment, (2) we set server batch size to 200 always
+        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
+		 > {logdir}/vit_models_exp/split_{model}_bs{batch_size}_{"cpu" if CPU else "gpu"}')
 
 def run_swift_in_and_out(batch_size, models, freeze_idxs):
     #Compare the performance of running inside and outside of Swift (with different models)
@@ -108,13 +124,20 @@ if __name__ == '__main__':
 ###################################EXP 1: MODELS EXP#############################################
     #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
     #models=['vit']
-    models=['alexnet']
+    models=['vit']
     #freeze_idxs=[11, 21, 25, 36, 17, 20]
     freeze_idxs=[17]
     #bsz = 2000		#This is the largest number I can get that fits in the client GPU
     #bsz = 200
+    #run_models_exp(bsz, models, freeze_idxs)  # GPU on the client side
     bsz = 1000
-    run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    bsz = 2000
+    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    bsz = 4000
+    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    bsz = 8000
+    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
     #run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
    #The same experiment but with extremely big batch size
     #bsz = 1000		#This fails with vanila GPU (but should hopefully work on)

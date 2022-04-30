@@ -178,7 +178,7 @@ def choose_split_idx(model, freeze_idx, client_batch):
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
     print("Sizes ", sizes)
     print("Input_size ", input_size)
-    pot_idxs = np.where(sizes*client_batch*100 < min(input_size*client_batch*100, bw))
+    pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     print("All candidates indexes: ", pot_idxs)
     split_idx = freeze_idx
@@ -204,6 +204,7 @@ def choose_split_idx(model, freeze_idx, client_batch):
     fixed, scale_with_bsz = model_size, input_size/(1024*1024)+begtosplit_mem
     print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
     print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
+    split_idx = 17
     return split_idx, (fixed, scale_with_bsz)
 #    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
 #    bw = 908.2855256674147*1024*1024/8
@@ -480,6 +481,7 @@ def send_request(request_dict):
   #This function sends a request to the intermediate server through its socket and wait for the result
   #request_dict is the dict object that should be sent to the server
   HOST = '192.168.0.246'  # The server's hostname or IP address		#TODO: store this somewhere general later
+  #HOST = '192.168.0.242'  # The server's hostname or IP address		#TODO: store this somewhere general later
   PORT = 65432        # The port used by the server
   #process request_dict
   options = request_dict['meta'].union(request_dict['header'])
@@ -503,8 +505,8 @@ def send_request(request_dict):
 def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode='vanilla', split_idx=100, mem_cons=(0,0), sequential=False, use_intermediate=False):
   #If use_intermediate is set, we should send our request to the server socket instead of directly to Swift
   stream_time = time.time()
-  COMP_FILE_SIZE = 200				#defines how many image per object (after compression)
-  #COMP_FILE_SIZE = 1000				#defines how many image per object (after compression)
+  #COMP_FILE_SIZE = 200				#defines how many image per object (after compression)
+  COMP_FILE_SIZE = 1000				#defines how many image per object (after compression)
   print("The mode is: ", mode)
   if mode == 'split':
       parallel_posts = int((lend-lstart)/COMP_FILE_SIZE)			#number of posts request to run in parallel

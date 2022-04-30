@@ -182,26 +182,34 @@ def print_stats(m):
     #print(torch.cuda.max_memory_reserved(0) / (1024 ** 2))
     print()
 
-batch_sizes = [1, 10]
+batch_sizes = [100]
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # Define transforms for test
-IMG_SIZE = (224, 224)
-NORMALIZE_MEAN = (0.5, 0.5, 0.5)
-NORMALIZE_STD = (0.5, 0.5, 0.5)
-transforms = [
-    T.Resize(IMG_SIZE),
-    T.ToTensor(),
-    T.Normalize(NORMALIZE_MEAN, NORMALIZE_STD),
-]
-transforms = T.Compose(transforms)
+# IMG_SIZE = (224, 224)
+# NORMALIZE_MEAN = (0.5, 0.5, 0.5)
+# NORMALIZE_STD = (0.5, 0.5, 0.5)
+# transforms = [
+#     T.Resize(IMG_SIZE),
+#     T.ToTensor(),
+#     T.Normalize(NORMALIZE_MEAN, NORMALIZE_STD),
+# ]
+# transforms = T.Compose(transforms)
+
+normalize = T.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+transforms = T.Compose([
+            T.RandomResizedCrop(224),
+            T.RandomHorizontalFlip(),
+            T.ToTensor(),
+            normalize,
+])
+
 img = PIL.Image.open('santorini.png')
 
 for batch_size in batch_sizes:
     torch.cuda.empty_cache()
     print_stats("Beginning of exp")
-    model_time = time.time()
     img_tensor = transforms(img).unsqueeze(0).to(device)
-    print("Time to load first vector: {}\r\n".format(time.time()-model_time))
     img_tensor = img_tensor.repeat(batch_size, 1, 1, 1)
     input_size = img_tensor.element_size() * img_tensor.nelement() / (1024**2)
     print("Input size ", input_size)
@@ -220,8 +228,10 @@ for batch_size in batch_sizes:
     print("Model_size: ", model_size)
     print_stats("After loading model to cuda ")
 
+    inference_time = time.time()
     model_test.eval()
     output, res = model_test(img_tensor)
+    print("Time for inference: {}\r\n".format(time.time() - model_time))
     print("Layer sizes, total sum", res, sum(res))
     print("Expected (input+layers+model): ", input_size+sum(res)+model_size)
     print_stats("After inference eval mode")
