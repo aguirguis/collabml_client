@@ -161,7 +161,7 @@ def choose_split_idx(model, freeze_idx, client_batch):
         sys.stdout.flush()
         res=None
         sleep(1)
-        bw = 908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
+        bw = 1*908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
         break
     print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
     #This function chooses the split index based on the intermediate output sizes and memory consumption
@@ -204,7 +204,6 @@ def choose_split_idx(model, freeze_idx, client_batch):
     fixed, scale_with_bsz = model_size, input_size/(1024*1024)+begtosplit_mem
     print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
     print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
-    split_idx = 17
     return split_idx, (fixed, scale_with_bsz)
 #    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
 #    bw = 908.2855256674147*1024*1024/8
