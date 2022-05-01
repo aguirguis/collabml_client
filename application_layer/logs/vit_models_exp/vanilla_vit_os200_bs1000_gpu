@@ -6,25 +6,16 @@ Freezing the lower layers of the model (vit) till index 17
 The mode is:  vanilla
 Memory occpied: (1630.0, 3.0)
 Memory occpied: (1630.0, 3.0)
-Memory occpied: (1630.0, 3.0)
-Memory occpied: (1630.0, 3.0)
-Memory occpied: (1630.0, 3.0)
-Read 127.53089141845703 MBs for this batch
-Streaming imagenet data took 5.078538656234741 seconds
+Read 127.53097534179688 MBs for this batch
+Streaming imagenet data took 2.3014116287231445 seconds
 The mode is:  vanilla
 
 Epoch: 0
+Read 125.2020092010498 MBs for this batch
+Streaming imagenet data took 2.484853982925415 seconds
+Time of next(dataloader) is: 3.6849262714385986
+Time for copying to cuda: 0.14832210540771484
 Memory occpied: (1630.0, 3.0)
-Memory occpied: (1630.0, 3.0)
-Time of next(dataloader) is: 3.522770404815674
-Memory occpied: (2206.0, 3.0)
-Time for copying to cuda: 0.2008376121520996
-Memory occpied: (2206.0, 802.0)
-Read 125.20192527770996 MBs for this batch
-Streaming imagenet data took 5.56438136100769 seconds
-Memory occpied: (2206.0, 1228.0)
-Memory occpied: (4248.0, 2470.0)
-Memory occpied: (15044.0, 14738.0)
 Exception: Caught RuntimeError in replica 0 on device 0.
 Original Traceback (most recent call last):
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
@@ -49,4 +40,4 @@ Original Traceback (most recent call last):
     attn = (q @ k.transpose(-2, -1)) * self.scale
 RuntimeError: CUDA out of memory. Tried to allocate 890.00 MiB (GPU 0; 14.76 GiB total capacity; 13.07 GiB already allocated; 65.75 MiB free; 13.45 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 
-The whole process took 20.859126806259155 seconds
+The whole process took 18.772736310958862 seconds

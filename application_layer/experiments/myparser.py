@@ -14,7 +14,7 @@ def get_total_exec_time(filenames):
             line = lines[0]
             if not line.startswith("The whole"):
                 for l in lines:
-                    if l.startswith("RuntimeError: CUDA out of memory."):
+                    if l.startswith("RuntimeError: CUDA out of memory.") or l.startswith("Exception:"):
                         line = l
                         break
                     if l.startswith("The whole"):

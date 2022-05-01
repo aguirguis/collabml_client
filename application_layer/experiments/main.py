@@ -17,18 +17,18 @@ SPLIT="HAPI"
 #EXP1: models exp
 exp_name="models_exp"
 specific_dir = os.path.join(logdir, exp_name)
-models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-##models=['vit']
-#models=['alexnet']
-##logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
-#devs=['gpu']
+models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121', 'vit']
+###models=['vit']
+##models=['alexnet']
+###logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
+##devs=['gpu']
 devs=['gpu','cpu']
 for dev in devs:
     Y=[]
-##    bsz=200
-##    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_{dev}") for model in models])
-##    Y.append([os.path.join(specific_dir,f"split_{model}_bs{bsz}_{dev}") for model in models])
-## 
+###    bsz=200
+###    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_{dev}") for model in models])
+###    Y.append([os.path.join(specific_dir,f"split_{model}_bs{bsz}_{dev}") for model in models])
+### 
     bsz=2000
     Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_{dev}") for model in models])
     Y.append([os.path.join(specific_dir,f"split_{model}_bs{bsz}_{dev}") for model in models])
@@ -46,7 +46,9 @@ for dev in devs:
         text.append(t)
     sys_legends = [f"{BASELINE}, B=2000",f"{SPLIT}, B=2000",f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
     #sys_legends = [f"{BASELINE}, B=1000",f"{SPLIT}, B=1000"]
-    xtick_labels = [model.title() for model in models]
+    #for m in models:
+    #    print(m.title())
+    xtick_labels = [model.title() if model.title() != 'Vit' else 'Transformer' for model in models]
     colors = ["blue", "orange", "deepskyblue","darkorange"]
     #colors = ["blue", "orange"]
     print(dev)
@@ -61,8 +63,8 @@ for dev in devs:
     print("Raw values")
     for y in Y:
         print(y)
-    plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}", text=text,colors=colors, rotation=30)
-##################################################################################################
+    plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}", text=text,colors=colors, rotation=40)
+###################################################################################################
 ##EXP2: BW exp
 #exp_name="bw_exp"
 #model = 'alexnet'
@@ -85,7 +87,7 @@ for dev in devs:
 #output_sizes = [get_output_size(y) for y in Y]
 #plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes")
 ##################################################################################################
-###EXP3: Scalability with multiple tenants exp
+##EXP3: Scalability with multiple tenants exp
 #exp_name="multitenant_exp"
 #specific_dir = os.path.join(logdir, exp_name)
 #batch_sizes = [500, 1000,2000, 4000]

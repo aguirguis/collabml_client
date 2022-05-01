@@ -83,7 +83,7 @@ def plot_bars(Y, sys_legends, xtick_labels, hatches, xlabel, ylabel, output_file
     plt.xlabel(xlabel,fontsize=fontsize)
     plt.xticks(ind, xtick_labels, fontsize=fontsize, rotation=rotation)
     plt.yticks(fontsize=fontsize)
-    plt.legend(ps, sys_legends, fontsize=25)
+    plt.legend(ps, sys_legends, fontsize=30)
     plt.tight_layout()
     figr.savefig(f'{output_file}.pdf', bbox_inches = "tight")
     plt.gcf().clear()
