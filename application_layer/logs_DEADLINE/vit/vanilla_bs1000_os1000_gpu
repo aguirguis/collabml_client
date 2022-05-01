@@ -1,0 +1,53 @@
+Namespace(batch_size=1000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=17, manual_split=False, model='vit', num_epochs=1, sequential=False, split_idx=100, start=0, testonly=False, use_intermediate=False)
+==> Preparing data..
+==> Building model..
+Using split index: 100
+Freezing the lower layers of the model (vit) till index 17
+The mode is:  vanilla
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Read 127.53089141845703 MBs for this batch
+Streaming imagenet data took 5.007347822189331 seconds
+The mode is:  vanilla
+
+Epoch: 0
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Time of next(dataloader) is: 3.3729124069213867
+Memory occpied: (2206.0, 3.0)
+Time for copying to cuda: 0.1882343292236328
+Memory occpied: (2206.0, 800.0)
+Read 125.20192527770996 MBs for this batch
+Streaming imagenet data took 5.130360126495361 seconds
+Memory occpied: (2206.0, 1226.0)
+Memory occpied: (15062.0, 2470.0)
+Memory occpied: (15044.0, 14738.0)
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 433, in forward
+    x = self.forward_features(x)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 421, in forward_features
+    x = self.blocks(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/container.py", line 141, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 238, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 199, in forward
+    attn = (q @ k.transpose(-2, -1)) * self.scale
+RuntimeError: CUDA out of memory. Tried to allocate 890.00 MiB (GPU 0; 14.76 GiB total capacity; 13.07 GiB already allocated; 65.75 MiB free; 13.45 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+Memory occpied: (15044.0, 14718.0)
+The whole process took 21.594945430755615 seconds

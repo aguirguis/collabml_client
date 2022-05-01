@@ -20,6 +20,9 @@ def run_models_exp(batch_size, models, freeze_idxs, CPU=False):
     #Compare the performance of Vanilla and Split with different models on both GPU and CPU on the client side
     #The default BW here is 1Gbps
     assert len(models) == len(freeze_idxs)
+    wondershaper_exec = os.path.join(homedir,"wondershaper","wondershaper")
+    os.system(f'{wondershaper_exec} -c -a eth0')
+    os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
     for model, freeze_idx in zip(models, freeze_idxs):
         empty_gpu()
         #run vanilla
@@ -123,22 +126,27 @@ def run_scalability_multitenants(max_tenants, batch_sizes, target="split"):
 if __name__ == '__main__':
 ##################################EXP 1: MODELS EXP#############################################
     #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+    #models=['resnet18']
+    models=['alexnet']
     #models=['vit']
-    models=['vit']
     #freeze_idxs=[11, 21, 25, 36, 17, 20]
+    #freeze_idxs=[11]
     freeze_idxs=[17]
     #bsz = 2000		#This is the largest number I can get that fits in the client GPU
     #bsz = 200
     #run_models_exp(bsz, models, freeze_idxs)  # GPU on the client side
-    bsz = 1000
-    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    #bsz = 1000
+    #vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
     bsz = 2000
-    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
-    bsz = 4000
-    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
-    bsz = 8000
-    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
     #run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
+
+    #bsz = 4000
+    #vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    #bsz = 8000
+    #run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
+    #run_models_exp(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
+
    #The same experiment but with extremely big batch size
     #bsz = 1000		#This fails with vanila GPU (but should hopefully work on)
     #bsz = 1000		#This fails with vanila GPU (but should hopefully work on)

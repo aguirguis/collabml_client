@@ -161,7 +161,7 @@ def choose_split_idx(model, freeze_idx, client_batch):
         sys.stdout.flush()
         res=None
         sleep(1)
-        bw = 1*908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
+        bw = 908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
         break
     print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
     #This function chooses the split index based on the intermediate output sizes and memory consumption
@@ -178,7 +178,8 @@ def choose_split_idx(model, freeze_idx, client_batch):
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
     print("Sizes ", sizes)
     print("Input_size ", input_size)
-    pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
+    pot_idxs = np.where((sizes*SERVER_BATCH*100 < min(input_size*SERVER_BATCH*100, bw)) & (sizes > 0))
+    #pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     print("All candidates indexes: ", pot_idxs)
     split_idx = freeze_idx
@@ -201,7 +202,7 @@ def choose_split_idx(model, freeze_idx, client_batch):
     #input_size (in bytes), model_size (in MBs), begtosplit_mem (in MBs)
     #I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
     #Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
-    fixed, scale_with_bsz = model_size, input_size/(1024*1024)+begtosplit_mem
+    fixed, scale_with_bsz = model_size, input_size*4.5/(1024*1024)+begtosplit_mem
     print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
     print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
     return split_idx, (fixed, scale_with_bsz)
