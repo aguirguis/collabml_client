@@ -151,7 +151,8 @@ def choose_split_idx(model, freeze_idx, client_batch):
     #First of all, get the bandwidth
     client = iperf3.Client()
     client.duration = 1
-    client.server_hostname = "192.168.0.242"
+    #client.server_hostname = "192.168.0.242"
+    client.server_hostname = "192.168.0.246"
     while True:
         res = client.run()
         if res.error is None:
