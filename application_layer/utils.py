@@ -112,6 +112,10 @@ def _get_intermediate_outputs_and_time(model, input):
 #client batch size, server bach size, and model
 #The function also returns the estimated memory consumption in the vanilla case
 def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_batch, server_batch=SERVER_BATCH):
+    #TODO remove
+    server_batch = 1000
+    
+
     if freeze_idx < split_idx:          #we do not allow split after freeze index
         split_idx = freeze_idx
     outputs/=1024			#to make outputs also in KBs (P.S. it comes to here in Bytes)
@@ -179,6 +183,8 @@ def choose_split_idx(model, freeze_idx, client_batch):
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
     print("Sizes ", sizes)
     print("Input_size ", input_size)
+    # TODO remove
+    print("TOTAL SIZES: ", sum(sizes))
     pot_idxs = np.where((sizes*SERVER_BATCH*100 < min(input_size*SERVER_BATCH*100, bw)) & (sizes > 0))
     #pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
@@ -203,6 +209,13 @@ def choose_split_idx(model, freeze_idx, client_batch):
     #input_size (in bytes), model_size (in MBs), begtosplit_mem (in MBs)
     #I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
     #Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
+    # TODO remove
+    split_idx = len(int_time) - 1
+    server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
+    print("MEM CONSUMP: ", "Total server ", server, " total client ", client, " vanilla ", \
+            vanilla, " model size ", model_size, " beg to split " , begtosplit_mem)
+
+
     fixed, scale_with_bsz = model_size, input_size*4.5/(1024*1024)+begtosplit_mem
     print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
     print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])

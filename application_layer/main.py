@@ -242,7 +242,9 @@ try:
         lstart, lend = 0, step
         trainloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
         idx=0
-        for s in range(step, 50000, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
+        #for s in range(step, 50000, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
+        #TODO remove
+        for s in range(step, step, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
           localtime = time.time()
           lstart, lend = s, s+step
           myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
