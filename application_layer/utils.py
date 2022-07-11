@@ -121,6 +121,8 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_bat
     outputs/=1024			#to make outputs also in KBs (P.S. it comes to here in Bytes)
     input_size = np.prod(np.array(input.size()))*4/ (1024*1024)*server_batch
     begtosplit_sizes = outputs[0:split_idx]
+    print(split_idx)
+    print("SUM begtosplit ", begtosplit_sizes, np.sum(begtosplit_sizes)/1024)
     #intermediate_input_size = outputs[split_idx]/ (1024*1024)*client_batch
     intermediate_input_size = outputs[split_idx-1]/1024*client_batch
     splittofreeze_sizes = outputs[split_idx:freeze_idx]
