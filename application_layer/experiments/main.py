@@ -15,50 +15,68 @@ linestyles = ['-', '--', '-.', ':', (0, (3, 1, 1, 1, 1, 1)), 'solid', '--']
 BASELINE="Baseline"
 SPLIT="HAPI"
 #EXP0: models exp split to freeze vs split
-exp_name="models_exp"
+#exp_name="models_exp"
+#specific_dir = os.path.join(logdir, exp_name)
+#models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+##logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
+#devs=['gpu','cpu']
+#for dev in devs:
+#    Y=[]
+#    bsz=2000
+#    Y.append([os.path.join(specific_dir,f"test_freeze_{model}_bs{bsz}_{dev}") for model in models])
+#    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_{dev}") for model in models])
+#    bsz=8000
+#    Y.append([os.path.join(specific_dir,f"test_freeze_{model}_bs{bsz}_{dev}") for model in models])
+#    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_{dev}") for model in models])
+#    
+#    for exp in Y:
+#        print()
+#        print(exp[0])
+#        split_idxs =[get_split_idx(exp)]
+#        print(split_idxs)
+#    
+#    Y = [get_total_exec_time(filenames) for filenames in Y]
+#    #Add texts to our bars:
+#    text = []
+#    for y in Y:
+#        t=[]
+#        for yy in y:
+#            s = "X" if yy==0 else ""
+#            t.append(s)
+#        text.append(t)
+#    sys_legends = [f"{BASELINE}, B=2000",f"{SPLIT}, B=2000",f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
+#    xtick_labels = [model.title() for model in models]
+#    colors = ["blue", "orange", "deepskyblue","darkorange"]
+#    #print(dev)
+#    for i in range(0,len(Y),2):
+#        speedup = []
+#        for y1,y2 in zip(Y[i],Y[i+1]):
+#            if y1 != 0:
+#                speedup.append(y1/y2)
+#        print(f"Average speedup: {sum(speedup)/len(speedup)}")
+#        print(f"All speedups: {speedup}")
+#    #print("Raw values")
+#    #for y in Y:
+#    #    print(y)
+#    plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}", text=text,colors=colors, rotation=30)
+exp_name="bw_exp"
 specific_dir = os.path.join(logdir, exp_name)
-models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-#logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
-devs=['gpu','cpu']
-for dev in devs:
-    Y=[]
-    bsz=2000
-    Y.append([os.path.join(specific_dir,f"test_freeze_{model}_bs{bsz}_{dev}") for model in models])
-    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_{dev}") for model in models])
-    bsz=8000
-    Y.append([os.path.join(specific_dir,f"test_freeze_{model}_bs{bsz}_{dev}") for model in models])
-    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_{dev}") for model in models])
-    
-    for exp in Y:
-        print()
-        print(exp[0])
-        split_idxs =[get_split_idx(exp)]
-        print(split_idxs)
-    
-    Y = [get_total_exec_time(filenames) for filenames in Y]
-    #Add texts to our bars:
-    text = []
-    for y in Y:
-        t=[]
-        for yy in y:
-            s = "X" if yy==0 else ""
-            t.append(s)
-        text.append(t)
-    sys_legends = [f"{BASELINE}, B=2000",f"{SPLIT}, B=2000",f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
-    xtick_labels = [model.title() for model in models]
-    colors = ["blue", "orange", "deepskyblue","darkorange"]
-    #print(dev)
-    for i in range(0,len(Y),2):
-        speedup = []
-        for y1,y2 in zip(Y[i],Y[i+1]):
-            if y1 != 0:
-                speedup.append(y1/y2)
-        print(f"Average speedup: {sum(speedup)/len(speedup)}")
-        print(f"All speedups: {speedup}")
-    #print("Raw values")
-    #for y in Y:
-    #    print(y)
-    plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}", text=text,colors=colors, rotation=30)
+BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024, 5*1024*1024, 10*1024*1024, 15*1024*1024]
+Y=[]
+Y.append([os.path.join(specific_dir,f"freeze_{bw/1024}_alexnet") for bw in BW])
+Y.append([os.path.join(specific_dir,f"split_{bw/1024}_alexnet") for bw in BW])
+exec_time = [get_total_exec_time(filenames) for filenames in Y]
+print(f"Bandwidth speedup: {np.array(exec_time[0])/np.array(exec_time[1])}")
+sys_legends = [f"{BASELINE}", f"{SPLIT}"]
+xtick_labels = [int(bw/(1024*1024)) for bw in BW]
+xtick_labels[:3] = [0.05,0.1,0.5]
+plot_bars(exec_time, sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Execution Time (sec.)", f"results/{exp_name}_exectime")
+#######Another thing we want to see is the split index in each case
+split_idxs =[get_split_idx(Y[1])]
+plot_bars(split_idxs, sys_legends[1:], xtick_labels, hatches, "Bandwidth (Gbps)", "Split Index", f"results/{exp_name}_splitidx")
+#######THe third thing to plot is the output size in each case
+output_sizes = [get_output_size(y) for y in Y]
+plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes")
 ##################################################################################################
 ##EXP1: models exp
 #exp_name="models_exp"
