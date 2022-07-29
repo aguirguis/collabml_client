@@ -16,6 +16,27 @@ def empty_gpu():
     os.system(f"pkill -f 'python3 {execfile}'")
     time.sleep(10)
 
+def run_models_exp_freeze_split(batch_size, models, freeze_idxs, CPU=False):
+    wondershaper_exec = os.path.join(homedir,"wondershaper","wondershaper")
+    os.system(f'{wondershaper_exec} -c -a eth0')
+    os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
+    #The default BW here is 1Gbps
+
+    assert len(models) == len(freeze_idxs)
+
+    for model, freeze_idx in zip(models, freeze_idxs):
+        empty_gpu()
+        #run split
+        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
+                > {logdir}/models_exp/test_split_{model}_bs{batch_size}_{"cpu" if CPU else "gpu"}')
+        #run freeze
+        empty_gpu()
+        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate --splitindex_to_freezeindex {"--cpuonly" if CPU else ""}\
+                > {logdir}/models_exp/test_freeze_{model}_bs{batch_size}_{"cpu" if CPU else "gpu"}')
+
+
 def run_models_exp(batch_size, models, freeze_idxs, CPU=False):
     #Compare the performance of Vanilla and Split with different models on both GPU and CPU on the client side
     #The default BW here is 1Gbps
@@ -121,6 +142,23 @@ def run_scalability_multitenants(max_tenants, batch_sizes, target="split"):
                 p.join()
 
 if __name__ == '__main__':
+##################################EXP 0: MODELS EXP FREEZE AND SPLIT#############################################
+
+    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+
+    freeze_idxs=[11, 21, 25, 36, 17, 20]
+
+    bsz = 8000
+
+    run_models_exp_freeze_split(bsz, models, freeze_idxs) #GPU on the client side
+
+    run_models_exp_freeze_split(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
+
+    bsz = 2000
+
+    run_models_exp_freeze_split(bsz, models, freeze_idxs) #GPU on the client side
+
+    run_models_exp_freeze_split(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
 ##################################EXP 1: MODELS EXP#############################################
 #    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
 #    models=['vit']
@@ -137,9 +175,9 @@ if __name__ == '__main__':
 ##################################EXP 2: BW EXP#################################################
 #    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
 #    #BW = [50*1024]
-    BW = [1024*1024, 12*1024*1024]
+#    BW = [1024*1024, 12*1024*1024]
 ##    run_bw_exp(BW, "vit", 17)
-    run_bw_exp(BW, "alexnet", 17)
+#    run_bw_exp(BW, "alexnet", 17)
 ##################################################################################################
 ###################################EXP 3: Scalability with multi-tenants EXP#####################
 #    max_tenants = 11

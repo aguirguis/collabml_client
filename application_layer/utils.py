@@ -145,7 +145,7 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_bat
                 (begtosplit_size*(client_batch/server_batch))+splittofreeze_size+freezetoend_size*2
     return total_server, total_client, vanilla, model_size, begtosplit_size/server_batch
 
-def choose_split_idx(model, freeze_idx, client_batch):
+def choose_split_idx(model, freeze_idx, client_batch, splitindex_to_freezeindex):
     a=torch.cuda.FloatTensor(1)
     print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
     #First of all, get the bandwidth
@@ -186,17 +186,18 @@ def choose_split_idx(model, freeze_idx, client_batch):
     split_idx = freeze_idx
 #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
     model_size, begtosplit_mem = 0, 0
-    for idx in pot_idxs[0]:
-        candidate_split=idx+1		#to solve the off-by-one error
-        if candidate_split > freeze_idx:
-            break
-        split_idx = candidate_split
-        server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
-        print("Candidate split ", candidate_split)
-        print("Server, client, server+client, vanilla ", server, client, server+client, vanilla)
-        print("Model size ", model_size)
-        if server+client < vanilla:
-            break
+    if not splitindex_to_freezeindex:
+        for idx in pot_idxs[0]:
+            candidate_split=idx+1		#to solve the off-by-one error
+            if candidate_split > freeze_idx:
+                break
+            split_idx = candidate_split
+            server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
+            print("Candidate split ", candidate_split)
+            print("Server, client, server+client, vanilla ", server, client, server+client, vanilla)
+            print("Model size ", model_size)
+            if server+client < vanilla:
+                break
     if model_size == 0:
         _,_,_,model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
     #Note that, now I have all the pieces of memory consumption on the server:

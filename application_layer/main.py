@@ -53,6 +53,7 @@ parser.add_argument('--sequential', action='store_true', help='execute in a sing
 parser.add_argument('--cpuonly', action='store_true', help='do not use GPUs')
 parser.add_argument('--manual_split', action='store_true', help='If set, we will use the split_idx provided by the user; otherwise, we choose the split index automatically')
 parser.add_argument('--use_intermediate', action='store_true', help='If set, we use intermediate compute server between Swift server and client. Otherwise, ML computation (i.e., feature extraction) will happen inside Swift')
+parser.add_argument('--splitindex_to_freezeindex', action='store_true', help='If set, we use the freezing index as split point')
 args = parser.parse_args()
 
 dataset_name = args.dataset
@@ -67,6 +68,7 @@ start = args.start
 end = args.end
 split_idx = args.split_idx
 freeze_idx = args.freeze_idx
+splitindex_to_freezeindex = args.splitindex_to_freezeindex
 if args.freeze and freeze_idx == 0:
   print("Freeze flag is set, but no freeze_idx was given! Will use the value of split_idx ({}) as a freeze_idx too!".format(split_idx))
   freeze_idx = split_idx
@@ -119,7 +121,7 @@ print('==> Building model..')
 net = get_model(model, dataset_name)
 mem_cons = [10,10]
 if mode == 'split' and not args.manual_split:
-    split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size)
+    split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, splitindex_to_freezeindex)
 
 print(f"Using split index: {split_idx}")
 if mode == 'split' or args.freeze:
