@@ -186,7 +186,7 @@ def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_ma
     if split_choice == 'manual':
         split_idx = split_idx_manual
     elif split_choice == 'to_min':
-        split_idx = np.argmin(sizes)
+        split_idx = np.argmin(sizes[:freeze_idx+1])
     else:
         split_idx = freeze_idx
 #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
