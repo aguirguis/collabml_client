@@ -145,7 +145,7 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_bat
                 (begtosplit_size*(client_batch/server_batch))+splittofreeze_size+freezetoend_size*2
     return total_server, total_client, vanilla, model_size, begtosplit_size/server_batch
 
-def choose_split_idx(model, freeze_idx, client_batch, splitindex_to_freezeindex):
+def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_manual):
     a=torch.cuda.FloatTensor(1)
     print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
     #First of all, get the bandwidth
@@ -183,10 +183,15 @@ def choose_split_idx(model, freeze_idx, client_batch, splitindex_to_freezeindex)
     #pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     print("All candidates indexes: ", pot_idxs)
-    split_idx = freeze_idx
+    if split_choice == 'manual':
+        split_idx = split_idx_manual
+    elif split_choice == 'to_min':
+        split_idx = np.argmin(sizes)
+    else:
+        split_idx = freeze_idx
 #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
     model_size, begtosplit_mem = 0, 0
-    if not splitindex_to_freezeindex:
+    if split_choice == 'automatic':
         for idx in pot_idxs[0]:
             candidate_split=idx+1		#to solve the off-by-one error
             if candidate_split > freeze_idx:
