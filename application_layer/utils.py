@@ -183,10 +183,11 @@ def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_ma
     #pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     print("All candidates indexes: ", pot_idxs)
+    print("SPLIT IDX CHOICE, split idx manual, freeze_idx: ", split_choice, split_idx_manual, freeze_idx)
     if split_choice == 'manual':
         split_idx = split_idx_manual
     elif split_choice == 'to_min':
-        split_idx = np.argmin(sizes[:freeze_idx+1])
+        split_idx = np.argmin(sizes[:freeze_idx])+1
     else:
         split_idx = freeze_idx
 #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)

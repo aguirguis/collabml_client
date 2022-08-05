@@ -16,10 +16,48 @@ def empty_gpu():
     os.system(f"pkill -f 'python3 {execfile}'")
     time.sleep(10)
 
-def run_models_exp_freeze_split(batch_size, models, freeze_idxs, CPU=False):
+def run_alexnet_all_indexes(batch_size, freeze_idx, CPU=False, bw=1024):
     wondershaper_exec = os.path.join(homedir,"wondershaper","wondershaper")
     os.system(f'{wondershaper_exec} -c -a eth0')
+    m_bw = bw * 1024
+    os.system(f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
+    #The default BW here is 1Gbps
+
+    for split_idx in range(freeze_idx):
+    #for split_idx in range(0,7):
+        empty_gpu()
+        #run split
+        os.system(f'python3 {execfile} --dataset imagenet --model myalexnet --num_epochs 1 --batch_size {batch_size}\
+                 --freeze --freeze_idx {freeze_idx} --split_idx {split_idx} --use_intermediate --split_choice manual {"--cpuonly" if CPU else ""}\
+                > {logdir}/alexnet/test_split_alexnet_bs{batch_size}_split_{split_idx}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+        time.sleep(20)
+
+    os.system(f'{wondershaper_exec} -c -a eth0')
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
+
+def run_models_exp_min_split(batch_size, models, freeze_idxs, CPU=False, bw=1024):
+    wondershaper_exec = os.path.join(homedir,"wondershaper","wondershaper")
+    os.system(f'{wondershaper_exec} -c -a eth0')
+    m_bw = bw * 1024
+    os.system(f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
+    #The default BW here is 1Gbps
+
+    assert len(models) == len(freeze_idxs)
+
+    for model, freeze_idx in zip(models, freeze_idxs):
+        empty_gpu()
+        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate --split_choice to_min {"--cpuonly" if CPU else ""}\
+                > {logdir}/models_exp/test_min_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+    
+    os.system(f'{wondershaper_exec} -c -a eth0')
+    os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
+
+def run_models_exp_freeze_split(batch_size, models, freeze_idxs, CPU=False, bw=1024):
+    wondershaper_exec = os.path.join(homedir,"wondershaper","wondershaper")
+    os.system(f'{wondershaper_exec} -c -a eth0')
+    m_bw = bw*1024
+    os.system(f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
     #The default BW here is 1Gbps
 
     assert len(models) == len(freeze_idxs)
@@ -29,12 +67,15 @@ def run_models_exp_freeze_split(batch_size, models, freeze_idxs, CPU=False):
         #run split
         os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
                  --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
-                > {logdir}/models_exp/test_split_{model}_bs{batch_size}_{"cpu" if CPU else "gpu"}')
+                > {logdir}/models_exp/test_split_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
         #run freeze
         empty_gpu()
         os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate --splitindex_to_freezeindex {"--cpuonly" if CPU else ""}\
-                > {logdir}/models_exp/test_freeze_{model}_bs{batch_size}_{"cpu" if CPU else "gpu"}')
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate --split_choice to_freeze {"--cpuonly" if CPU else ""}\
+                > {logdir}/models_exp/test_freeze_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+    
+    os.system(f'{wondershaper_exec} -c -a eth0')
+    os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
 
 
 def run_models_exp(batch_size, models, freeze_idxs, CPU=False):
@@ -96,7 +137,7 @@ def run_bw_exp_freeze_split(BW, model, freeze_idx):
         #empty_gpu()
         #run freeze
         os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size 8000\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate --splitindex_to_freezeindex > {logdir}/bw_exp/freeze_{bw/1024}_{model}')
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate --split_choice to_freeze > {logdir}/bw_exp/freeze_{bw/1024}_{model}')
         empty_gpu()
         #run split
         os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size 8000\
@@ -159,25 +200,55 @@ def run_scalability_multitenants(max_tenants, batch_sizes, target="split"):
                 p.join()
 
 if __name__ == '__main__':
-##################################EXP 0: MODELS EXP FREEZE AND SPLIT#############################################
+##################################EXP 0: MODELAS EXP MIN SPLIT#############################################
+    BWS = [1024, 50]
 
-#    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-#
-#    freeze_idxs=[11, 21, 25, 36, 17, 20]
-#
-#    bsz = 8000
-#
-#    run_models_exp_freeze_split(bsz, models, freeze_idxs) #GPU on the client side
-#
-#    run_models_exp_freeze_split(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
-#
-#    bsz = 2000
-#
-#    run_models_exp_freeze_split(bsz, models, freeze_idxs) #GPU on the client side
-#
-#    run_models_exp_freeze_split(bsz, models, freeze_idxs, CPU=True) #CPU on the client side
-    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 15*1024*1024]
-    run_bw_exp_freeze_split(BW, "alexnet", 17)
+    for bw in BWS:
+        models = ['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121']
+
+        freeze_idxs = [11, 21, 25, 36, 17, 20]
+
+        bsz = 8000
+
+        run_models_exp_min_split(bsz, models, freeze_idxs, bw=bw)  # GPU on the client side
+
+        #run_models_exp_min_split(bsz, models, freeze_idxs, CPU=True, bw=bw)  # CPU on the client side
+
+        #bsz = 2000
+
+        #run_models_exp_min_split(bsz, models, freeze_idxs, bw=bw)  # GPU on the client side
+
+        #run_models_exp_min_split(bsz, models, freeze_idxs, CPU=True, bw=bw)  # CPU on the client side
+##################################EXP 0: MODELS EXP FREEZE AND SPLIT#############################################
+    #for bw in BWS:
+        #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+
+        #freeze_idxs=[11, 21, 25, 36, 17, 20]
+
+        #bsz = 8000
+
+        #run_models_exp_freeze_split(bsz, models, freeze_idxs, bw=bw) #GPU on the client side
+
+        #run_models_exp_freeze_split(bsz, models, freeze_idxs, CPU=True, bw=bw) #CPU on the client side
+
+        #bsz = 2000
+
+        #run_models_exp_freeze_split(bsz, models, freeze_idxs, bw=bw) #GPU on the client side
+
+        #run_models_exp_freeze_split(bsz, models, freeze_idxs, CPU=True, bw=bw) #CPU on the client side
+
+
+#    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 15*1024*1024]
+#    run_bw_exp_freeze_split(BW, "alexnet", 17)
+##################################EXP 0: MODELS EXP MIN SPLIT#############################################
+    #for bw in BWS:
+        #bsz = 8000
+        #run_alexnet_all_indexes(bsz, 17, bw=bw)
+        #run_alexnet_all_indexes(bsz, 17, CPU=True, bw=bw)
+        #bsz = 2000
+        #run_alexnet_all_indexes(bsz, 17, bw=bw)
+        #run_alexnet_all_indexes(bsz, 17, CPU=True, bw=bw)
+
 ##################################EXP 1: MODELS EXP#############################################
 #    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
 #    models=['vit']
