@@ -165,13 +165,14 @@ def run_bw_exp(BW, model, freeze_idx):
     os.system(f'{wondershaper_exec} -c -a eth0')
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
 
-def _run_split(process_idx, batch_size, num_processes, special_dir=""):
+def _run_split(process_idx, batch_size, num_processes, special_dir="", split_choice="automatic"):
     #This helper function runs one ML request (the total number of requests is specified in num_processes)
     models_dict={0:("myalexnet",17), 1:("myresnet18",11), 2:("myresnet50",21), 3:("myvgg11",25), 4:("myvgg19",36),5:("mydensenet121",20)}
+    #models_dict={0:("myalexnet",17), 1:("mydensenet121",20)}
     model, freeze_idx = models_dict[process_idx%len(models_dict)]
     dir = 'multitenant_exp' if special_dir=="" else special_dir
     os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/{dir}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate --split_choice {split_choice} > {logdir}/{dir}_{split_choice}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
 
 def _run_vanilla(process_idx, batch_size, num_processes,special_dir=""):
     #This helper function runs one ML request (the total number of requests is specified in num_processes)
@@ -181,10 +182,15 @@ def _run_vanilla(process_idx, batch_size, num_processes,special_dir=""):
     os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
                  --freeze --freeze_idx {freeze_idx} > {logdir}/{dir}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
 
-def run_scalability_multitenants(max_tenants, batch_sizes, target="split"):
+def run_scalability_multitenants(max_tenants, batch_sizes, target="split", split_choice="automatic", bw=1024):
     #Test the scalability of our system (i.e., split) with multi-tenants and different batch sizes
     #Default parameters: (model, freeze_idx)=(multiple values), BW=1Gbps
-    for t in range(11, max_tenants, 2):
+    wondershaper_exec = os.path.join(homedir,"wondershaper","wondershaper")
+    os.system(f'{wondershaper_exec} -c -a eth0')
+    m_bw = bw * 1024
+    os.system(f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
+    #for t in range(0, max_tenants, 2):
+    for t in range(5,6):
         num_tenant=t+1
         for bsz in batch_sizes:
             process = []
@@ -193,7 +199,8 @@ def run_scalability_multitenants(max_tenants, batch_sizes, target="split"):
                 if target == "vanilla":
                     p = Process(target=_run_vanilla, args=(i,bsz,num_tenant,"multitenant_exp_vanilla_notraining"))
                 else:
-                    p = Process(target=_run_split, args=(i,bsz,num_tenant, "multitenant_exp_notraining"))
+                    p = Process(target=_run_split, args=(i,bsz,num_tenant, "multitenant_exp", split_choice))
+                    #p = Process(target=_run_split, args=(i,bsz,num_tenant, "multitenant_exp_notraining_new", split_choice))
                 p.start()
                 process.append(p)
             for p in process:
@@ -201,16 +208,16 @@ def run_scalability_multitenants(max_tenants, batch_sizes, target="split"):
 
 if __name__ == '__main__':
 ##################################EXP 0: MODELAS EXP MIN SPLIT#############################################
-    BWS = [1024, 50]
+    #BWS = [1024, 50]
 
-    for bw in BWS:
-        models = ['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121']
+    #for bw in BWS:
+        #models = ['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121']
 
-        freeze_idxs = [11, 21, 25, 36, 17, 20]
+        #freeze_idxs = [11, 21, 25, 36, 17, 20]
 
-        bsz = 8000
+        #bsz = 8000
 
-        run_models_exp_min_split(bsz, models, freeze_idxs, bw=bw)  # GPU on the client side
+        #run_models_exp_min_split(bsz, models, freeze_idxs, bw=bw)  # GPU on the client side
 
         #run_models_exp_min_split(bsz, models, freeze_idxs, CPU=True, bw=bw)  # CPU on the client side
 
@@ -231,7 +238,7 @@ if __name__ == '__main__':
 
         #run_models_exp_freeze_split(bsz, models, freeze_idxs, CPU=True, bw=bw) #CPU on the client side
 
-        #bsz = 2000
+        #bsz = 1000
 
         #run_models_exp_freeze_split(bsz, models, freeze_idxs, bw=bw) #GPU on the client side
 
@@ -270,11 +277,13 @@ if __name__ == '__main__':
 #    run_bw_exp(BW, "alexnet", 17)
 ##################################################################################################
 ###################################EXP 3: Scalability with multi-tenants EXP#####################
-#    max_tenants = 11
-#    batch_sizes = [1000,4000]
-#    run_scalability_multitenants(max_tenants, batch_sizes[:1])
-#    run_scalability_multitenants(max_tenants, batch_sizes[:1],"vanilla")
-#    run_scalability_multitenants(max_tenants, batch_sizes[1:])
+    max_tenants = 11
+    #batch_sizes = [1000,4000]
+    batch_sizes = [1000]
+    run_scalability_multitenants(max_tenants, batch_sizes[:1], split_choice='to_min')
+    run_scalability_multitenants(max_tenants, batch_sizes[:1])
+    #run_scalability_multitenants(max_tenants, batch_sizes[:1],"vanilla")
+    #run_scalability_multitenants(max_tenants, batch_sizes[1:])
 ###############################################################################################
 ##############################EXP 4: Data reduction with different batch sizes#################
 ####Not really a complete experiment, yet this is useful to compare vanilla to split###########

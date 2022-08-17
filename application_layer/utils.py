@@ -145,6 +145,91 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_bat
                 (begtosplit_size*(client_batch/server_batch))+splittofreeze_size+freezetoend_size*2
     return total_server, total_client, vanilla, model_size, begtosplit_size/server_batch
 
+
+#def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_manual):
+#    a=torch.cuda.FloatTensor(1)
+#    print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
+#    #First of all, get the bandwidth
+#    client = iperf3.Client()
+#    client.duration = 1
+#    #client.server_hostname = "192.168.0.242"
+#    client.server_hostname = "192.168.0.246"
+#    while True:
+#        res = client.run()
+#        if res.error is None:
+#            bw = res.received_bps/8             #bw now (after /8) is in Bytes/sec
+#            break
+#        print(f"Error of iperf: {res.error}")
+#        sys.stdout.flush()
+#        res=None
+#        sleep(1)
+#        bw = 908.2855256674147*1024*1024/8		#TODO: this is a hack to overcome the problem with iperf3..check later
+#        break
+#    print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
+#    #This function chooses the split index based on the intermediate output sizes and memory consumption
+#    client_batch=15
+#    input = torch.rand((client_batch,3,224,224)) 
+#    #Step 1: select the layers whose outputs size is < input size && whose output < bw
+#    #input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
+#    input_size = np.prod(np.array(input.size()))*4/(4.5*client_batch)
+#    sizes, int_time = _get_intermediate_outputs_and_time(model, input)
+#    sizes = np.array(sizes)/client_batch*1024	#sizes is in Bytes (after *1024)
+#    #note that int_time is the time to process each layer.. to estimate the computation time on the client, you need to compute the aggregate
+#    aggregate_computation_time=[0]*len(int_time)
+#    aggregate_computation_time[0]=sum(int_time)
+#    for i in range(1,len(int_time)):
+#        aggregate_computation_time[i]=aggregate_computation_time[i-1]-int_time[i-1]
+#    print("Done intermediate outputs and time")
+##    print(f"Intermediate output sizes: {sizes*server_batch*100}")
+##    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
+#    #note that input_size and sizes are both in Bytes
+#    #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
+#    print("Sizes ", sizes)
+#    print("Input_size ", input_size)
+#    print("TESTING *****************************")
+#    print("Input size, BW, MIN:")
+#    #pot_idxs = np.where((sizes*SERVER_BATCH*100 < min(input_size*SERVER_BATCH*100, bw)) & (sizes > 0))
+#    pot_idxs = np.where(sizes < input_size)		#New version
+#    #search at which index the communication time will be less than the computation time!
+#    print("All candidates indexes: ", pot_idxs)
+#    print("Communication time: ", np.array(sizes)*client_batch/bw)
+#    print("Computation time: ", aggregate_computation_time)
+#    pot_idxs = [i for i in pot_idxs[0] if sizes[i]*client_batch/bw <= aggregate_computation_time[i]]
+#    print("Indexes that satisfies the communication less than computation: ", pot_idxs)
+#    #Step 2: select an index whose memory utilition is less than that in vanilla cases
+#    print("All candidates indexes: ", pot_idxs)
+#    print("SPLIT IDX CHOICE, split idx manual, freeze_idx: ", split_choice, split_idx_manual, freeze_idx)
+#    if split_choice == 'manual':
+#        split_idx = split_idx_manual
+#    elif split_choice == 'to_freeze':
+#        split_idx = freeze_idx
+#    else:
+#        split_idx = np.argmin(sizes[:freeze_idx])+1
+##    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
+#    model_size, begtosplit_mem = 0, 0
+#    if split_choice == 'automatic':
+#        for idx in pot_idxs:
+#            candidate_split=idx+1		#to solve the off-by-one error
+#            if candidate_split > freeze_idx:
+#                break
+#            split_idx = candidate_split
+#            server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
+#            print("Candidate split ", candidate_split)
+#            print("Server, client, server+client, vanilla ", server, client, server+client, vanilla)
+#            print("Model size ", model_size)
+#            if server+client < vanilla:
+#                break
+#    if model_size == 0:
+#        _,_,_,model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
+#    #Note that, now I have all the pieces of memory consumption on the server:
+#    #input_size (in bytes), model_size (in MBs), begtosplit_mem (in MBs)
+#    #I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
+#    #Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
+#    fixed, scale_with_bsz = model_size, input_size*4.5/(1024*1024)+begtosplit_mem
+#    print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
+#    print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
+#    return split_idx, (fixed, scale_with_bsz)
+
 def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_manual):
     a=torch.cuda.FloatTensor(1)
     print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
@@ -179,6 +264,9 @@ def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_ma
     #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
     print("Sizes ", sizes)
     print("Input_size ", input_size)
+    print("TESTING *****************************")
+    print("Input size, BW, MIN:")
+    print(input_size*SERVER_BATCH*100, bw, min(input_size*SERVER_BATCH*100, bw))
     pot_idxs = np.where((sizes*SERVER_BATCH*100 < min(input_size*SERVER_BATCH*100, bw)) & (sizes > 0))
     #pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
@@ -186,10 +274,10 @@ def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_ma
     print("SPLIT IDX CHOICE, split idx manual, freeze_idx: ", split_choice, split_idx_manual, freeze_idx)
     if split_choice == 'manual':
         split_idx = split_idx_manual
-    elif split_choice == 'to_min':
-        split_idx = np.argmin(sizes[:freeze_idx])+1
-    else:
+    elif split_choice == 'to_freeze':
         split_idx = freeze_idx
+    else:
+        split_idx = np.argmin(sizes[:freeze_idx])+1
 #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
     model_size, begtosplit_mem = 0, 0
     if split_choice == 'automatic':
@@ -214,6 +302,10 @@ def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_ma
     print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
     print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
     return split_idx, (fixed, scale_with_bsz)
+
+
+
+
 #    bw = res.received_bps/8		#bw now (after /8) is in Bytes/sec
 #    bw = 908.2855256674147*1024*1024/8
 #    print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")

@@ -17,37 +17,41 @@ SPLIT="HAPI"
 
 
 #EXP0: min hapi freeze split
-BASELINE1="MIN"
-SPLIT="HAPI"
-BASELINE2="FREEZE"
-exp_name="models_exp"
-specific_dir = os.path.join(logdir, exp_name)
-models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-#logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
-devs=['gpu']#,'cpu']
-for dev in devs:
-    Y=[]
-    bsz=8000
-    Y.append([os.path.join(specific_dir,f"test_min_{model}_bs{bsz}_bw1048576_gpu") for model in models])
-    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw1048576_gpu") for model in models])
-    Y.append([os.path.join(specific_dir, f"test_freeze_{model}_bs{bsz}_bw1048576_gpu") for model in models])
-    for y in Y:
-        print(y)
-        print(get_split_idx(y))
-    Y = [get_total_exec_time(filenames) for filenames in Y]
-    #Add texts to our bars:
-    text = []
-    for y in Y:
-        t=[]
-        for yy in y:
-            s = "X" if yy==0 else ""
-            t.append(s)
-        text.append(t)
-    sys_legends = [f"{BASELINE1}, B=8000",f"{SPLIT}, B=8000",f"{BASELINE2}, B=8000"]
-    xtick_labels = [model.title() for model in models]
-    #colors = ["blue", "orange", "deepskyblue","darkorange"]
-    colors = ["blue", "orange", "red"]
-    plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}_min_split_freeze", text=text,colors=colors, rotation=30)
+#BASELINE1="MIN"
+#SPLIT="HAPI"
+#BASELINE2="FREEZE"
+#exp_name="models_exp"
+#specific_dir = os.path.join(logdir, exp_name)
+#models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+##logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
+#devs=['gpu','cpu']
+#bws = [1048576, 51200]
+#bszs = [2000, 8000]
+#for dev in devs:
+#    for bw in bws:
+#        for bsz in bszs:
+#            Y=[]
+#            Y.append([os.path.join(specific_dir,f"test_min_{model}_bs{bsz}_bw{bw}_gpu") for model in models])
+#            Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_gpu") for model in models])
+#            Y.append([os.path.join(specific_dir, f"test_freeze_{model}_bs{bsz}_bw{bw}_gpu") for model in models])
+#            for y in Y:
+#                print(bsz, dev, bw)
+#                print(y)
+#                print(get_split_idx(y))
+#            Y = [get_total_exec_time(filenames) for filenames in Y]
+#            #Add texts to our bars:
+#            text = []
+#            for y in Y:
+#                t=[]
+#                for yy in y:
+#                    s = "X" if yy==0 else ""
+#                    t.append(s)
+#                text.append(t)
+#            sys_legends = [f"{BASELINE1}, B={bsz}",f"{SPLIT}, B={bsz}",f"{BASELINE2}, B={bsz}"]
+#            xtick_labels = [model.title() for model in models]
+#            #colors = ["blue", "orange", "deepskyblue","darkorange"]
+#            colors = ["blue", "orange", "red"]
+#            plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}_{bw/1024./1024}_{bsz}_min_split_freeze", text=text,colors=colors, rotation=30)
 
 
 ##EXP0: test alexnet for all split indexes
@@ -222,25 +226,32 @@ for dev in devs:
 #xtick_labels = list(np.arange(1, max_tenants+1))
 #plot_bars(Y, sys_legends, xtick_labels, hatches, "Number of Tenants", "Average Execution Time (sec.)", f"results/{exp_name}")
 ###Trial 2 for the same experiment....here, we do not do actual training so that the client cannot crash
-#exp_names=["multitenant_exp_notraining"] #,"multitenant_exp_vanilla_notraining"]
+#exp_names=["multitenant_exp_notraining_automatic", "multitenant_exp_notraining_to_min", "multitenant_exp_notraining_new_automatic"] #,"multitenant_exp_vanilla_notraining"]
+exp_names=["multitenant_exp_automatic", "multitenant_exp_to_min"] #,"multitenant_exp_vanilla_notraining"]
 ##batch_sizes = [1000, 4000]
-#Y=[]
+Y=[]
 #max_tenants = 11
-#num_tenants = np.arange(2,max_tenants,2)
-#for exp_name in exp_names:
-#    specific_dir = os.path.join(logdir, exp_name)
-#    times, times2 = [], []
-#    for n in num_tenants:
-#        filenames = [os.path.join(specific_dir,f"process_{idx+1}_of_{n}_bs1000") for idx in range(n)]
-#        exec_time=get_total_exec_time(filenames)
-#        exec_time = [et for et in exec_time if et != 0]		#remove zeros
-#        print(f"Num of tenants: {n}, finished processes: {len(exec_time)}")
-#        avg = sum(exec_time)/len(exec_time)
-#        maxi = max(exec_time)
-#        times.append(maxi)
-#        times2.append(avg)
-#    Y.append(times)
-#    Y.append(times2)
+num_tenants = range(5,7)
+for exp_name in exp_names:
+    specific_dir = os.path.join(logdir, exp_name)
+    times, times2 = [], []
+    #for n in num_tenants:
+    for i in range(len(num_tenants)):
+        n = num_tenants[i] + 1
+        filenames = [os.path.join(specific_dir,f"process_{idx+1}_of_{n}_bs1000") for idx in range(n)]
+        #print(filenames)
+        exec_time=get_total_exec_time(filenames)
+        #print("EXEC TIMES: ", exec_time)
+        exec_time = [et for et in exec_time if et != 0]		#remove zeros
+        print(f"Num of tenants: {n}, finished processes: {len(exec_time)}")
+        avg = sum(exec_time)/len(exec_time)
+        maxi = max(exec_time)
+        times.append(maxi)
+        times2.append(avg)
+    Y.append(times)
+    Y.append(times2)
+    print(exp_name, " max: ", times, " avg: ", times2)
+print(Y)
 #linear = [Y[0][0]*n/num_tenants[0] for n in num_tenants]
 ##The following two rows come from logs/swiftOnly_exp
 #swiftonly_avg = [446.4932259321213, 715.1012377738953, 1521.1284693876903, 3418.3286892473698, 6968.817616629601]
