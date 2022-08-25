@@ -11,6 +11,7 @@ import torch
 from torchvision.models import AlexNet
 from torch import Tensor
 import torch.nn as nn
+from torch.profiler import profile, record_function, ProfilerActivity
 from time import time
 import sys
 
@@ -52,6 +53,13 @@ def _get_gpu_stats(gpu_id):
 def print_stats(m):
     # gpu_t.track()
     print(m)
+#    memory_stats_d = torch.cuda.memory_stats(0)
+#    active = memory_stats_d['active_bytes.all.peak'] / (1024**2)
+#    inactive = memory_stats_d['inactive_split_bytes.all.peak'] / (1024**2)
+#    inactive = memory_stats_d['inactive_split_bytes.all.peak'] / (1024**2)
+#    reserved = memory_stats_d['reserved_bytes.all.current'] / (1024**2)
+#    print("torch cuda active, inactive, reserved ", active, inactive, reserved)
+#    print("torch cuda memory stat ", torch.cuda.memory_stats(0))
     print("nvidia-smi gpu utilization ", _get_gpu_stats(0)[0][1])
     print("torch cuda memory allocated ", torch.cuda.memory_allocated(0) / (1024 ** 2))
     print("torch cuda max memory allocated ", torch.cuda.max_memory_allocated(0) / (1024 ** 2))
@@ -109,32 +117,60 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_bat
               (begtosplit_size * (client_batch / server_batch)) + splittofreeze_size + freezetoend_size * 2
     return total_server, total_client, vanilla, model_size, begtosplit_size / server_batch
 
+#os.environ['PYTORCH_NO_CUDA_MEMORY_CACHING'] = '1'
+torch.backends.cudnn.benchmark = False
+torch.backends.cudnn.deterministic = True
 idx = 0
 os.environ["CUDA_VISIBLE_DEVICES"] = f"{idx}"
 cuda0 = torch.device('cuda:0')
 
 #batch_sizes = [1, 10, 100]
 #batch_sizes = [1, 1000]
-batch_sizes = [10]
+#batch_sizes = [10]
+#batch_sizes = [1]
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+models_name = ['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+models_name = ['resnet50']
 
+results = {}
 
-for batch_size in batch_sizes:
+for model_str in models_name:
+#for batch_size in batch_sizes:
+    results[model_str] = []
+    batch_size = 100
     torch.cuda.empty_cache()
     torch.cuda.reset_peak_memory_stats(device)
 
     #print(torch.cuda.memory_stats(0))
 
+    print()
+    print()
+    print(model_str)
     print_stats("Beginning of exp")
     img_tensor = torch.rand((batch_size,3,224,224)).to(device)
     print_stats(f"After loading input to cuda, input batch size {batch_size}")
 
     #['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
     num_classes = 1000
+    if model_str.startswith('alex'):
+        model_test = build_my_alexnet(num_classes)
+    elif model_str.startswith('res'):
+        model_test = build_my_resnet(model_str, num_classes)
+    elif model_str.startswith('vgg'):
+        model_test = build_my_vgg(model_str, num_classes)
+    elif model_str.startswith('dense'):
+        model_test = build_my_densenet(model_str, num_classes)
+    elif model_str.startswith('vit'):
+        model_test = build_my_vit(num_classes)
+    
+    all_layers = []
+    remove_sequential(model_test, all_layers)
+    results[model_str].extend([len(all_layers)])
+    
     #model_test = build_my_resnet('resnet18', num_classes)
     #model_test = build_my_resnet('resnet50', num_classes)
     #model_test = build_my_vgg('vgg11', num_classes)
-    model_test = build_my_vgg('vgg19', num_classes)
+    #model_test = build_my_vgg('vgg19', num_classes)
     #model_test = build_my_alexnet(num_classes)
     #model_test = build_my_densenet('densenet121', num_classes)
 
@@ -145,73 +181,56 @@ for batch_size in batch_sizes:
     input = torch.rand((1,3,224,224)).to(device)
     input_size = np.prod(np.array(input.size())) * 4 / 4.5
     sizes, int_time = _get_intermediate_outputs_and_time(model_test, input)
-    sizes = np.array(sizes) * 1024
-    tb_sizes, tb_times = _get_intermediate_outputs_and_time(model_test, torch.rand((batch_size,3,224,244)).to(device))
-    print("IDXS sorted by sizes", np.array(sizes).argsort().tolist())
-    np.set_printoptions(suppress=True)
-    print(np.sort(np.array(sizes/1024./1024*batch_size)))
+    sizes = np.array(sizes) * 1024.
 
-    print("Sizes + Times: ")
-    for i in zip(np.array(tb_sizes)/1024., tb_times):
-        print(i)
+
     print()
-
-    print("Sizes + Times: ")
-    for i in zip(sizes/1024./1024*batch_size,int_time):
-        print(i)
-    print()
-
-    split_freeze_idx = len(model_test.all_layers)
-    server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model_test, input, sizes,
-                                                                              split_freeze_idx, split_freeze_idx,
-                                                                              batch_size, batch_size)
-    print("All freeze MEM CONSUMP: ", "Total server ", server, " total client ", client, " vanilla ", \
-          vanilla, " model size ", model_size, " beg to split ", begtosplit_mem)
-    print()
-
-    split_freeze_idx = 0
-    server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model_test, input, sizes,
-                                                                              split_freeze_idx, split_freeze_idx,
-                                                                              batch_size, batch_size)
-    print("No freeze MEM CONSUMP: ", "Total server ", server, " total client ", client, " vanilla ", \
-          vanilla, " model size ", model_size, " beg to split ", begtosplit_mem)
-    print()
-
-
     input_size = img_tensor.element_size() * img_tensor.nelement() / (1024**2)
-    print("Input size ", input_size)
+    print("Input size: ", input_size)
+    sum_cons_sizes = [input_size]
+    sum_cons_sizes.extend(sizes/1024./1024.*batch_size)
+    sum_cons_sizes = [sum(sum_cons_sizes[i:i+2]) for i in range(len(sum_cons_sizes)-1)]
+    max_output = max(sum_cons_sizes)
+    #max_output = max(sizes/1024./1024.*batch_size)
+    sum_output = sum(sizes/1024./1024.*batch_size)
+    print("Max output: ", max(sizes/1024./1024.*batch_size))
+    print("Total output: ", sum(sizes/1024./1024.*batch_size))
+    mod_sizes = [np.prod(np.array(p.size())) for p in model_test.parameters()]
+    model_size = np.sum(mod_sizes) * 4 / (1024 * 1024)
+    print("Model size: ", model_size)
+    print(sizes/1024./1024.*batch_size)
+    print()
+
+    if np.argmax(sum_cons_sizes) != 0:
+        results[model_str].extend([input_size+sum_output+model_size, input_size+max_output+model_size])
+    else:
+        results[model_str].extend([input_size+sum_output+model_size, max_output+model_size])
+
+
+    # just to put stats at 0 again after some checks
+    print_stats("Before inferences")
 
 
     model_test.eval()
+    passed = True
     with torch.no_grad():
-        output, res = model_test(img_tensor,0,100)
+        try:
+            output, res = model_test(img_tensor,0,100)
+        except:
+            passed = False
+            print("WRONG VALUE ", model_str)
+            pass
+    
+    max_allocated = torch.cuda.max_memory_allocated(0) / (1024 ** 2)
+    results[model_str].extend([max_allocated])
     print_stats("After inference eval mode")
-
-
-    with torch.inference_mode():
-        output, res = model_test(img_tensor,0,100)
-    print_stats("After inference inference mode")
-
-    model_test.train()
-    output, res = model_test(img_tensor,0,100)
-    print_stats("After inference train mode")
-
-
-    model_test.train()
-    output, res = model_test(img_tensor,0,100)
-    torch.optim.Adam(model_test.parameters(), lr=1e-3, betas=(0.9, 0.99))
-    target = torch.rand(output.size()).to(device)
-    print("TARGET: ", target.element_size() * target.nelement()/(1024 * 1024))
-    loss = torch.nn.MSELoss()(output, target)
-    print("LOSS: ", loss.element_size() * loss.nelement()/(1024 * 1024))
-    print(loss)
-    loss.backward()
-    print_stats("After inference train mode and backward call")
-
-    del output
-    del res
-    del img_tensor
+    
+    if passed:
+        del output
+        del res
     del input
     del model_test
-
+    del img_tensor
     print()
+
+print(results)

@@ -1,0 +1,118 @@
+Namespace(batch_size=1000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=11, model='myresnet18', num_epochs=1, sequential=False, split_choice='to_min', split_idx=100, start=0, testonly=False, use_intermediate=True)
+==> Preparing data..
+==> Building model..
+INIT  205.0 3.0
+Error of iperf: the server is busy running a test. try again later
+Recorded bandwidth: 908.2855256674147 Mbps
+In _get_intermediate_outputs_and_time
+Done intermediate outputs and time
+Sizes  [3.211264e+06 3.211264e+06 3.211264e+06 8.028160e+05 4.816896e+06
+ 4.816896e+06 2.408448e+06 2.408448e+06 1.204224e+06 1.204224e+06
+ 6.021120e+05 6.021120e+05 2.048000e+03 4.000000e+03]
+Input_size  133802.66666666666
+TESTING *****************************
+Input size, BW, MIN:
+334506666.6666666 119050800.42027938 119050800.42027938
+All candidates indexes:  (array([12, 13]),)
+SPLIT IDX CHOICE, split idx manual, freeze_idx:  to_min 100 11
+Intermediate:  574.21875
+26.60546875
+Total layers size  27.185455322265625
+Fixed, scale_with_bsz  44.591949462890625 27.1796875
+Mem usage  6473.0 3.0
+Using split index: 11
+Freezing the lower layers of the model (myresnet18) till index 11
+The mode is:  split
+1
+Start 0, end 1000, post_step 1000
+
+Memory occpied: (6879.0, 3.0)
+Memory occpied: (7867.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Memory occpied: (9035.0, 3.0)
+Read 95.74806308746338 MBs for this batch
+Executing all posts took 14.249653339385986 seconds
+Streaming imagenet data took 14.286014556884766 seconds
+The mode is:  split
+1
+Start 1000, end 2000, post_step 1000
+
+
+Epoch: 0
+Control connection MSS 1448
+Time of next(dataloader) is: 0.32299208641052246
+Time for copying to cuda: 0.033067941665649414
+Memory occpied: (9131.0, 547.0)
+Memory occpied: (9131.0, 1399.0)
+Memory occpied: (9243.0, 3069.0)
+Memory occpied: (12805.0, 7713.0)
+Time for forward pass: 4.343609094619751
+Time for backpropagation: 0.8190877437591553
+GPU memory for training: 6.715591907501221                          
+
+One training iteration takes: 5.592459201812744 seconds
+Index: 0
+Memory occpied: (9611.0, 8293.0)
+Memory occpied: (13151.0, 11753.0)
+Memory occpied: (10927.0, 10811.0)
+Memory occpied: (10927.0, 10811.0)
+Memory occpied: (10927.0, 10811.0)
+Memory occpied: (10927.0, 10811.0)
+Memory occpied: (10927.0, 10811.0)
+Memory occpied: (10927.0, 10811.0)
+Memory occpied: (10971.0, 11116.0)
+Memory occpied: (10971.0, 11562.0)
+Memory occpied: (10971.0, 11946.0)
+Memory occpied: (12197.0, 12632.0)
+Memory occpied: (12197.0, 12632.0)
+Memory occpied: (12807.0, 13325.0)
+Memory occpied: (12807.0, 13717.0)
+Memory occpied: (14979.0, 14867.0)
+Memory occpied: (14955.0, 14875.0)
+Memory occpied: (14955.0, 14875.0)
+Read 95.74806308746338 MBs for this batch
+Executing all posts took 26.3234224319458 seconds
+Streaming imagenet data took 26.359599828720093 seconds
+Then, training+dataloading take 26.366337299346924 seconds
+The mode is:  split
+1
+Start 2000, end 3000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3584153652191162
+Time for copying to cuda: 0.025656938552856445
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/root/collabml_client/application_layer/models/myresnet.py", line 95, in forward
+    x,sizes = m(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/root/collabml_client/application_layer/models/myresnet.py", line 26, in forward
+    out = self.conv2(out)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 447, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 443, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+RuntimeError: CUDA out of memory. Tried to allocate 48.00 MiB (GPU 0; 14.76 GiB total capacity; 276.74 MiB already allocated; 54.75 MiB free; 344.00 MiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+Memory occpied: (15055.0, 14889.0)
+The whole process took 49.30425572395325 seconds
+Read 95.74806308746338 MBs for this batch
+Executing all posts took 8.717837572097778 seconds
+Streaming imagenet data took 8.757475852966309 seconds

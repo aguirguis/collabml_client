@@ -1,0 +1,101 @@
+Namespace(batch_size=1000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=21, model='myresnet50', num_epochs=1, sequential=False, split_choice='to_min', split_idx=100, start=0, testonly=False, use_intermediate=True)
+==> Preparing data..
+==> Building model..
+INIT  306.0 3.0
+Error of iperf: the server is busy running a test. try again later
+Recorded bandwidth: 908.2855256674147 Mbps
+In _get_intermediate_outputs_and_time
+Done intermediate outputs and time
+Sizes  [3.2112640e+06 3.2112640e+06 3.2112640e+06 8.0281600e+05 1.4450688e+07
+ 1.4450688e+07 1.4450688e+07 1.0838016e+07 7.2253440e+06 7.2253440e+06
+ 7.2253440e+06 5.4190080e+06 3.6126720e+06 3.6126720e+06 3.6126720e+06
+ 3.6126720e+06 3.6126720e+06 2.7095040e+06 1.8063360e+06 1.8063360e+06
+ 8.1920000e+03 4.0000000e+03]
+Input_size  133802.66666666666
+TESTING *****************************
+Input size, BW, MIN:
+334506666.6666666 119050800.42027938 119050800.42027938
+All candidates indexes:  (array([20, 21]),)
+SPLIT IDX CHOICE, split idx manual, freeze_idx:  to_min 100 21
+Intermediate:  7.8125
+110.736328125
+Total layers size  110.74014282226562
+Fixed, scale_with_bsz  97.49234008789062 111.310546875
+Mem usage  7824.0 3.0
+Using split index: 21
+Freezing the lower layers of the model (myresnet50) till index 21
+The mode is:  split
+1
+Start 0, end 1000, post_step 1000
+
+Memory occpied: (8664.0, 3.0)
+Memory occpied: (9412.0, 3.0)
+Memory occpied: (10526.0, 3.0)
+Memory occpied: (10526.0, 3.0)
+Memory occpied: (10526.0, 3.0)
+Memory occpied: (10526.0, 3.0)
+Memory occpied: (10526.0, 3.0)
+Memory occpied: (10526.0, 3.0)
+Memory occpied: (10558.0, 27.0)
+Memory occpied: (10654.0, 1392.0)
+Memory occpied: (10654.0, 2546.0)
+Read 7.849919319152832 MBs for this batch
+Executing all posts took 12.947340726852417 seconds
+Streaming imagenet data took 12.951834917068481 seconds
+The mode is:  split
+1
+Start 1000, end 2000, post_step 1000
+
+
+Epoch: 0
+Control connection MSS 1448
+Time of next(dataloader) is: 0.3973424434661865
+Time for copying to cuda: 0.002665996551513672
+Time for forward pass: 3.8739094734191895
+Time for backpropagation: 0.0734562873840332
+GPU memory for training: 0.428133487701416                          
+
+Memory occpied: (10670.0, 4773.0)
+One training iteration takes: 4.402200222015381 seconds
+Index: 0
+Memory occpied: (14160.0, 14391.0)
+Memory occpied: (14674.0, 14703.0)
+Memory occpied: (14900.0, 14711.0)
+Memory occpied: (14900.0, 14711.0)
+Memory occpied: (15098.0, 14727.0)
+Memory occpied: (15098.0, 14727.0)
+Memory occpied: (15098.0, 14727.0)
+Memory occpied: (15098.0, 14727.0)
+Memory occpied: (15098.0, 14727.0)
+Memory occpied: (15098.0, 14727.0)
+Read 7.849919319152832 MBs for this batch
+Executing all posts took 17.28038477897644 seconds
+Streaming imagenet data took 17.286341905593872 seconds
+Then, training+dataloading take 17.28748846054077 seconds
+The mode is:  split
+1
+Start 2000, end 3000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3223550319671631
+Time for copying to cuda: 0.002566814422607422
+Memory occpied: (15098.0, 14727.0)
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/root/collabml_client/application_layer/models/myresnet.py", line 98, in forward
+    x = m(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/linear.py", line 103, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: CUDA error: CUBLAS_STATUS_ALLOC_FAILED when calling `cublasCreate(handle)`
+
+The whole process took 38.47572898864746 seconds
+Read 7.849919319152832 MBs for this batch
+Executing all posts took 7.686210870742798 seconds
+Streaming imagenet data took 7.690355062484741 seconds

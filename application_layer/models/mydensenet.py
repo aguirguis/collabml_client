@@ -38,11 +38,17 @@ class MyDenseNet(DenseNet):
           layer_time = time()
           if isinstance(m, torch.nn.modules.linear.Linear):
               x = F.relu(x, inplace=True)
+              # TODO REMOVE APPEND
+              res.append(x.element_size() * x.nelement()/1024.)
               x = F.adaptive_avg_pool2d(x, (1, 1))
+              # TODO REMOVE APPEND
+              res.append(x.element_size() * x.nelement()/1024.)
               x = torch.flatten(x, 1)
+              # TODO REMOVE APPEND
+              res.append(x.element_size() * x.nelement()/1024.)
           x = m(x)
           time_res.append(time()-layer_time)
-          res.append(x.element_size() * x.nelement()/1024)
+          res.append(x.element_size() * x.nelement()/1024.)
           if idx >= end:
               break
       if need_time:

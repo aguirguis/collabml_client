@@ -54,7 +54,7 @@ parser.add_argument('--cpuonly', action='store_true', help='do not use GPUs')
 #parser.add_argument('--manual_split', action='store_true', help='If set, we will use the split_idx provided by the user; otherwise, we choose the split index automatically')
 parser.add_argument('--use_intermediate', action='store_true', help='If set, we use intermediate compute server between Swift server and client. Otherwise, ML computation (i.e., feature extraction) will happen inside Swift')
 #parser.add_argument('--splitindex_to_freezeindex', action='store_true', help='If set, we use the freezing index as split point')
-parser.add_argument('--split_choice', default='automatic', type=str, help='How to choose split_idx (manual, automatic, to_freeze, to_min)')
+parser.add_argument('--split_choice', default='automatic', type=str, help='How to choose split_idx (manual, automatic, to_freeze, to_min, to_max)')
 args = parser.parse_args()
 
 dataset_name = args.dataset
@@ -208,6 +208,10 @@ next_loader= None
 def start_now(lstart, lend, transform):
   global next_dataloader
   next_dataloader = None
+  # TODO run splitting algo at each iteration
+  #split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, split_choice, split_idx)
+
+
   next_dataloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode, split_idx, mem_cons,  args.sequential, args.use_intermediate)
 
 #step defines the number of images (or intermediate values) got from the server per iteration

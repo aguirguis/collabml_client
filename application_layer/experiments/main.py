@@ -226,12 +226,12 @@ SPLIT="HAPI"
 #xtick_labels = list(np.arange(1, max_tenants+1))
 #plot_bars(Y, sys_legends, xtick_labels, hatches, "Number of Tenants", "Average Execution Time (sec.)", f"results/{exp_name}")
 ###Trial 2 for the same experiment....here, we do not do actual training so that the client cannot crash
-#exp_names=["multitenant_exp_notraining_automatic", "multitenant_exp_notraining_to_min", "multitenant_exp_notraining_new_automatic"] #,"multitenant_exp_vanilla_notraining"]
-exp_names=["multitenant_exp_automatic", "multitenant_exp_to_min"] #,"multitenant_exp_vanilla_notraining"]
+exp_names=["multitenant_exp_notraining_automatic", "multitenant_exp_notraining_to_min", "multitenant_exp_notraining_new_automatic"] #,"multitenant_exp_vanilla_notraining"]
+#exp_names=["multitenant_exp_automatic", "multitenant_exp_to_min"] #,"multitenant_exp_vanilla_notraining"]
 ##batch_sizes = [1000, 4000]
 Y=[]
 #max_tenants = 11
-num_tenants = range(5,7)
+num_tenants = range(5,6)
 for exp_name in exp_names:
     specific_dir = os.path.join(logdir, exp_name)
     times, times2 = [], []

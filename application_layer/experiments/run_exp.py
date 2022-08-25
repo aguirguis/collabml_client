@@ -4,6 +4,7 @@
 import os
 import time
 import torch
+from time import sleep
 from multiprocessing import Process
 homedir = os.path.expanduser("~")
 projectdir = os.path.join(homedir, "collabml_client/application_layer")
@@ -167,8 +168,10 @@ def run_bw_exp(BW, model, freeze_idx):
 
 def _run_split(process_idx, batch_size, num_processes, special_dir="", split_choice="automatic"):
     #This helper function runs one ML request (the total number of requests is specified in num_processes)
-    models_dict={0:("myalexnet",17), 1:("myresnet18",11), 2:("myresnet50",21), 3:("myvgg11",25), 4:("myvgg19",36),5:("mydensenet121",20)}
+    #models_dict={0:("myalexnet",17), 1:("myresnet18",11), 2:("myresnet50",21), 3:("myvgg11",25), 4:("myvgg19",36),5:("mydensenet121",20)}
     #models_dict={0:("myalexnet",17), 1:("mydensenet121",20)}
+    print("Run split ", split_choice)
+    models_dict={0:("myvgg19",36)}
     model, freeze_idx = models_dict[process_idx%len(models_dict)]
     dir = 'multitenant_exp' if special_dir=="" else special_dir
     os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
@@ -176,7 +179,8 @@ def _run_split(process_idx, batch_size, num_processes, special_dir="", split_cho
 
 def _run_vanilla(process_idx, batch_size, num_processes,special_dir=""):
     #This helper function runs one ML request (the total number of requests is specified in num_processes)
-    models_dict={0:("alexnet",17), 1:("resnet18",11), 2:("resnet50",21), 3:("vgg11",25), 4:("vgg19",36),5:("densenet121",20)}
+    #models_dict={0:("alexnet",17), 1:("resnet18",11), 2:("resnet50",21), 3:("vgg11",25), 4:("vgg19",36),5:("densenet121",20)}
+    models_dict={0:("alexnet",17)}
     model, freeze_idx = models_dict[0]	#[process_idx]
     dir = 'vanilla_run' if special_dir=="" else special_dir
     os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
@@ -190,14 +194,14 @@ def run_scalability_multitenants(max_tenants, batch_sizes, target="split", split
     m_bw = bw * 1024
     os.system(f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
     #for t in range(0, max_tenants, 2):
-    for t in range(5,6):
+    for t in range(2,3):
         num_tenant=t+1
         for bsz in batch_sizes:
             process = []
             empty_gpu()
             for i in range(num_tenant):
                 if target == "vanilla":
-                    p = Process(target=_run_vanilla, args=(i,bsz,num_tenant,"multitenant_exp_vanilla_notraining"))
+                    p = Process(target=_run_vanilla, args=(i,bsz,num_tenant,"multitenant_exp_vanilla"))
                 else:
                     p = Process(target=_run_split, args=(i,bsz,num_tenant, "multitenant_exp", split_choice))
                     #p = Process(target=_run_split, args=(i,bsz,num_tenant, "multitenant_exp_notraining_new", split_choice))
@@ -280,9 +284,10 @@ if __name__ == '__main__':
     max_tenants = 11
     #batch_sizes = [1000,4000]
     batch_sizes = [1000]
-    run_scalability_multitenants(max_tenants, batch_sizes[:1], split_choice='to_min')
-    run_scalability_multitenants(max_tenants, batch_sizes[:1])
-    #run_scalability_multitenants(max_tenants, batch_sizes[:1],"vanilla")
+    #run_scalability_multitenants(max_tenants, batch_sizes[:1], split_choice='to_min')
+    #run_scalability_multitenants(max_tenants, batch_sizes[:1], split_choice='to_max')
+    #run_scalability_multitenants(max_tenants, batch_sizes[:1])
+    run_scalability_multitenants(max_tenants, batch_sizes[:1],"vanilla")
     #run_scalability_multitenants(max_tenants, batch_sizes[1:])
 ###############################################################################################
 ##############################EXP 4: Data reduction with different batch sizes#################
