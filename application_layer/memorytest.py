@@ -127,17 +127,17 @@ cuda0 = torch.device('cuda:0')
 #batch_sizes = [1, 10, 100]
 #batch_sizes = [1, 1000]
 #batch_sizes = [10]
-#batch_sizes = [1]
+batch_sizes = [1]
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 models_name = ['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-models_name = ['resnet50']
+#models_name = ['resnet50']
 
 results = {}
 
 for model_str in models_name:
 #for batch_size in batch_sizes:
     results[model_str] = []
-    batch_size = 100
+    batch_size = 128
     torch.cuda.empty_cache()
     torch.cuda.reset_peak_memory_stats(device)
 
@@ -147,8 +147,6 @@ for model_str in models_name:
     print()
     print(model_str)
     print_stats("Beginning of exp")
-    img_tensor = torch.rand((batch_size,3,224,224)).to(device)
-    print_stats(f"After loading input to cuda, input batch size {batch_size}")
 
     #['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
     num_classes = 1000
@@ -163,9 +161,10 @@ for model_str in models_name:
     elif model_str.startswith('vit'):
         model_test = build_my_vit(num_classes)
     
-    all_layers = []
-    remove_sequential(model_test, all_layers)
-    results[model_str].extend([len(all_layers)])
+#    all_layers = []
+#    remove_sequential(model_test, all_layers)
+#    results[model_str].extend([len(all_layers)])
+#    del all_layers
     
     #model_test = build_my_resnet('resnet18', num_classes)
     #model_test = build_my_resnet('resnet50', num_classes)
@@ -176,13 +175,36 @@ for model_str in models_name:
 
     if torch.cuda.is_available():
         model_test.cuda()
+    model_size_cuda = torch.cuda.max_memory_allocated(0) / (1024 ** 2)
     print_stats("After loading model to cuda ")
+    print("Model memory cuda ", model_size_cuda)
+    mod_sizes = [np.prod(np.array(p.size())) for p in model_test.parameters()]
+    model_size = np.sum(mod_sizes) * 4 / (1024 * 1024)
+    print("Model size: ", model_size)
 
-    input = torch.rand((1,3,224,224)).to(device)
-    input_size = np.prod(np.array(input.size())) * 4 / 4.5
-    sizes, int_time = _get_intermediate_outputs_and_time(model_test, input)
+
+    input_vec = torch.rand((1,3,224,224)).to(device)
+    #input_size_vec = np.prod(np.array(input_vec.size())) * 4 / 4.5
+    input_size_vec = input_vec.element_size() * input_vec.nelement() / (1024**2)
+    sizes, int_time = _get_intermediate_outputs_and_time(model_test, input_vec)
     sizes = np.array(sizes) * 1024.
+    print_stats("Before inference with bs 1")
+    model_test.eval()
+    with torch.no_grad():
+        model_test(input_vec,0,100)
+    max_allocated_bs1 = torch.cuda.max_memory_allocated(0) / (1024 ** 2)
+    sum_cons_sizes = [input_size_vec]
+    sum_cons_sizes.extend(sizes/1024./1024.)
+    sum_cons_sizes = [sum(sum_cons_sizes[i:i+2]) for i in range(len(sum_cons_sizes)-1)]
+    max_output_bs1 = max(sum_cons_sizes)
+    del input_vec
 
+    img_tensor = torch.rand((batch_size,3,224,224)).to(device)
+    print_stats(f"After loading input to cuda, input batch size {batch_size}")
+    input_size_cuda = torch.cuda.max_memory_allocated(0) / (1024 ** 2)
+    #input_size = img_tensor.element_size() * img_tensor.nelement() / (1024**2)
+    print("Input size cuda: ", input_size_cuda)
+    #print("Input size ", input_size)
 
     print()
     input_size = img_tensor.element_size() * img_tensor.nelement() / (1024**2)
@@ -202,9 +224,19 @@ for model_str in models_name:
     print()
 
     if np.argmax(sum_cons_sizes) != 0:
-        results[model_str].extend([input_size+sum_output+model_size, input_size+max_output+model_size])
+        #results[model_str].extend([input_size+sum_output+model_size, input_size+max_output+model_size])
+        diff_bs1 = max_allocated_bs1 - (input_size_vec + model_size_cuda + max_output_bs1) 
+#        print(input_size_vec, input_size)
+#        print(max_output_bs1, max_output)
+#        print("HERE")
+        #results[model_str].extend([input_size+sum_output+model_size_cuda, input_size+max_output+model_size_cuda, diff_bs1*batch_size])
+        results[model_str].extend([input_size+max_output+model_size_cuda, diff_bs1*batch_size])
     else:
-        results[model_str].extend([input_size+sum_output+model_size, max_output+model_size])
+        print("SPECIAL CASE ", model_str)
+        #results[model_str].extend([input_size+sum_output+model_size, max_output+model_size]) 
+        diff_bs1 = max_allocated_bs1 - (model_size_cuda + max_output_bs1) 
+        #results[model_str].extend([input_size+sum_output+model_size_cuda, max_output+model_size_cuda, diff_bs1*batch_size])
+        results[model_str].extend([max_output+model_size_cuda, diff_bs1*batch_size])
 
 
     # just to put stats at 0 again after some checks
@@ -215,22 +247,42 @@ for model_str in models_name:
     passed = True
     with torch.no_grad():
         try:
-            output, res = model_test(img_tensor,0,100)
+            model_test(img_tensor,0,100)
         except:
             passed = False
             print("WRONG VALUE ", model_str)
             pass
     
     max_allocated = torch.cuda.max_memory_allocated(0) / (1024 ** 2)
+    print("MAX allocated ", max_allocated, max_allocated_bs1)
     results[model_str].extend([max_allocated])
     print_stats("After inference eval mode")
     
-    if passed:
-        del output
-        del res
-    del input
+#    if passed:
+#        del output
+#        del res
+#    del _
     del model_test
     del img_tensor
     print()
+
+
+#    import gc
+#    for obj in gc.get_objects():
+#        try:
+#            if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
+#                print(type(obj), obj.size(), obj.get_device(), sys.getsizeof(obj.data))
+#        except:
+#            pass
+    
+#    print("TEST DIR")
+#    for var_name, var_value in dict(locals()).items():
+#        try:
+#            #print(type(var_value))
+#            #var_value.is_cuda
+#            print(var_name, var_value)
+#        except:
+#            pass
+
 
 print(results)

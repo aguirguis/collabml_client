@@ -94,7 +94,7 @@ class MyResNet(resnet):
           if isinstance(m, MyBasicBlock) or isinstance(m, MyBottleneck):
               x,sizes = m(x)
               # TODO CHANGE AGAIN
-              # res.append(sum(sizes))
+              #res.append(sum(sizes))
               res.extend(sizes)
           else:
               x = m(x)
