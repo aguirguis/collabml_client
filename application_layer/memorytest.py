@@ -129,15 +129,15 @@ cuda0 = torch.device('cuda:0')
 #batch_sizes = [10]
 batch_sizes = [1]
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-models_name = ['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-#models_name = ['resnet50']
+#models_name = ['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+models_name = ['alexnet']
 
 results = {}
 
 for model_str in models_name:
 #for batch_size in batch_sizes:
     results[model_str] = []
-    batch_size = 128
+    batch_size = 8000
     torch.cuda.empty_cache()
     torch.cuda.reset_peak_memory_stats(device)
 
@@ -201,7 +201,7 @@ for model_str in models_name:
 
     img_tensor = torch.rand((batch_size,3,224,224)).to(device)
     print_stats(f"After loading input to cuda, input batch size {batch_size}")
-    input_size_cuda = torch.cuda.max_memory_allocated(0) / (1024 ** 2)
+    input_size_cuda = torch.cuda.max_memory_allocated(0) / (1024 ** 2) - model_size_cuda
     #input_size = img_tensor.element_size() * img_tensor.nelement() / (1024**2)
     print("Input size cuda: ", input_size_cuda)
     #print("Input size ", input_size)
@@ -215,7 +215,7 @@ for model_str in models_name:
     max_output = max(sum_cons_sizes)
     #max_output = max(sizes/1024./1024.*batch_size)
     sum_output = sum(sizes/1024./1024.*batch_size)
-    print("Max output: ", max(sizes/1024./1024.*batch_size))
+    print("Max output: ", max_output)
     print("Total output: ", sum(sizes/1024./1024.*batch_size))
     mod_sizes = [np.prod(np.array(p.size())) for p in model_test.parameters()]
     model_size = np.sum(mod_sizes) * 4 / (1024 * 1024)
