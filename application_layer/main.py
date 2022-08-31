@@ -19,6 +19,9 @@ from threading import Thread
 from swiftclient.service import SwiftService, SwiftError
 from swiftclient.exceptions import ClientException
 
+torch.backends.cudnn.benchmark = False
+torch.backends.cudnn.deterministic = True
+
 def download_dataset(swift, dataset_name, datadir):
   """
   download dataset from swift db to local disk
