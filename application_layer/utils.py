@@ -509,7 +509,8 @@ def prepare_transforms(dataset_name):
             transforms.ToTensor(),
             normalize,
     ])
-    return transform_train, transform_test
+    #return transform_train, transform_test
+    return normalize, normalize
 
 def get_train_test_split(dataset_name, datadir, transform_train, transform_test):
   if dataset_name == 'cifar10':
@@ -679,7 +680,8 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
   assert len(images) == len(labels)
   imgs = np.array(images)
   dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode)
-  dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8)
+  # TODO play with num_workers...
+  dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=0)
   print("Streaming imagenet data took {} seconds".format(time.time()-stream_time))
 #  decompress_time += (time.time()-decompt)
 #  print("Time taken for post processing the received compressed file: {} seconds".format(decompress_time))
