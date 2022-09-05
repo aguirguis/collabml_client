@@ -28,8 +28,10 @@ for i in range(0,50000):
     ])
     image = transform(image)
 
-    image_buffer = io.BytesIO()
-    torch.save(image, image_buffer)
+    torch.save(image, file_image.replace(".JPEG",".PTB"))
 
-    with open(file_image.replace(".JPEG",".PTB"), "wb") as f:
-        f.write(image_buffer.read())
+    #image_buffer = io.BytesIO()
+    #torch.save(image, image_buffer)
+
+    #with open(file_image.replace(".JPEG",".PTB"), "wb") as f:
+    #    f.write(image_buffer.read())
