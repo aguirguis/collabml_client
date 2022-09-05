@@ -510,7 +510,7 @@ def prepare_transforms(dataset_name):
             normalize,
     ])
     #return transform_train, transform_test
-    return transform.Compose([]), transform.Compose([])
+    return transforms.Compose([]), transforms.Compose([])
 
 def get_train_test_split(dataset_name, datadir, transform_train, transform_test):
   if dataset_name == 'cifar10':

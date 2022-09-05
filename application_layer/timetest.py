@@ -11,6 +11,7 @@ import torch
 from torchvision.models import AlexNet
 from torch import Tensor
 import torch.nn as nn
+from torch.profiler import profile, record_function, ProfilerActivity
 from time import time
 import sys
 
@@ -52,6 +53,13 @@ def _get_gpu_stats(gpu_id):
 def print_stats(m):
     # gpu_t.track()
     print(m)
+#    memory_stats_d = torch.cuda.memory_stats(0)
+#    active = memory_stats_d['active_bytes.all.peak'] / (1024**2)
+#    inactive = memory_stats_d['inactive_split_bytes.all.peak'] / (1024**2)
+#    inactive = memory_stats_d['inactive_split_bytes.all.peak'] / (1024**2)
+#    reserved = memory_stats_d['reserved_bytes.all.current'] / (1024**2)
+#    print("torch cuda active, inactive, reserved ", active, inactive, reserved)
+#    print("torch cuda memory stat ", torch.cuda.memory_stats(0))
     print("nvidia-smi gpu utilization ", _get_gpu_stats(0)[0][1])
     print("torch cuda memory allocated ", torch.cuda.memory_allocated(0) / (1024 ** 2))
     print("torch cuda max memory allocated ", torch.cuda.max_memory_allocated(0) / (1024 ** 2))
@@ -109,70 +117,109 @@ def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_bat
               (begtosplit_size * (client_batch / server_batch)) + splittofreeze_size + freezetoend_size * 2
     return total_server, total_client, vanilla, model_size, begtosplit_size / server_batch
 
+#os.environ['PYTORCH_NO_CUDA_MEMORY_CACHING'] = '1'
+torch.backends.cudnn.benchmark = False
+torch.backends.cudnn.deterministic = True
 idx = 0
 os.environ["CUDA_VISIBLE_DEVICES"] = f"{idx}"
 cuda0 = torch.device('cuda:0')
 
-batch_sizes = [1, 10, 100, 1000, 5000]
+#batch_sizes = [1, 10, 100]
 #batch_sizes = [1, 1000]
 #batch_sizes = [10]
+batch_sizes = [1]
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+#models_name = ['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+models_name = ['alexnet']
 
+results = {}
 
-for batch_size in batch_sizes:
+for model_str in models_name:
+#for batch_size in batch_sizes:
+    results[model_str] = []
+    batch_size = 1000
     torch.cuda.empty_cache()
     torch.cuda.reset_peak_memory_stats(device)
 
     #print(torch.cuda.memory_stats(0))
 
-    #print_stats("Beginning of exp")
-    img_tensor = torch.rand((batch_size,3,224,224)).to(device)
-    #print_stats(f"After loading input to cuda, input batch size {batch_size}")
+    print()
+    print()
+    print(model_str)
+    print_stats("Beginning of exp")
 
     #['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
     num_classes = 1000
+    if model_str.startswith('alex'):
+        model_test = build_my_alexnet(num_classes)
+    elif model_str.startswith('res'):
+        model_test = build_my_resnet(model_str, num_classes)
+    elif model_str.startswith('vgg'):
+        model_test = build_my_vgg(model_str, num_classes)
+    elif model_str.startswith('dense'):
+        model_test = build_my_densenet(model_str, num_classes)
+    elif model_str.startswith('vit'):
+        model_test = build_my_vit(num_classes)
+    
+#    all_layers = []
+#    remove_sequential(model_test, all_layers)
+#    results[model_str].extend([len(all_layers)])
+#    del all_layers
+    
     #model_test = build_my_resnet('resnet18', num_classes)
     #model_test = build_my_resnet('resnet50', num_classes)
     #model_test = build_my_vgg('vgg11', num_classes)
     #model_test = build_my_vgg('vgg19', num_classes)
-    model_test = build_my_alexnet(num_classes)
+    #model_test = build_my_alexnet(num_classes)
     #model_test = build_my_densenet('densenet121', num_classes)
 
     if torch.cuda.is_available():
         model_test.cuda()
-    #print_stats("After loading model to cuda ")
-
-    s_time = time.time()
-    model_test.eval()
-    with torch.no_grad():
-        output, res = model_test(img_tensor,0,100)
-    print("TIME ", batch_size, ": ", time.time()-s_time)
-    #print_stats("After inference eval mode")
+    model_size_cuda = torch.cuda.max_memory_allocated(0) / (1024 ** 2)
+    print_stats("After loading model to cuda ")
+    print("Model memory cuda ", model_size_cuda)
+    mod_sizes = [np.prod(np.array(p.size())) for p in model_test.parameters()]
+    model_size = np.sum(mod_sizes) * 4 / (1024 * 1024)
+    print("Model size: ", model_size)
 
 
-#    with torch.inference_mode():
-#        output, res = model_test(img_tensor,0,100)
-#    print_stats("After inference inference mode")
-#
-#    model_test.train()
-#    output, res = model_test(img_tensor,0,100)
-#    print_stats("After inference train mode")
-#
-#
-#    model_test.train()
-#    output, res = model_test(img_tensor,0,100)
-#    torch.optim.Adam(model_test.parameters(), lr=1e-3, betas=(0.9, 0.99))
-#    target = torch.rand(output.size()).to(device)
-#    print("TARGET: ", target.element_size() * target.nelement()/(1024 * 1024))
-#    loss = torch.nn.MSELoss()(output, target)
-#    print("LOSS: ", loss.element_size() * loss.nelement()/(1024 * 1024))
-#    print(loss)
-#    loss.backward()
-#    print_stats("After inference train mode and backward call")
+    input_vec = torch.rand((batch_size,3,224,224)).to(device)
+    #input_size_vec = np.prod(np.array(input_vec.size())) * 4 / 4.5
+    input_size_vec = input_vec.element_size() * input_vec.nelement() / (1024**2)
+    sizes, int_time = _get_intermediate_outputs_and_time(model_test, input_vec)
 
-    del output
-    del res
-    del img_tensor
-    del model_test
+    print("Sizes + Times: ")
+    for i in zip(np.array(sizes)/1024., int_time):
+        print(i)
+        print()
+    
+    print("SUM(time) ", sum(int_time))
 
     print()
+    input_size = input_vec.element_size() * input_vec.nelement() / (1024**2)
+    print("Input size: ", input_size)
+
+    del model_test
+    del input_vec
+    print()
+
+
+#    import gc
+#    for obj in gc.get_objects():
+#        try:
+#            if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
+#                print(type(obj), obj.size(), obj.get_device(), sys.getsizeof(obj.data))
+#        except:
+#            pass
+    
+#    print("TEST DIR")
+#    for var_name, var_value in dict(locals()).items():
+#        try:
+#            #print(type(var_value))
+#            #var_value.is_cuda
+#            print(var_name, var_value)
+#        except:
+#            pass
+
+
+print(results)
