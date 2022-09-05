@@ -620,6 +620,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
       print("Executing all posts took {} seconds".format(time.time()-post_time))
       transform=None		#no transform required in this case
   else:		#mode=='vanilla'
+      # TODO change code to handle no transforms for image
     objects = []
     num_objs = int((lend-lstart)/COMP_FILE_SIZE)
     step = int((lend-lstart)/num_objs)

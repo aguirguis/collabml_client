@@ -11,7 +11,8 @@ step = 100
 for i in range(0,50000,step):
     start, end = i,i+step
     print(f"Compressing images from {start} to {end}")
-    idtostr = lambda idx: "val/ILSVRC2012_val_000"+((5-len(str(idx+1)))*"0")+str(idx+1)+".JPEG"
+    idtostr = lambda idx: "val/ILSVRC2012_val_000"+((5-len(str(idx+1)))*"0")+str(idx+1)+".PTB"
+    #idtostr = lambda idx: "val/ILSVRC2012_val_000"+((5-len(str(idx+1)))*"0")+str(idx+1)+".JPEG"
     objects = [idtostr(idx) for idx in range(start,end)]
     list_files = [os.path.join(home, "dataset/imagenet",obj) for obj in objects]
     #   compress
