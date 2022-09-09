@@ -114,11 +114,13 @@ def _get_intermediate_outputs_and_time(model, input):
     return sizes.tolist(), int_time, detailed_sizes, detailed_idx			#note that returned sizes are of type Tensor
 
 def _calculate_max(input_size, sizes):
-    sum_cons_sizes = [input_size]
-    sum_cons_sizes.extend(sizes/1024./1024.)
-    sum_cons_sizes = [sum(sum_cons_sizes[i:i+2]) for i in range(len(sum_cons_sizes)-1)]
-    max_output = max(sum_cons_sizes)
-    return max_output, sum_cons_sizes
+    if len(sizes) > 0:
+        sum_cons_sizes = [input_size]
+        sum_cons_sizes.extend(sizes/1024./1024.)
+        sum_cons_sizes = [sum(sum_cons_sizes[i:i+2]) for i in range(len(sum_cons_sizes)-1)]
+        max_output = max(sum_cons_sizes)
+        return max_output, sum_cons_sizes
+    return 0., sizes
 
 #This function gets the memory consumption on both the client and the server sides with a given split_idx, freeze_idx,
 #client batch size, server bach size, and model
