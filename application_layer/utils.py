@@ -203,11 +203,12 @@ def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, s
     input = torch.rand((1,3,224,224)).to(device)
     #Step 1: select the layers whose outputs size is < input size && whose output < bw
     #input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
-    input_size = input.element_size() * input.nelement() / (1024**2)
+    input_size = input.element_size() * input.nelement() / (1024.**2)
+
     sizes, int_time, detailed_sizes, detailed_idx = _get_intermediate_outputs_and_time(model, input)
     sizes = np.array(sizes)*1024	#sizes is in Bytes (after *1024)
     detailed_sizes = np.array(detailed_sizes)*1024
-    max_allocated_bs1 = torch.cuda.max_memory_allocated(0) / (1024 ** 2) - GPU_in
+    max_allocated_bs1 = torch.cuda.max_memory_allocated(0) / (1024. ** 2) - GPU_in
     max_output_bs1, sum_cons_sizes = _calculate_max(input_size, detailed_sizes)
     if np.argmax(sum_cons_sizes) != 0:
         diff_bs1 = max_allocated_bs1 - (input_size + _model_size + max_output_bs1)
@@ -225,8 +226,8 @@ def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, s
     print("Input_size ", input_size)
     print("TESTING *****************************")
     print("Input size, BW, MIN:")
-    print(input_size*SERVER_BATCH*100, bw, min(input_size*SERVER_BATCH*100, bw))
-    pot_idxs = np.where((sizes*SERVER_BATCH*100 < min(input_size*SERVER_BATCH*100, bw)) & (sizes > 0))
+    print(input_size*(1024.**2)*SERVER_BATCH*100, bw, min(input_size*(1024.**2)*SERVER_BATCH*100, bw))
+    pot_idxs = np.where((sizes*SERVER_BATCH*100 < min(input_size*(1024.**2)*SERVER_BATCH*100, bw)) & (sizes > 0))
     #pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
     #Step 2: select an index whose memory utilition is less than that in vanilla cases
     print("All candidates indexes: ", pot_idxs)
