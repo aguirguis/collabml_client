@@ -169,7 +169,7 @@ def get_mem_consumption(model_str, model_size, input_size, outputs_, split_idx, 
 
 def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, split_idx_manual, device):
     GPU_in = torch.cuda.max_memory_allocated(device) / (1024 ** 2)
-    if device == 'cuda' or device == 'cuda:0,1':
+    if torch.cuda.is_available():
         model.to(device)
         _model_size = torch.cuda.max_memory_allocated(device) / (1024 ** 2) - GPU_in
     else:
