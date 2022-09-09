@@ -82,7 +82,7 @@ print(args)
 parent_dir = "compressed" # if mode == 'split' else "val"
 
 start_time = time.time()
-device = 'cuda' if torch.cuda.is_available() and not args.cpuonly else 'cpu'
+device = 'cuda:0,1' if torch.cuda.is_available() and not args.cpuonly else 'cpu'
 
 # Data
 print('==> Preparing data..')
