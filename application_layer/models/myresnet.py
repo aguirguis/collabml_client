@@ -98,7 +98,7 @@ class MyResNet(resnet):
               # TODO CHANGE AGAIN
               res.append(sum(sizes))
               detailed_res.extend(sizes)
-              detailed_idx.append(idx for s in sizes)
+              detailed_idx.extend([idx for s in sizes])
           else:
               x = m(x)
               res.append(x.element_size() * x.nelement()/1024)
