@@ -169,11 +169,11 @@ def get_mem_consumption(model_str, model_size, input_size, outputs_, split_idx, 
 
 def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, split_idx_manual, device):
     GPU_in = torch.cuda.max_memory_allocated(device) / (1024 ** 2)
-    if device == 'cuda':
+    if device == 'cuda' or device == 'cuda:0,1':
         model.to(device)
         _model_size = torch.cuda.max_memory_allocated(device) / (1024 ** 2) - GPU_in
     else:
-        mod_sizes = [np.prod(np.array(p.size())) for p in model_test.parameters()]
+        mod_sizes = [np.prod(np.array(p.size())) for p in model.parameters()]
         _model_size = np.sum(mod_sizes) * 4 / (1024 * 1024)
     print("IN SPLITTING ALGO")
     #a=torch.cuda.FloatTensor(1)
