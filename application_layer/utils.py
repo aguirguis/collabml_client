@@ -107,142 +107,75 @@ def get_model(model_str, dataset):
 def _get_intermediate_outputs_and_time(model, input):
     print("In _get_intermediate_outputs_and_time")
     #returns an array with sizes of intermediate outputs (in KBs), assuming some input
-    output,sizes, int_time = model(input,0,150, need_time=True)		#the last parameter is any large number that is bigger than the number of layers
-    return sizes.tolist(), int_time			#note that returned sizes are of type Tensor
+    model.eval()
+    with torch.no_grad():
+        output,sizes, int_time, detailed_sizes, detailed_idx = model(input,0,150, need_time=True)		#the last parameter is any large number that is bigger than the number of layers
+    model.train()
+    return sizes.tolist(), int_time, detailed_sizes, detailed_idx			#note that returned sizes are of type Tensor
+
+def _calculate_max(input_size, sizes):
+    sum_cons_sizes = [input_size]
+    sum_cons_sizes.extend(sizes/1024./1024.)
+    sum_cons_sizes = [sum(sum_cons_sizes[i:i+2]) for i in range(len(sum_cons_sizes)-1)]
+    max_output = max(sum_cons_sizes)
+    return max_output, sum_cons_sizes
+
 #This function gets the memory consumption on both the client and the server sides with a given split_idx, freeze_idx,
 #client batch size, server bach size, and model
 #The function also returns the estimated memory consumption in the vanilla case
-def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_batch, server_batch=SERVER_BATCH):
+def get_mem_consumption(model_str, model_size, input_size, outputs_, split_idx, freeze_idx, client_batch, diff_bs1, doutputs, detailed_idx, server_batch=SERVER_BATCH):
+    if not (model_str == 'mydensenet121' or model_str == 'myresenet50'):
+        diff_bs1 = 0.
     if freeze_idx < split_idx:          #we do not allow split after freeze index
         split_idx = freeze_idx
-    outputs/=1024			#to make outputs also in KBs (P.S. it comes to here in Bytes)
-    input_size = np.prod(np.array(input.size()))*4/ (1024*1024)*server_batch
-    begtosplit_sizes = outputs[0:split_idx]
-    #intermediate_input_size = outputs[split_idx]/ (1024*1024)*client_batch
-    intermediate_input_size = outputs[split_idx-1]/1024*client_batch
-    splittofreeze_sizes = outputs[split_idx:freeze_idx]
-    freezetoend_sizes = outputs[freeze_idx:]
-    #Calculating the required sizes
-    params=[param for param in model.parameters()]
-    mod_sizes = [np.prod(np.array(p.size())) for p in params]
-    model_size = np.sum(mod_sizes)*4/ (1024*1024)
-    #print("Model size ", model_size)
+    dsplit = -1
+    dsplit_server = -1
+    dfreeze = -1
+    for i, idx in enumerate(detailed_idx):
+        if idx > (split_idx - 1) and dsplit_server == -1:
+            dsplit_server = i-1
+        if idx > split_idx and dsplit == -1:
+            dsplit = i-1
+        if idx > freeze_idx and dfreeze == -1:
+            dfreeze = i-1
+    #outputs/=1024			#to make outputs also in KBs (P.S. it comes to here in Bytes)
+    #input_size = np.prod(np.array(input.size()))*4/ (1024*1024)*server_batch
+    begtosplit_sizes = doutputs[0:dsplit]
+    intermediate_input_size = doutputs[dsplit_server]/(1024.*1024.)
+    splittofreeze_sizes = doutputs[dsplit:dfreeze]
+    freezetoend_sizes = doutputs[dfreeze:]
+    
     #note that before split, we do only forward pass so, we do not store gradients
     #after split index, we store gradients so we expect double the storage
-    begtosplit_size = np.sum(begtosplit_sizes)/1024*server_batch
-    splittofreeze_size = np.sum(splittofreeze_sizes)/1024*client_batch
-    freezetoend_size = np.sum(freezetoend_sizes)/1024*client_batch
+    begtosplit_size, _ = _calculate_max(input_size, begtosplit_sizes)
+    splittofreeze_size,_ = _calculate_max(intermediate_input_size, splittofreeze_sizes)
+    freezetoend_size = np.sum(freezetoend_sizes)/(1024.*1024.)
 
 
     # Just for debug
     print("Intermediate: ", intermediate_input_size)
-    print(begtosplit_size/server_batch)
-    total_layers_size = np.sum(outputs)/1024
+    print(begtosplit_size)
+    total_layers_size = np.sum(outputs_)/1024./1024.
     print("Total layers size ", total_layers_size)
+    
+    # approximation with a small batch size on the sever
+    total_server = (input_size + model_size + begtosplit_size+diff_bs1)*server_batch
+    total_client = (intermediate_input_size + model_size + splittofreeze_size+diff_bs1 + freezetoend_size*2)*client_batch
+    vanilla = (input_size + model_size + begtosplit_size+diff_bs1 + splittofreeze_size+diff_bs1 + freezetoend_size*2)*client_batch
+    return total_server, total_client, vanilla, model_size, begtosplit_size, diff_bs1
 
-    total_server = input_size+model_size+begtosplit_size
-    total_client = intermediate_input_size+model_size+splittofreeze_size+freezetoend_size*2
-    vanilla = input_size*(client_batch/server_batch)+model_size+\
-                (begtosplit_size*(client_batch/server_batch))+splittofreeze_size+freezetoend_size*2
-    return total_server, total_client, vanilla, model_size, begtosplit_size/server_batch
 
-
-#def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_manual):
-#    a=torch.cuda.FloatTensor(1)
-#    print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
-#    #First of all, get the bandwidth
-#    client = iperf3.Client()
-#    client.duration = 1
-#    #client.server_hostname = "192.168.0.242"
-#    client.server_hostname = "192.168.0.246"
-#    print("IN SPLITTING")
-#    while True:
-#        try:
-#            res = client.run()
-#            if res.error is None:
-#                bw = res.received_bps/8             #bw now (after /8) is in Bytes/sec
-#                break
-#        except:
-#            print(f"Error of iperf: {res.error}")
-#            sys.stdout.flush()
-#            res=None
-#            sleep(1)
-#            #bw = 908.2855256674147*1024*1024/8
-#    print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
-#    if split_choice == 'manual':
-#        split_idx = split_idx_manual
-#    elif split_choice == 'to_freeze':
-#        split_idx = freeze_idx
-#    else:
-#        #This function chooses the split index based on the intermediate output sizes and memory consumption
-#        client_batch=15
-#        #input = torch.rand((1,3,224,224)) 
-#        input = torch.rand((client_batch,3,224,224)) 
-#        #Step 1: select the layers whose outputs size is < input size && whose output < bw
-#        #input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
-#        input_size = np.prod(np.array(input.size()))*4/(4.5*client_batch)
-#        #input_size = np.prod(np.array(input.size()))*4/4.5
-#        sizes, int_time = _get_intermediate_outputs_and_time(model, input)
-#        sizes = np.array(sizes)/client_batch*1024	#sizes is in Bytes (after *1024)
-#
-#        split_idx = np.argmin(sizes[:freeze_idx])+1
-#
-#        #note that int_time is the time to process each layer.. to estimate the computation time on the client, you need to compute the aggregate
-#        aggregate_computation_time=[0]*len(int_time)
-#        aggregate_computation_time[0]=sum(int_time)
-#        for i in range(1,len(int_time)):
-#            aggregate_computation_time[i]=aggregate_computation_time[i-1]-int_time[i-1]
-#        print("Done intermediate outputs and time")
-##       print(f"Intermediate output sizes: {sizes*server_batch*100}")
-##       print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
-#        #note that input_size and sizes are both in Bytes
-#        #TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
-#        print("Sizes ", sizes)
-#        print("Input_size ", input_size)
-#        print("TESTING *****************************")
-#        print("Input size, BW, MIN:")
-#        #pot_idxs = np.where((sizes*SERVER_BATCH*100 < min(input_size*SERVER_BATCH*100, bw)) & (sizes > 0))
-#        pot_idxs = np.where(sizes < input_size)		#New version
-#        #search at which index the communication time will be less than the computation time!
-#        print("All candidates indexes: ", pot_idxs)
-#        print("Communication time: ", np.array(sizes)*client_batch/bw)
-#        print("Computation time: ", aggregate_computation_time)
-#        pot_idxs = [i for i in pot_idxs[0] if sizes[i]*client_batch/bw <= aggregate_computation_time[i]]
-#        print("Indexes that satisfies the communication less than computation: ", pot_idxs)
-#        #Step 2: select an index whose memory utilition is less than that in vanilla cases
-#        print("All candidates indexes: ", pot_idxs)
-#        print("SPLIT IDX CHOICE, split idx manual, freeze_idx: ", split_choice, split_idx_manual, freeze_idx)
-#    #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
-#        model_size, begtosplit_mem = 0, 0
-#        if split_choice == 'automatic':
-#            for idx in pot_idxs:
-#                candidate_split=idx+1		#to solve the off-by-one error
-#                if candidate_split > freeze_idx:
-#                    break
-#                split_idx = candidate_split
-#                server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
-#                print("Candidate split ", candidate_split)
-#                print("Server, client, server+client, vanilla ", server, client, server+client, vanilla)
-#                print("Model size ", model_size)
-#                break
-#                #if server+client < vanilla:
-#                #    break
-#    if model_size == 0:
-#        _,_,_,model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
-#    #Note that, now I have all the pieces of memory consumption on the server:
-#    #input_size (in bytes), model_size (in MBs), begtosplit_mem (in MBs)
-#    #I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
-#    #Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
-#    fixed, scale_with_bsz = model_size, input_size*4.5/(1024*1024)+begtosplit_mem
-#    print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
-#    print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
-#
-#    return split_idx, (fixed, scale_with_bsz)
-
-def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_manual):
+def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, split_idx_manual, device):
+    GPU_in = torch.cuda.max_memory_allocated(device) / (1024 ** 2)
+    if device == 'cuda':
+        model.to(device)
+        _model_size = torch.cuda.max_memory_allocated(device) / (1024 ** 2) - GPU_in
+    else:
+        mod_sizes = [np.prod(np.array(p.size())) for p in model_test.parameters()]
+        _model_size = np.sum(mod_sizes) * 4 / (1024 * 1024)
     print("IN SPLITTING ALGO")
-    a=torch.cuda.FloatTensor(1)
-    print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
+    #a=torch.cuda.FloatTensor(1)
+    #print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
     #First of all, get the bandwidth
     client = iperf3.Client()
     client.duration = 1
@@ -265,13 +198,23 @@ def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_ma
             break
     print(f"Recorded bandwidth: {bw*8/(1024*1024)} Mbps")
     #This function chooses the split index based on the intermediate output sizes and memory consumption
-    input = torch.rand((1,3,224,224))
+    input = torch.rand((1,3,224,224)).to(device)
     #Step 1: select the layers whose outputs size is < input size && whose output < bw
     #input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
-    input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
-    sizes, int_time = _get_intermediate_outputs_and_time(model, input)
+    input_size = input.element_size() * input.nelement() / (1024**2)
+    sizes, int_time, detailed_sizes, detailed_idx = _get_intermediate_outputs_and_time(model, input)
     sizes = np.array(sizes)*1024	#sizes is in Bytes (after *1024)
-    print("Done intermediate outputs and time")
+    detailed_sizes = np.array(detailed_sizes)*1024
+    max_allocated_bs1 = torch.cuda.max_memory_allocated(0) / (1024 ** 2) - GPU_in
+    max_output_bs1, sum_cons_sizes = _calculate_max(input_size, detailed_sizes)
+    if np.argmax(sum_cons_sizes) != 0:
+        diff_bs1 = max_allocated_bs1 - (input_size + _model_size + max_output_bs1)
+    else:
+        diff_bs1 = max_allocated_bs1 - (_model_size + max_output_bs1)
+    del input
+    print("Done intermediate outputs and time") 
+
+
 #    print(f"Intermediate output sizes: {sizes*server_batch*100}")
 #    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
     #note that input_size and sizes are both in Bytes
@@ -302,19 +245,20 @@ def choose_split_idx(model, freeze_idx, client_batch, split_choice, split_idx_ma
             if candidate_split > freeze_idx:
                 break
             split_idx = candidate_split
-            server, client, vanilla, model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
+            server, client, vanilla, model_size, begtosplit_mem, diff_bs1 = get_mem_consumption(model_str, _model_size, input_size, sizes, split_idx, freeze_idx, client_batch, diff_bs1, detailed_sizes, detailed_idx)
             print("Candidate split ", candidate_split)
             print("Server, client, server+client, vanilla ", server, client, server+client, vanilla)
             print("Model size ", model_size)
             if server+client < vanilla:
                 break
     if model_size == 0:
-        _,_,_,model_size, begtosplit_mem = get_mem_consumption(model, input, sizes, split_idx, freeze_idx, client_batch)
+        _,_,_,_, begtosplit_mem, diff_bs1 = get_mem_consumption(model_str,_model_size, input_size, sizes, split_idx, freeze_idx, client_batch, diff_bs1, detailed_sizes, detailed_idx)
     #Note that, now I have all the pieces of memory consumption on the server:
     #input_size (in bytes), model_size (in MBs), begtosplit_mem (in MBs)
     #I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
     #Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
-    fixed, scale_with_bsz = model_size, input_size*4.5/(1024*1024)+begtosplit_mem
+    # TODO change input sizm
+    fixed, scale_with_bsz = model_size, input_size+begtosplit_mem+diff_bs1
     print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
     print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
     return split_idx, (fixed, scale_with_bsz)

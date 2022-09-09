@@ -42,7 +42,7 @@ class MyVGG(VGG):
           if idx >= end:
               break
       if need_time:
-          return x,torch.Tensor(res).cuda(), time_res #, names
+          return x,torch.Tensor(res).cuda(), time_res, res, [idx for idx in range(start, start+len(res))] #, names
       return x,torch.Tensor(res).cuda()
 
 largs = {'vgg11':[cfgs['A'],False],

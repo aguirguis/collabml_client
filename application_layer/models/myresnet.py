@@ -79,7 +79,9 @@ class MyResNet(resnet):
       all_layers = []
       remove_sequential(self, all_layers)
       idx = 0
+      detailed_idx = []
       res = []
+      detailed_res = []
 #      res.append(x.element_size() * x.nelement()/1024)
       time_res = []
       names = []
@@ -95,15 +97,18 @@ class MyResNet(resnet):
               x,sizes = m(x)
               # TODO CHANGE AGAIN
               res.append(sum(sizes))
-              #res.extend(sizes)
+              detailed_res.extend(sizes)
+              detailed_idx.append(idx for s in sizes)
           else:
               x = m(x)
               res.append(x.element_size() * x.nelement()/1024)
+              detailed_res.append(x.element_size() * x.nelement()/1024)
+              detailed_idx.append(idx)
           time_res.append(time()-layer_time)
           if idx >= end:
               break
       if need_time:
-          return x,torch.Tensor(res).cuda(), time_res #, names
+          return x,torch.Tensor(res).cuda(), time_res, detailed_res, detailed_idx #, names
       return x,torch.Tensor(res).cuda()
 
 largs = {'resnet18':[MyBasicBlock, [2, 2, 2, 2]],

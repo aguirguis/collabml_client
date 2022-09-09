@@ -42,7 +42,7 @@ class MyAlexNet(AlexNet):
           if idx >= end:
               break
       if need_time:
-          return x,torch.Tensor(res).cuda(), time_res #, names
+          return x,torch.Tensor(res).cuda(), time_res, res, [idx for idx in range(start, start+len(res))] #, names
       return x,torch.Tensor(res).cuda()
 
 def build_my_alexnet(num_classes=10):

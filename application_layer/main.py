@@ -125,7 +125,7 @@ print('==> Building model..')
 net = get_model(model, dataset_name)
 mem_cons = [10,10]
 if mode == 'split':
-    split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, split_choice, split_idx)
+    split_idx, mem_cons = choose_split_idx(model, net, freeze_idx, batch_size, split_choice, split_idx, device)
 
 print(f"Using split index: {split_idx}")
 if mode == 'split' or args.freeze:

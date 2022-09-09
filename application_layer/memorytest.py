@@ -70,8 +70,11 @@ def print_stats(m):
 
 def _get_intermediate_outputs_and_time(model, input):
     #returns an array with sizes of intermediate outputs (in KBs), assuming some input
-    output,sizes, int_time = model(input,0,150, need_time=True)		#the last parameter is any large number that is bigger than the number of layers
-    return sizes.tolist(), int_time
+    model.eval()
+    with torch.no_grad():
+        output, sizes, int_time, detailed_sizes, detailed_idx = model(input,0,150, need_time=True)		#the last parameter is any large number that is bigger than the number of layers
+    model.train()
+    return sizes.tolist(), int_time, detailed_sizes, detailed_idx
 
 def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_batch=1, server_batch=1):
     if freeze_idx < split_idx:  # we do not allow split after freeze index
@@ -129,15 +132,15 @@ cuda0 = torch.device('cuda:0')
 #batch_sizes = [10]
 batch_sizes = [1]
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-#models_name = ['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-models_name = ['alexnet']
+models_name = ['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+#models_name = ['alexnet']
 
 results = {}
 
 for model_str in models_name:
 #for batch_size in batch_sizes:
     results[model_str] = []
-    batch_size = 8000
+    batch_size = 128
     torch.cuda.empty_cache()
     torch.cuda.reset_peak_memory_stats(device)
 
@@ -160,6 +163,8 @@ for model_str in models_name:
         model_test = build_my_densenet(model_str, num_classes)
     elif model_str.startswith('vit'):
         model_test = build_my_vit(num_classes)
+
+    print("MODEL TYPE ", type(model_test))
     
 #    all_layers = []
 #    remove_sequential(model_test, all_layers)
@@ -186,13 +191,12 @@ for model_str in models_name:
     input_vec = torch.rand((1,3,224,224)).to(device)
     #input_size_vec = np.prod(np.array(input_vec.size())) * 4 / 4.5
     input_size_vec = input_vec.element_size() * input_vec.nelement() / (1024**2)
-    sizes, int_time = _get_intermediate_outputs_and_time(model_test, input_vec)
+    before_inf_bs1 = torch.cuda.max_memory_allocated(0) / (1024 ** 2)
+    print("BEFORE inf bs1 ", before_inf_bs1)
+    sizes, int_time, sizes, detailed_idx = _get_intermediate_outputs_and_time(model_test, input_vec)
     sizes = np.array(sizes) * 1024.
-    print_stats("Before inference with bs 1")
-    model_test.eval()
-    with torch.no_grad():
-        model_test(input_vec,0,100)
     max_allocated_bs1 = torch.cuda.max_memory_allocated(0) / (1024 ** 2)
+    print("Max allocated bs1 ", max_allocated_bs1)
     sum_cons_sizes = [input_size_vec]
     sum_cons_sizes.extend(sizes/1024./1024.)
     sum_cons_sizes = [sum(sum_cons_sizes[i:i+2]) for i in range(len(sum_cons_sizes)-1)]

@@ -25,6 +25,8 @@ class MyDenseNet(DenseNet):
     def forward(self, x:Tensor, start: int, end: int, need_time=False) -> Tensor:
       idx = 0
       res=[]
+      detailed_res = []
+      detailed_idx = []
 #      res.append(x.element_size() * x.nelement()/1024)
       time_res=[]
       names=[]
@@ -39,20 +41,25 @@ class MyDenseNet(DenseNet):
           if isinstance(m, torch.nn.modules.linear.Linear):
               x = F.relu(x, inplace=True)
               # TODO REMOVE APPEND
-              #res.append(x.element_size() * x.nelement()/1024.)
+              detailed_res.append(x.element_size() * x.nelement()/1024.)
+              detailed_idx.append(idx)
               x = F.adaptive_avg_pool2d(x, (1, 1))
               # TODO REMOVE APPEND
-              #res.append(x.element_size() * x.nelement()/1024.)
+              detailed_res.append(x.element_size() * x.nelement()/1024.)
+              detailed_idx.append(idx)
               x = torch.flatten(x, 1)
               # TODO REMOVE APPEND
-              #res.append(x.element_size() * x.nelement()/1024.)
+              detailed_res.append(x.element_size() * x.nelement()/1024.)
+              detailed_idx.append(idx)
           x = m(x)
           time_res.append(time()-layer_time)
           res.append(x.element_size() * x.nelement()/1024.)
+          detailed_res.append(x.element_size() * x.nelement()/1024.)
+          detailed_idx.append(idx)
           if idx >= end:
               break
       if need_time:
-          return x,torch.Tensor(res).cuda(), time_res #, names
+          return x,torch.Tensor(res).cuda(), time_res, detailed_res, detailed_idx #, names
       return x,torch.Tensor(res).cuda()
 
 largs = {'densenet121':[32, (6, 12, 24, 16), 64],

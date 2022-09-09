@@ -120,7 +120,7 @@ class MyViT(vision_transformer.VisionTransformer):
                         blocks_done = True
 
         if need_time:
-            return x, torch.Tensor(res).cuda(), time_res
+            return x, torch.Tensor(res).cuda(), time_res, res, [idx for idx in range(start, start+len(res))]
         return x, torch.Tensor(res).cuda()
 
 

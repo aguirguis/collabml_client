@@ -23,7 +23,7 @@ class MyInception(Inception3):
       idx = 0
       print("Input data size: {} KBs".format(x.element_size() * x.nelement()/1024))
       res = []
-      res.append(x.element_size() * x.nelement()/1024)
+      #res.append(x.element_size() * x.nelement()/1024)
       aux = None
       time_res=[]
       names=[]
@@ -44,7 +44,7 @@ class MyInception(Inception3):
           if idx >= end:
               break
       if need_time:
-          return x,torch.Tensor(res).cuda(), time_res #, names
+          return x,torch.Tensor(res).cuda(), time_res, res, [idx for idx in range(start, start+len(res))] #, names
       return x,torch.Tensor(res).cuda()
 
 def build_my_inception(num_classes=10):
