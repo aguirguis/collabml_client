@@ -161,9 +161,9 @@ def get_mem_consumption(model_str, model_size, input_size, outputs_, split_idx, 
     print("Total layers size ", total_layers_size)
     
     # approximation with a small batch size on the sever
-    total_server = (input_size + model_size + begtosplit_size+diff_bs1)*server_batch
-    total_client = (intermediate_input_size + model_size + splittofreeze_size+diff_bs1 + freezetoend_size*2)*client_batch
-    vanilla = (input_size + model_size + begtosplit_size+diff_bs1 + splittofreeze_size+diff_bs1 + freezetoend_size*2)*client_batch
+    total_server = (input_size + begtosplit_size+diff_bs1)*server_batch + model_size
+    total_client = (intermediate_input_size + splittofreeze_size+diff_bs1 + freezetoend_size*2)*client_batch + model_size
+    vanilla = (input_size + begtosplit_size + splittofreeze_size+diff_bs1 + freezetoend_size*2)*client_batch + model_size
     return total_server, total_client, vanilla, model_size, begtosplit_size, diff_bs1
 
 
