@@ -31,10 +31,11 @@ class InMemoryDataset(Dataset):
         if self.mode == 'split':		#this is not an image then, yet it is some intermediate result
             image = torch.from_numpy(image)
         else:
-            try:
-                image = Image.fromarray(image)
-            except:
-                image = Image.fromarray(image.numpy(), mode='L')
+            image = self.dataset[idx]
+#            try:
+#                image = Image.fromarray(image)
+#            except:
+#                image = Image.fromarray(image.numpy(), mode='L')
         if self.transform:
             image = self.transform(image)
         if self.labels is not None:
