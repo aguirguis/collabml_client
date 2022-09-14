@@ -6,7 +6,7 @@ def get_total_exec_time(filenames):
     times = []
     for filename in filenames:
         print(f"Processing file: {filename}")
-        with open(filename, "r") as f:
+        with open(filename, "r", encoding='latin1') as f:
             lines = f.readlines()
             if len(lines) == 0:
                 times.append(0)
