@@ -516,7 +516,8 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
   #If use_intermediate is set, we should send our request to the server socket instead of directly to Swift
   stream_time = time.time()
   #COMP_FILE_SIZE = 200				#defines how many image per object (after compression)
-  COMP_FILE_SIZE = 32				#defines how many image per object (after compression)
+  #COMP_FILE_SIZE = 32				#defines how many image per object (after compression)
+  COMP_FILE_SIZE = 1000				#defines how many image per object (after compression)
   print("The mode is: ", mode)
   if mode == 'split':
       parallel_posts = int((lend-lstart)/COMP_FILE_SIZE)			#number of posts request to run in parallel
