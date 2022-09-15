@@ -220,12 +220,13 @@ def run_scalability_multitenants(max_tenants, batch_sizes, target="split", split
 
 if __name__ == '__main__':
 ##################################EXP 0: MODELAS EXP MIN SPLIT#############################################
-    BWS = [1024, 50]
+    BWS = [50]#[1024, 50]
 
     for bw in BWS:
-        models = ['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121']
-
-        freeze_idxs = [11, 21, 25, 36, 17, 20]
+        #models = ['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121']
+        models = ['vgg19']
+        #freeze_idxs = [11, 21, 25, 36, 17, 20]
+        freeze_idxs = [36]
 
         #bsz = 8000
         bsz = 128
@@ -281,7 +282,7 @@ if __name__ == '__main__':
 #    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
 #    vit_run_models_exp(bsz, models, freeze_idxs, CPU=True)
 #    #run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
-        run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw) #CPU on the client side
+        #:run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw) #CPU on the client side
 ################################################################################################
 ##################################EXP 2: BW EXP#################################################
 #    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
