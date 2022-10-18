@@ -582,7 +582,7 @@ def send_request(request_dict):
 def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model,
                           mode='vanilla', split_idx=100, mem_cons=(0, 0), sequential=False, use_intermediate=False):
     stream_time = time.time()
-    COMP_FILE_SIZE = 1000  # defines how many image per object (after compression)
+    COMP_FILE_SIZE = 500  # defines how many image per object (after compression)
     print("The mode is: ", mode)
     if mode == 'split':
         parallel_posts = int((lend - lstart) / COMP_FILE_SIZE)  # number of posts request to run in parallel

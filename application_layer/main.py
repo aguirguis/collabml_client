@@ -124,7 +124,8 @@ if not args.downloadall and dataset_name in stream_datasets:
   reader = next(query)['contents']
   labelstr = b''.join(reader)
   labels = labelstr.decode("utf-8").split("\n")[:-1]		#remove extra '' at the end
-  assert len(labels) == 150000		#remove this after making sure the code works
+  if dataset_name == 'imagenet':
+    assert len(labels) == 150000		#remove this after making sure the code works
   labels = [int(l)-1 for l in labels]
 
 # Model
