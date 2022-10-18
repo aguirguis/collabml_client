@@ -94,13 +94,13 @@ def run_models_exp(batch_size, models, freeze_idxs, CPU=False, bw=1024, dataset=
     for model, freeze_idx in zip(models, freeze_idxs):
         empty_gpu()
         #run vanilla
-        os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
+        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
 		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
 		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
         empty_gpu()
         #run split
         #TWO IMPORTANT NOTES HERE: (1) we use the intermediate server for this experiment, (2) we set server batch size to 200 always
-        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
+        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
                  --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
 		> {logdir}/models_exp_{dataset}/test_split_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
 
@@ -118,13 +118,13 @@ def vit_run_models_exp(batch_size, models, freeze_idxs, CPU=False, bw=1024, data
     for model, freeze_idx in zip(models, freeze_idxs):
         empty_gpu()
         #run vanilla
-        os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
+        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
 		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
 		 > {logdir}/vit_models_exp/vanilla_{model}_bs{batch_size}_{"cpu" if CPU else "gpu"}')
         empty_gpu()
         #run split
         #TWO IMPORTANT NOTES HERE: (1) we use the intermediate server for this experiment, (2) we set server batch size to 200 always
-        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
+        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
                  --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
 		 > {logdir}/vit_models_exp_{dataset}/test_split_{model}_bs{batch_size}_{"cpu" if CPU else "gpu"}')
 
@@ -174,11 +174,11 @@ def run_bw_exp(BW, model, freeze_idx, dataset='imagenet'):
         os.system(f'{wondershaper_exec} -a eth0 -d {bw} -u {bw}')
         #empty_gpu()
         #run vanilla
-        os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size 8000\
+        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size 8000\
                  --freeze --freeze_idx {freeze_idx} > {logdir}/bw_exp_{dataset}/vanilla_{bw/1024}_{model}')
         empty_gpu()
         #run split
-        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size 8000\
+        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size 8000\
                  --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/bw_exp_{dataset}/split_{bw/1024}_{model}')
     #Back to the default BW (1Gbps)
     os.system(f'{wondershaper_exec} -c -a eth0')
