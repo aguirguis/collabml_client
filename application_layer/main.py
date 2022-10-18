@@ -65,6 +65,13 @@ if not args.downloadall and (dataset_name == 'mnist' or dataset_name == 'cifar10
   print("WARNING: dataset {} is small enough! Will download it only once in the beginning!".format(dataset_name))
   args.downloadall = True
 
+stream_datasets = ['imagenet', 'plantleave', 'inaturalist']
+
+stream_dataset_len = {'imagenet': 50000,
+            'plantleave': 4502,
+            'inaturalist': 24426
+        }
+
 model = args.model
 batch_size = args.batch_size
 num_epochs = args.num_epochs
@@ -109,7 +116,7 @@ if args.downloadall:
   testloader = torch.utils.data.DataLoader(
       testset, batch_size=batch_size, shuffle=False, num_workers=2)
 
-if not args.downloadall and dataset_name == 'imagenet':
+if not args.downloadall and dataset_name in stream_datasets:
   #We can download the labels file once and for all (it's small enough)
   opts = {'out_file':'-'}	#so that we can have it directly in memory
   query = swift.download(container=dataset_name, objects=['compressed/ILSVRC2012_validation_ground_truth.txt'], options=opts)
@@ -214,18 +221,17 @@ def start_now(lstart, lend, transform):
   # TODO run splitting algo at each iteration
   #split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, split_choice, split_idx)
 
-
-  next_dataloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode, split_idx, mem_cons,  args.sequential, args.use_intermediate)
+  next_dataloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode, split_idx, mem_cons,  args.sequential, args.use_intermediate)
 
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
 step = batch_size #max(2000, batch_size)		#using a value less than 1000 is really waste of bandwidth (after some experimentation)
 try:
   if args.testonly:
-    if not args.downloadall and dataset_name == 'imagenet':
+    if not args.downloadall and dataset_name in stream_datasets:
       gstart, gend = start, end
       lstart, lend = gstart, gstart+step if gstart+step < gend else gend
-      testloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate)
+      testloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate)
       res = []
       idx = 0
       for s in range(gstart+step, gend, step):
@@ -248,11 +254,11 @@ try:
     print("The whole process took {} seconds".format(time.time()-start_time))
   else:
     for epoch in range(num_epochs):
-      if not args.downloadall and dataset_name == 'imagenet':
+      if not args.downloadall and dataset_name in stream_datasets:
         lstart, lend = 0, step
-        trainloader = stream_imagenet_batch(swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
+        trainloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
         idx=0
-        for s in range(step, 50000, step):
+        for s in range(step, stream_dataset_len[dataset_name], step):
         #for s in range(step, 24320, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
         #for s in range(step, 24000, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
           localtime = time.time()
@@ -275,6 +281,8 @@ try:
         train(epoch)
       scheduler.step()
 except Exception as e:
+  import traceback
+  traceback.print_exc()
   print(f"Exception: {e}")
 #Stop GPU thread
 stop_thread = True

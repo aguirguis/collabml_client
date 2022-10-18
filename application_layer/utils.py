@@ -54,7 +54,7 @@ def get_model(model_str, dataset):
     :raises: ValueError
     :returns: Model object
     """
-    num_class_dict = {'mnist': 10, 'cifar10': 10, 'cifar100': 100, 'imagenet': 1000}
+    num_class_dict = {'mnist': 10, 'cifar10': 10, 'cifar100': 100, 'imagenet': 1000, 'plantleave': 22, 'inaturalist': 8142}
     if dataset not in num_class_dict.keys():
         raise ValueError("Provided dataset ({}) is not known!".format(dataset))
     num_classes = num_class_dict[dataset]
@@ -467,6 +467,7 @@ def prepare_transforms(dataset_name):
             transforms.Normalize((0.1307,), (0.3081,))
         ])
         return transform, transform
+    # TODO change
     elif dataset_name == 'imagenet':
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
@@ -486,6 +487,39 @@ def prepare_transforms(dataset_name):
         # TODO transform not needed
         # return transforms.Compose([]), transforms.Compose([])
 
+    elif dataset_name == 'plantleave':
+        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
+        transform_train = transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize,
+        ])
+        transform_test = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            normalize,
+        ])
+        return transform_train, transform_test
+    elif dataset_name == 'inaturalist':
+        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
+        transform_train = transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize,
+        ])
+        transform_test = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            normalize,
+        ])
+        return transform_train, transform_test
+
 
 def get_train_test_split(dataset_name, datadir, transform_train, transform_test):
     if dataset_name == 'cifar10':
@@ -504,6 +538,9 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
         # Then, we load the Imagenet dataset
         trainset = torchvision.datasets.ImageFolder(root=datadir, transform=transform_train)
         testset = torchvision.datasets.ImageFolder(root=datadir, transform=transform_test)
+    else:
+        print("WARNING! Downloading the whole ", dataset_name, "dataset is not recommended!")
+        return [], []
     return trainset, testset
 
 
@@ -542,7 +579,7 @@ def send_request(request_dict):
         return data
 
 
-def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model,
+def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model,
                           mode='vanilla', split_idx=100, mem_cons=(0, 0), sequential=False, use_intermediate=False):
     stream_time = time.time()
     COMP_FILE_SIZE = 1000  # defines how many image per object (after compression)
@@ -550,7 +587,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
     if mode == 'split':
         parallel_posts = int((lend - lstart) / COMP_FILE_SIZE)  # number of posts request to run in parallel
         post_step = int((lend - lstart) / parallel_posts)  # if the batch is smaller, it will be handled on the server
-        lend = 50000 if lend > 50000 else lend
+        lend = stream_dataset_len[dataset_name] if lend > stream_dataset_len[dataset_name] else lend
         print("Start {}, end {}, post_step {}\r\n".format(lstart, lend, post_step))
         post_objects = []
         images = []
@@ -559,7 +596,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
             cur_end = s + post_step if s + post_step <= lend else lend
             cur_step = cur_end - s
             opts = {"meta": {"Ml-Task:inference",
-                             "dataset:imagenet", "model:{}".format(model),
+                             "dataset:" + dataset_name, "model:{}".format(model),
                              f"Batch-Size:{SERVER_BATCH}",  # {}".format(int(cur_step//5)),
                              "start:{}".format(s), "end:{}".format(cur_end),
                              #            "Batch-Size:{}".format(post_step),
@@ -582,7 +619,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
                     read_bytes += int(len(res))
                     images.extend(pickle.loads(res))
         else:
-            for post_res in swift.post(container='imagenet', objects=post_objects):
+            for post_res in swift.post(container=dataset_name, objects=post_objects):
                 if 'error' in post_res.keys():
                     print("error: {}, traceback: {}".format(post_res['error'], post_res['traceback']))
                 read_bytes += int(len(post_res['result']))
@@ -599,7 +636,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
         objects = []
         num_objs = int((lend - lstart) / COMP_FILE_SIZE)
         step = int((lend - lstart) / num_objs)
-        lend = 50000 if lend > 50000 else lend
+        lend = stream_dataset_len[dataset_name] if lend > stream_dataset_len[dataset_name] else lend
         # prepare images that should be read
         for idx in range(lstart, lend, step):
             #      idstr = str(idx+1)
@@ -614,13 +651,13 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
         if sequential:
             queries = objects  # request them one by one then
         else:
-            queries = swift.download(container='imagenet', objects=objects, options=opts)
+            queries = swift.download(container=dataset_name, objects=objects, options=opts)
         read_bytes = 0
         infolists = []
         decompress_time = 0
         for query in queries:
             if sequential:
-                query = next(swift.download(container='imagenet', objects=[query], options=opts))
+                query = next(swift.download(container=dataset_name, objects=[query], options=opts))
             #      print(query)
             read_bytes += int(query['read_length'])
             #      print("Time till before unzipping {} seconds".format(time.time()-stream_time))
@@ -658,7 +695,7 @@ def stream_imagenet_batch(swift, datadir, parent_dir, labels, transform, batch_s
     imgs = np.array(images)
     dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode)
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8)
-    print("Streaming imagenet data took {} seconds".format(time.time() - stream_time))
+    print("Streaming {} data took {} seconds".format(dataset_name, time.time() - stream_time))
     #  decompress_time += (time.time()-decompt)
     #  print("Time taken for post processing the received compressed file: {} seconds".format(decompress_time))
     return dataloader
