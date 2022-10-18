@@ -1,3 +1,35 @@
+#!/usr/bin/env python3
+from os.path import expanduser
+import math
+import time
+import os
+import sys
+import random
+import zipfile
+import io
+import iperf3
+import struct
+import gc
+import socket
+import selectors
+import types
+import json
+import pickle
+import torch
+import GPUtil
+from PIL import Image
+import numpy as np
+import concurrent.futures
+import torchvision.transforms as transforms
+from pulp import *
+from torch.multiprocessing import Process, Lock, Manager, Pool
+from swift.proxy.mllib.dataset_utils import *
+from swift.proxy.mllib.utils import *
+from swiftclient.service import SwiftService, SwiftError
+from swiftclient.exceptions import ClientException
+
+home=expanduser("~")
+
 import os
 import numpy as np
 
@@ -198,6 +230,22 @@ for model_str in models_name:
     print()
     input_size = input_vec.element_size() * input_vec.nelement() / (1024**2)
     print("Input size: ", input_size)
+    
+#    swift = SwiftService()
+#    obj_name = f"compressed/vals0e1000.zip"
+#    read_time = time.time()
+#    query = next(swift.download(container='imagenet', objects=[obj_name], options={'out_file': '-'}))
+#    zipbytes = query['contents']
+#    file = io.BytesIO(b''.join(zipbytes))
+#
+#    zf = zipfile.ZipFile(file, 'r')  # as zf:
+#    infolist = zf.infolist()
+#    convert = lambda file: torch.load(io.BytesIO(zf.open(file).read()))
+#    with concurrent.futures.ThreadPoolExecutor() as executor:
+#        futures = [executor.submit(convert, file) for file in infolist]
+#        images = [fut.result() for fut in futures]
+#    sizes_images = [img.element_size() * img.nelement() / (1024**2) for img in images]
+#    print("IMAGES SUM SIZE ", sum(sizes_images), "IMAGE EX SIZE", sizes_images[9])
 
     del model_test
     del input_vec
