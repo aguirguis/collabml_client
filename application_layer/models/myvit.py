@@ -141,4 +141,4 @@ def build_my_vit(num_classes=10):
     return m
 
 
-
+#print(build_my_vit())

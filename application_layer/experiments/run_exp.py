@@ -97,12 +97,12 @@ def run_models_exp(batch_size, models, freeze_idxs, CPU=False, bw=1024):
         os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
 		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
 		 > {logdir}/models_exp/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
-        empty_gpu()
-        #run split
-        #TWO IMPORTANT NOTES HERE: (1) we use the intermediate server for this experiment, (2) we set server batch size to 200 always
-        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
-		> {logdir}/models_exp/test_split_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+#        empty_gpu()
+#        #run split
+#        #TWO IMPORTANT NOTES HERE: (1) we use the intermediate server for this experiment, (2) we set server batch size to 200 always
+#        os.system(f'python3 {execfile} --dataset imagenet --model my{model} --num_epochs 1 --batch_size {batch_size}\
+#                 --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
+#		> {logdir}/models_exp/test_split_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
 
 def vit_run_models_exp(batch_size, models, freeze_idxs, CPU=False):
     #Compare the performance of Vanilla and Split with different models on both GPU and CPU on the client side
@@ -220,11 +220,12 @@ def run_scalability_multitenants(max_tenants, batch_sizes, target="split", split
 
 if __name__ == '__main__':
 ##################################EXP 0: MODELAS EXP MIN SPLIT#############################################
-    BWS = [50]#[1024, 50]
+    BWS = [1024]#, 50]
 
     for bw in BWS:
         #models = ['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121']
         models = ['vgg19']
+        #models = ['alexnet']
         #freeze_idxs = [11, 21, 25, 36, 17, 20]
         freeze_idxs = [36]
 
@@ -277,7 +278,8 @@ if __name__ == '__main__':
 #    #freeze_idxs=[11, 21, 25, 36, 17, 20]
 #    freeze_idxs=[17]
     #bsz = 2000		#This is the largest number I can get that fits in the client GPU
-        run_models_exp(bsz, models, freeze_idxs, bw=bw)  # GPU on the client side
+        run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw)  # GPU on the client side
+        #run_models_exp(bsz, models, freeze_idxs, bw=bw)  # GPU on the client side
 #    bsz = 8000
 #    vit_run_models_exp(bsz, models, freeze_idxs) #GPU on the client side
 #    vit_run_models_exp(bsz, models, freeze_idxs, CPU=True)

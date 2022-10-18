@@ -70,7 +70,7 @@ def print_stats(m):
 
 def _get_intermediate_outputs_and_time(model, input):
     #returns an array with sizes of intermediate outputs (in KBs), assuming some input
-    output,sizes, int_time = model(input,0,150, need_time=True)		#the last parameter is any large number that is bigger than the number of layers
+    output,sizes, int_time  = model(input,0,150, need_time=True)		#the last parameter is any large number that is bigger than the number of layers
     return sizes.tolist(), int_time
 
 def get_mem_consumption(model, input, outputs, split_idx, freeze_idx, client_batch=1, server_batch=1):
@@ -126,7 +126,7 @@ cuda0 = torch.device('cuda:0')
 
 #batch_sizes = [1, 10, 100]
 #batch_sizes = [1, 1000]
-batch_sizes = [100]
+batch_sizes = [128]
 #batch_sizes = [1]
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -145,14 +145,16 @@ for batch_size in batch_sizes:
     num_classes = 1000
     #model_test = build_my_resnet('resnet18', num_classes)
     #model_test = build_my_resnet('resnet50', num_classes)
-    #model_test = build_my_vgg('vgg11', num_classes)
-    model_test = build_my_vgg('vgg19', num_classes)
+    model_test = build_my_vgg('vgg11', num_classes)
+    #model_test = build_my_vgg('vgg19', num_classes)
     #model_test = build_my_alexnet(num_classes)
     #model_test = build_my_densenet('densenet121', num_classes)
     
+
     all_layers = []
     remove_sequential(model_test, all_layers)
     print(all_layers)
+    print(len(all_layers))
 
     if torch.cuda.is_available():
         model_test.cuda()
@@ -160,6 +162,7 @@ for batch_size in batch_sizes:
 
     input = torch.rand((1,3,224,224)).to(device)
     input_size = np.prod(np.array(input.size())) * 4 / 4.5
+    print(model_test(input, start=0, end=100)[1][22])
     sizes, int_time = _get_intermediate_outputs_and_time(model_test, input)
     sizes = np.array(sizes) * 1024
 
@@ -218,7 +221,7 @@ for batch_size in batch_sizes:
         #for i in range(1,len(sizes)):
         for i in range(1,len(sizes)):
             #with profile(activities=[ProfilerActivity.CUDA], profile_memory=True, record_shapes=True) as prof:
-            _, _ = model_test(img_tensor,0,i)
+            _ = model_test(img_tensor,0,i)
             print("!!!! Till layer ", i)
             #print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=10))
             print_stats("After inference eval mode layer ")
@@ -236,7 +239,7 @@ for batch_size in batch_sizes:
     #print_stats("After inference inference mode")
 
     model_test.train()
-    _,_ = model_test(img_tensor,0,100)
+    _ = model_test(img_tensor,0,100)
     print_stats("After inference train mode")
     
 
