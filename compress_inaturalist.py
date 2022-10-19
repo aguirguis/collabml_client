@@ -6,9 +6,9 @@ from os.path import expanduser
 import io
 home=expanduser("~")
 #prepare files
-step = 50
-for i in range(0,4502,step):
-    start, end = i,i+step if i+step < 4502 else 4502
+step = 1000
+for i in range(0,24426,step):
+    start, end = i,i+step if i+step < 24426 else 24426
     print(f"Compressing images from {start} to {end}")
     #idtostr = lambda idx: "val/ILSVRC2012_val_000"+((5-len(str(idx+1)))*"0")+str(idx+1)+".PTB"
     idtostr = lambda idx: "val/ILSVRC2012_val_000"+((5-len(str(idx+1)))*"0")+str(idx+1)+".JPEG"

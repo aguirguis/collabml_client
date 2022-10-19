@@ -23,6 +23,8 @@ def uploadf(swift, container_name, fname, dir):
   for (_dir, _ds, _fs) in walk(join(dir,fname)):	#explore the directory
     if (_ds + _fs):	#found some files here
       objs.extend([join(_dir, _f) for _f in _fs])
+      #print(objs)
+  #objs = ['/root/dataset/plantleave/compressed/vals0e250.zip']
   objs = [SwiftUploadObject(o, object_name=o[len(dir):]) for o in objs]		#strip the "dir" name from the object name
   for r in swift.upload(container_name, objs):		#checking if everything is Ok
     if r['success']:
@@ -44,7 +46,7 @@ def main():
   parser.add_argument('--dataset', type=str, help='dataset to be uploaded')
   args = parser.parse_args()
   dataset_name = args.dataset
-  fnames = {'mnist':'mnist', 'cifar10':'cifar-10-batches-py', 'imagenet':'compressed', 'plantleave':'compressed'}
+  fnames = {'mnist':'mnist', 'cifar10':'cifar-10-batches-py', 'imagenet':'compressed', 'plantleave':'compressed', 'inaturalist':'compressed'}
 
   swift = SwiftService()
   try:
