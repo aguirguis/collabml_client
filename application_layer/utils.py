@@ -582,7 +582,7 @@ def send_request(request_dict):
 def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model,
                           mode='vanilla', split_idx=100, mem_cons=(0, 0), sequential=False, use_intermediate=False):
     stream_time = time.time()
-    COMP_FILE_SIZE = 500  # defines how many image per object (after compression)
+    COMP_FILE_SIZE = 50  # defines how many image per object (after compression)
     print("The mode is: ", mode)
     if mode == 'split':
         parallel_posts = int((lend - lstart) / COMP_FILE_SIZE)  # number of posts request to run in parallel
@@ -641,7 +641,10 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
         for idx in range(lstart, lend, step):
             #      idstr = str(idx+1)
             #      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
-            obj_name = f"{parent_dir}/vals{idx}e{idx + COMP_FILE_SIZE}.zip"
+            if idx+COMP_FILE_SIZE > lend:
+                obj_name = f"{parent_dir}/vals{idx}e{lend}.zip"
+            else:
+                obj_name = f"{parent_dir}/vals{idx}e{idx + COMP_FILE_SIZE}.zip"
             objects.append(obj_name)
         opts = {
             'out_directory': os.path.join(os.environ['HOME'], "temp")}  # It does not matter....I have all the images anyway

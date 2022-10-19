@@ -126,7 +126,7 @@ if not args.downloadall and dataset_name in stream_datasets:
   labels = labelstr.decode("utf-8").split("\n")[:-1]		#remove extra '' at the end
   if dataset_name == 'imagenet':
     assert len(labels) == 150000		#remove this after making sure the code works
-  labels = [int(l)-1 for l in labels]
+    labels = [int(l)-1 for l in labels]
 
 # Model
 print('==> Building model..')
