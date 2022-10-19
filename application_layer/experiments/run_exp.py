@@ -283,12 +283,12 @@ if __name__ == '__main__':
         #run_alexnet_all_indexes(bsz, 17, CPU=True, bw=bw)
 
 ##################################EXP 1: MODELS EXP#############################################
-    #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
 
-    models=['vit']
-    #freeze_idxs=[11, 21, 25, 36, 17, 20]
+    #models=['vit']
+    freeze_idxs=[11, 21, 25, 36, 17, 20]
 
-    freeze_idxs=[17]
+    #freeze_idxs=[17]
     bsz = 250
     dataset = 'plantleave'
     #bsz = 2000		#This is the largest number I can get that fits in the client GPU
