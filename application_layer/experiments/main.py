@@ -134,9 +134,11 @@ SPLIT="HAPI"
 ##################################################################################################
 ##EXP1: models exp
 exp_name="models_exp"
-dataset = 'plantleave'
+#dataset = 'plantleave'
+dataset= 'inaturalist'
 specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
 models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121', 'vit']
+#models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
 bw = 1024*1024
 ####models=['vit']
 ###models=['alexnet']
@@ -145,12 +147,13 @@ bw = 1024*1024
 devs=['gpu','cpu']
 for dev in devs:
     Y=[]
-    bsz=250
+    #bsz=250
+#    bsz=1000
+#    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
+#    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
+    bsz=2000
     Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
     Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
-    #bsz=8000
-    #Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
-    #Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
     Y = [get_total_exec_time(filenames) for filenames in Y]
     #Add texts to our bars:
     text = []
@@ -160,10 +163,11 @@ for dev in devs:
             s = "X" if yy==0 else ""
             t.append(s)
         text.append(t)
-    #sys_legends = [f"{BASELINE}, B=2000",f"{SPLIT}, B=2000",f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
-    sys_legends = [f"{BASELINE}, B=250",f"{SPLIT}, B=250"]#,f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
+    #sys_legends = [f"{BASELINE}, B=4000",f"{SPLIT}, B=4000",f"{BASELINE}, B=2000",f"{SPLIT}, B=2000"]
+    sys_legends = [f"{BASELINE}, B={bsz}",f"{SPLIT}, B={bsz}"]#,f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
     xtick_labels = [model.title() for model in models]
     colors = ["blue", "orange"]#, "deepskyblue","darkorange"]
+    #colors = ["blue", "orange", "deepskyblue","darkorange"]
     print(dev)
     for i in range(0,len(Y),2):
         speedup = []
