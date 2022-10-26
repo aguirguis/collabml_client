@@ -604,7 +604,8 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
                              #            "start:{}".format(lstart),"end:{}".format(lend),
                              "Split-Idx:{}".format(split_idx),
                              "Fixed-Mem:{}".format(mem_cons[0]),
-                             "Scale-BSZ:{}".format(mem_cons[1])},
+                             "Scale-BSZ:{}".format(mem_cons[1]),
+                             "COMP_FILE_SIZE:{}".format(COMP_FILE_SIZE)},
                     "header": {"Parent-Dir:{}".format(parent_dir)}}
             #          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
             obj_name = f"{parent_dir}/vals{s}e{s + COMP_FILE_SIZE}.zip"
