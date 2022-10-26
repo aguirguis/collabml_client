@@ -135,23 +135,26 @@ SPLIT="HAPI"
 ##EXP1: models exp
 exp_name="models_exp"
 #dataset = 'plantleave'
-dataset= 'inaturalist'
+#dataset= 'inaturalist'
+dataset = 'imagenet'
 specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
-models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121', 'vit']
+#models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121', 'vit']
+models=['resnet18', 'resnet50', 'vgg11','vgg19', 'densenet121', 'vit']
 #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-bw = 1024*1024
+#bw = 1024*1024
+bw = 50*1024
 ####models=['vit']
 ###models=['alexnet']
 ####logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
-#devs=['gpu']
-devs=['gpu','cpu']
+devs=['gpu']
+#devs=['gpu','cpu']
 for dev in devs:
     Y=[]
-    #bsz=250
+    bsz=250
 #    bsz=1000
 #    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
 #    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
-    bsz=2000
+    #bsz=2000
     Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
     Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
     Y = [get_total_exec_time(filenames) for filenames in Y]
@@ -181,28 +184,28 @@ for dev in devs:
         print(y)
     plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}_{dataset}", text=text,colors=colors, rotation=30)
 ###################################################################################################
-##EXP2: BW exp
-exp_name="bw_exp"
-model = 'alexnet'
-dataset = 'plantleave'
-specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
-BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024, 5*1024*1024, 10*1024*1024, 12*1024*1024]
-#BW = [1024*1024, 12*1024*1024]
-Y=[]
-Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}") for bw in BW])
-Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}") for bw in BW])
-exec_time = [get_total_exec_time(filenames) for filenames in Y]
-print(f"Bandwidth speedup: {np.array(exec_time[0])/np.array(exec_time[1])}")
-sys_legends = [f"{BASELINE}", f"{SPLIT}"]
-xtick_labels = [round(bw/(1024*1024),2) for bw in BW]
-#xtick_labels[:3] = [0.05,0.1,0.5]
-plot_bars(exec_time, sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Execution Time (sec.)", f"results/{exp_name}_exectime_{dataset}")
-#######Another thing we want to see is the split index in each case
-split_idxs =[get_split_idx(Y[1])]
-plot_bars(split_idxs, sys_legends[1:], xtick_labels, hatches, "Bandwidth (Gbps)", "Split Index", f"results/{exp_name}_splitidx_{dataset}")
-#######THe third thing to plot is the output size in each case
-output_sizes = [get_output_size(y) for y in Y]
-plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes_{dataset}")
+###EXP2: BW exp
+#exp_name="bw_exp"
+#model = 'alexnet'
+#dataset = 'plantleave'
+#specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
+#BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024, 5*1024*1024, 10*1024*1024, 12*1024*1024]
+##BW = [1024*1024, 12*1024*1024]
+#Y=[]
+#Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}") for bw in BW])
+#Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}") for bw in BW])
+#exec_time = [get_total_exec_time(filenames) for filenames in Y]
+#print(f"Bandwidth speedup: {np.array(exec_time[0])/np.array(exec_time[1])}")
+#sys_legends = [f"{BASELINE}", f"{SPLIT}"]
+#xtick_labels = [round(bw/(1024*1024),2) for bw in BW]
+##xtick_labels[:3] = [0.05,0.1,0.5]
+#plot_bars(exec_time, sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Execution Time (sec.)", f"results/{exp_name}_exectime_{dataset}")
+########Another thing we want to see is the split index in each case
+#split_idxs =[get_split_idx(Y[1])]
+#plot_bars(split_idxs, sys_legends[1:], xtick_labels, hatches, "Bandwidth (Gbps)", "Split Index", f"results/{exp_name}_splitidx_{dataset}")
+########THe third thing to plot is the output size in each case
+#output_sizes = [get_output_size(y) for y in Y]
+#plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes_{dataset}")
 #################################################################################################
 ##EXP3: Scalability with multiple tenants exp
 #exp_name="multitenant_exp"
