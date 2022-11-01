@@ -92,11 +92,11 @@ def run_models_exp(batch_size, models, freeze_idxs, CPU=False, bw=1024, dataset=
     #The default BW here is 1Gbps
     assert len(models) == len(freeze_idxs)
     for model, freeze_idx in zip(models, freeze_idxs):
-#        empty_gpu()
-#        #run vanilla
-#        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
-#		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
-#		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+        empty_gpu()
+        #run vanilla
+        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
+		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
+		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
         empty_gpu()
         #run split
         #TWO IMPORTANT NOTES HERE: (1) we use the intermediate server for this experiment, (2) we set server batch size to 200 always
@@ -286,7 +286,7 @@ if __name__ == '__main__':
     #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
     #models=['resnet50', 'vgg11','vgg19', 'densenet121', 'resnet18', 'vit']
     #models=['alexnet']
-    models=['vgg19']
+    #models=['vgg19']
     #models=['resnet18']
     #models=['vit']
 
@@ -296,11 +296,18 @@ if __name__ == '__main__':
     #freeze_idxs=[25]
 
     #freeze_idxs=[11]
-    freeze_idxs=[36]
+    #freeze_idxs=[36]
     #freeze_idxs=[17]
+    models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+    freeze_idxs=[11, 21, 25, 36, 17, 20]
+
     bsz = 512
+    bw = 1024
     dataset = 'imagenet'
-    run_models_exp(bsz, models, freeze_idxs, bw=50, dataset=dataset)   #GPU on the client side
+    run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
+
+    bw = 50
+    run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
     #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=50, dataset=dataset)
 
 

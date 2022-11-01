@@ -139,8 +139,8 @@ exp_name="models_exp"
 dataset = 'imagenet'
 specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
 #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121', 'vit']
-models=['resnet18', 'resnet50', 'vgg11','vgg19', 'densenet121', 'vit']
-#models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+#models=['resnet18', 'resnet50', 'vgg11','vgg19', 'densenet121', 'vit']
+models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
 #bw = 1024*1024
 bw = 50*1024
 ####models=['vit']
@@ -150,7 +150,7 @@ devs=['gpu']
 #devs=['gpu','cpu']
 for dev in devs:
     Y=[]
-    bsz=250
+    bsz=512
 #    bsz=1000
 #    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
 #    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
@@ -182,7 +182,7 @@ for dev in devs:
     print("Raw values")
     for y in Y:
         print(y)
-    plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}_{dataset}", text=text,colors=colors, rotation=30)
+    plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}_{dataset}_{bw}", text=text,colors=colors, rotation=30)
 ###################################################################################################
 ###EXP2: BW exp
 #exp_name="bw_exp"
