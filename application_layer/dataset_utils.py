@@ -45,8 +45,7 @@ from PIL import Image
 
 class InMemoryDataset(Dataset):
     """In memory dataset wrapper."""
-
-    def __init__(self, dataset, labels=None, transform=None, mode='vanilla', logFile=None):
+    def __init__(self, dataset, labels=None, transform=None, mode='vanilla', logFile=None, transformed=False):
         """
         Args:
             dataset (ndarray): array of dataset samples
@@ -59,6 +58,7 @@ class InMemoryDataset(Dataset):
         self.transform = transform
         self.logFile = logFile
         self.mode = mode
+        self.transformed = transformed
 
     def __len__(self):
         return len(self.dataset)
@@ -67,7 +67,7 @@ class InMemoryDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         image = self.dataset[idx]
-        if self.mode == 'split':		#this is not an image then, yet it is some intermediate result
+        if self.mode == 'split' or self.transformed:		#this is not an image then, yet it is some intermediate result
             image = torch.from_numpy(image)
         else:
             try:

@@ -45,6 +45,8 @@ except:
 
 SERVER_BATCH = 25
 
+CACHED = True
+TRANSFORMED = True
 
 def get_model(model_str, dataset):
     """
@@ -608,7 +610,10 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
                              "COMP_FILE_SIZE:{}".format(COMP_FILE_SIZE)},
                     "header": {"Parent-Dir:{}".format(parent_dir)}}
             #          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
-            obj_name = f"{parent_dir}/vals{s}e{s + COMP_FILE_SIZE}.zip"
+            if CACHED and TRANSFORMED:
+                obj_name = f"{parent_dir}/vals{s}e{s + COMP_FILE_SIZE}.PTB.zip"
+            else:
+                obj_name = f"{parent_dir}/vals{s}e{s + COMP_FILE_SIZE}.zip"
             #      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
             post_objects.append(SwiftPostObject(obj_name, opts))  # Create multiple posts
         #      post_time = time.time()
@@ -635,70 +640,118 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
         transform = None  # no transform required in this case
 
     else:  # mode=='vanilla'
-        objects = []
-        num_objs = int((lend - lstart) / COMP_FILE_SIZE)
-        step = int((lend - lstart) / num_objs)
-        lend = stream_dataset_len[dataset_name] if lend > stream_dataset_len[dataset_name] else lend
-        # prepare images that should be read
-        for idx in range(lstart, lend, step):
-            #      idstr = str(idx+1)
-            #      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
-            if idx+COMP_FILE_SIZE > lend:
-                obj_name = f"{parent_dir}/vals{idx}e{lend}.zip"
-            else:
-                obj_name = f"{parent_dir}/vals{idx}e{idx + COMP_FILE_SIZE}.zip"
-            objects.append(obj_name)
-        opts = {
-            'out_directory': os.path.join(os.environ['HOME'], "temp")}  # It does not matter....I have all the images anyway
-        #    opts = {'out_file':'-'}
-        # read all requested images
-        images = []
-        if sequential:
-            queries = objects  # request them one by one then
-        else:
-            queries = swift.download(container=dataset_name, objects=objects, options=opts)
-        read_bytes = 0
-        infolists = []
-        decompress_time = 0
-        for query in queries:
+        if not CACHED:
+            objects = []
+            num_objs = int((lend - lstart) / COMP_FILE_SIZE)
+            step = int((lend - lstart) / num_objs)
+            lend = stream_dataset_len[dataset_name] if lend > stream_dataset_len[dataset_name] else lend
+            # prepare images that should be read
+            for idx in range(lstart, lend, step):
+                #      idstr = str(idx+1)
+                #      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(idstr))*"0")+idstr+".JPEG"
+                if idx+COMP_FILE_SIZE > lend:
+                    obj_name = f"{parent_dir}/vals{idx}e{lend}.zip"
+                else:
+                    obj_name = f"{parent_dir}/vals{idx}e{idx + COMP_FILE_SIZE}.zip"
+
+                objects.append(obj_name)
+            opts = {
+                'out_directory': os.path.join(os.environ['HOME'], "temp")}  # It does not matter....I have all the images anyway
+            #    opts = {'out_file':'-'}
+            # read all requested images
+            images = []
             if sequential:
-                query = next(swift.download(container=dataset_name, objects=[query], options=opts))
-            #      print(query)
-            read_bytes += int(query['read_length'])
-            #      print("Time till before unzipping {} seconds".format(time.time()-stream_time))
-            #      with open(os.path.join(datadir, query['object']), 'rb') as f:
-            #        image_bytes = f.read()
-            #      img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
-            #      images.append(img)
-            # read the downloaded zip file (note that we use the out directory we passed up in opts)
+                queries = objects  # request them one by one then
+            else:
+                queries = swift.download(container=dataset_name, objects=objects, options=opts)
+            read_bytes = 0
+            infolists = []
+            decompress_time = 0
+            for query in queries:
+                if sequential:
+                    query = next(swift.download(container=dataset_name, objects=[query], options=opts))
+                #      print(query)
+                read_bytes += int(query['read_length'])
+                #      print("Time till before unzipping {} seconds".format(time.time()-stream_time))
+                #      with open(os.path.join(datadir, query['object']), 'rb') as f:
+                #        image_bytes = f.read()
+                #      img = np.array(Image.open(BytesIO(image_bytes)).convert('RGB'))
+                #      images.append(img)
+                # read the downloaded zip file (note that we use the out directory we passed up in opts)
+                decompt = time.time()
+                with open(os.path.join(os.environ['HOME'], "temp", query['object']), 'rb') as f:
+                    bytes = f.read()
+                #      zipbytes = query['contents']
+                #      f2 = BytesIO(b''.join(zipbytes))
+                f2 = BytesIO(bytes)
+                zipff = zipfile.ZipFile(f2, 'r')  # as zipf:
+                # infolist = zipf.infolist().copy()
+                infolists.append(zipff)
+                #              imgs = [np.array(Image.open(BytesIO(zipf.open(f3).read())).convert('RGB')) for f3 in infolist]
+                #              for file in zipf.infolist():
+                #                  with zipf.open(file) as f3:
+                #                      img = np.array(Image.open(BytesIO(f3.read())).convert('RGB'))
+                #                      images.append(img)
+                #      print("Time after unzipping {} seconds".format(time.time()-stream_time))
+                decompress_time += (time.time() - decompt)
             decompt = time.time()
-            with open(os.path.join(os.environ['HOME'], "temp", query['object']), 'rb') as f:
-                bytes = f.read()
-            #      zipbytes = query['contents']
-            #      f2 = BytesIO(b''.join(zipbytes))
-            f2 = BytesIO(bytes)
-            zipff = zipfile.ZipFile(f2, 'r')  # as zipf:
-            # infolist = zipf.infolist().copy()
-            infolists.append(zipff)
-            #              imgs = [np.array(Image.open(BytesIO(zipf.open(f3).read())).convert('RGB')) for f3 in infolist]
-            #              for file in zipf.infolist():
-            #                  with zipf.open(file) as f3:
-            #                      img = np.array(Image.open(BytesIO(f3.read())).convert('RGB'))
-            #                      images.append(img)
-            #      print("Time after unzipping {} seconds".format(time.time()-stream_time))
-            decompress_time += (time.time() - decompt)
-        decompt = time.time()
-        listToImages = lambda zipff: [np.array(Image.open(BytesIO(zipff.open(f3).read())).convert('RGB')) for f3 in
-                                      zipff.infolist()]
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            images = list(executor.map(listToImages, infolists))
-        images = functools.reduce(operator.iconcat, images, [])
-        print("Read {} MBs for this batch".format(read_bytes / (1024 * 1024)))
+            listToImages = lambda zipff: [np.array(Image.open(BytesIO(zipff.open(f3).read())).convert('RGB')) for f3 in
+                                          zipff.infolist()]
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                images = list(executor.map(listToImages, infolists))
+            images = functools.reduce(operator.iconcat, images, [])
+            print("Read {} MBs for this batch".format(read_bytes / (1024 * 1024)))
+        elif CACHED:
+            parallel_posts = int((lend - lstart) / COMP_FILE_SIZE)  # number of posts request to run in parallel
+            post_step = int((lend - lstart) / parallel_posts)  # if the batch is smaller, it will be handled on the server
+            lend = stream_dataset_len[dataset_name] if lend > stream_dataset_len[dataset_name] else lend
+            print("Start {}, end {}, post_step {}\r\n".format(lstart, lend, post_step))
+            post_objects = []
+            images = []
+            post_time = time.time()
+            for i, s in enumerate(range(lstart, lend, post_step)):
+                cur_end = s + post_step if s + post_step <= lend else lend
+                cur_step = cur_end - s
+                opts = {"meta": {"Ml-Task:inference",
+                                 "dataset:" + dataset_name, "model:{}".format(model),
+                                 f"Batch-Size:{COMP_FILE_SIZE}",  # {}".format(int(cur_step//5)),
+                                 "start:{}".format(s), "end:{}".format(cur_end),
+                                 #            "Batch-Size:{}".format(post_step),
+                                 #            "start:{}".format(lstart),"end:{}".format(lend),
+                                 "Split-Idx:{}".format(-1),
+                                 "Fixed-Mem:{}".format(mem_cons[0]),
+                                 "Scale-BSZ:{}".format(mem_cons[1]),
+                                 "COMP_FILE_SIZE:{}".format(COMP_FILE_SIZE)},
+                        "header": {"Parent-Dir:{}".format(parent_dir)}}
+                #          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
+                if not TRANSFORMED:
+                    obj_name = f"{parent_dir}/vals{s}e{s + COMP_FILE_SIZE}.zip"
+                else:
+                    obj_name = f"{parent_dir}/vals{s}e{s + COMP_FILE_SIZE}.PTB.zip" 
+                #      obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(lstart+1)))*"0")+str(lstart+1)+".JPEG"
+                post_objects.append(SwiftPostObject(obj_name, opts))  # Create multiple posts
+            #      post_time = time.time()
+            read_bytes = 0
+            images = []
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                futures = [executor.submit(send_request, post_obj.options) for post_obj in post_objects]
+                for fut in futures:
+                    res = fut.result()
+                    #read_bytes += int(len(res))
+                    #images.extend(pickle.loads(res))
+                    f2 = BytesIO(res)
+                    zipff = zipfile.ZipFile(f2, 'r')
+                    if not TRANSFORMED:
+                        images.extend(np.array(Image.open(BytesIO(zipff.open(f3).read())).convert('RGB')) for f3 in zipff.infolist())
+                    else:
+                        images.extend(np.array(torch.load(io.BytesIO(zipff.open(f3).read()))) for f3 in zipff.infolist())
+                        transform=None
+
     # use only labels corresponding to the required images
     labels = labels[lstart:lend]
     assert len(images) == len(labels)
     imgs = np.array(images)
-    dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode)
+    dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode, transformed=TRANSFORMED)
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8)
     print("Streaming {} data took {} seconds".format(dataset_name, time.time() - stream_time))
     #  decompress_time += (time.time()-decompt)

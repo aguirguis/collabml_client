@@ -1,0 +1,63 @@
+Namespace(batch_size=1000, cpuonly=False, dataset='inaturalist', downloadall=False, end=10000, freeze=True, freeze_idx=36, model='vgg19', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+==> Preparing data..
+==> Building model..
+Using split index: 100
+Freezing the lower layers of the model (vgg19) till index 36
+The mode is:  vanilla
+Memory occpied: (1934.0, 3.0)
+Memory occpied: (1934.0, 3.0)
+Memory occpied: (1934.0, 3.0)
+Memory occpied: (1934.0, 3.0)
+Memory occpied: (1934.0, 3.0)
+Memory occpied: (1934.0, 3.0)
+Memory occpied: (1934.0, 3.0)
+Memory occpied: (1934.0, 3.0)
+Read 265.7877149581909 MBs for this batch
+Streaming inaturalist data took 9.880908012390137 seconds
+The mode is:  vanilla
+
+Epoch: 0
+Time of next(dataloader) is: 4.521860599517822
+Time for copying to cuda: 0.14905953407287598
+Read 266.2350969314575 MBs for this batch
+Streaming inaturalist data took 9.530615329742432 seconds
+Time for forward pass: 32.406879901885986
+Time for backpropagation: 0.28347349166870117
+GPU memory for training: 26.599037647247314                          
+
+One training iteration takes: 37.578208923339844 seconds
+Index: 0
+Then, training+dataloading take 37.582085609436035 seconds
+The mode is:  vanilla
+
+Epoch: 0
+Memory occpied: (1934.0, 11418.0)
+Memory occpied: (5596.0, 11418.0)
+Memory occpied: (5596.0, 11418.0)
+Memory occpied: (5596.0, 11418.0)
+Time of next(dataloader) is: 4.744850158691406
+Time for copying to cuda: 0.147413969039917
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torchvision/models/vgg.py", line 66, in forward
+    x = self.features(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/container.py", line 141, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 447, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 443, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+RuntimeError: CUDA out of memory. Tried to allocate 5.98 GiB (GPU 0; 14.76 GiB total capacity; 8.33 GiB already allocated; 3.31 GiB free; 10.21 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+Memory occpied: (11720.0, 14488.0)
+The whole process took 61.60359501838684 seconds
+Read 259.5967378616333 MBs for this batch
+Streaming inaturalist data took 10.265652894973755 seconds

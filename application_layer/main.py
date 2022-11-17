@@ -54,7 +54,6 @@ parser.add_argument('--freeze_idx', default=0, type=int, help='index at which ne
 parser.add_argument('--freeze', action='store_true', help='freeze the lower layers of training model')
 parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
 parser.add_argument('--cpuonly', action='store_true', help='do not use GPUs')
-#parser.add_argument('--manual_split', action='store_true', help='If set, we will use the split_idx provided by the user; otherwise, we choose the split index automatically')
 parser.add_argument('--use_intermediate', action='store_true', help='If set, we use intermediate compute server between Swift server and client. Otherwise, ML computation (i.e., feature extraction) will happen inside Swift')
 #parser.add_argument('--splitindex_to_freezeindex', action='store_true', help='If set, we use the freezing index as split point')
 parser.add_argument('--split_choice', default='automatic', type=str, help='How to choose split_idx (manual, automatic, to_freeze, to_min, to_max)')

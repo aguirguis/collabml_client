@@ -141,8 +141,8 @@ specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
 #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121', 'vit']
 #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'densenet121', 'vit']
 models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-#bw = 1024*1024
-bw = 50*1024
+bw = 1024*1024
+#bw = 50*1024
 ####models=['vit']
 ###models=['alexnet']
 ####logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
@@ -156,7 +156,8 @@ for dev in devs:
 #    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
     #bsz=2000
     Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
-    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
+    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}_transformed") for model in models])
+    Y.append([os.path.join(specific_dir,f"cached_test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
     Y = [get_total_exec_time(filenames) for filenames in Y]
     #Add texts to our bars:
     text = []
@@ -167,18 +168,18 @@ for dev in devs:
             t.append(s)
         text.append(t)
     #sys_legends = [f"{BASELINE}, B=4000",f"{SPLIT}, B=4000",f"{BASELINE}, B=2000",f"{SPLIT}, B=2000"]
-    sys_legends = [f"{BASELINE}, B={bsz}",f"{SPLIT}, B={bsz}"]#,f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
+    sys_legends = [f"{BASELINE}, B={bsz}",f"{BASELINE} TRANSFORMED, B={bsz}", f"{SPLIT}, B={bsz}"]#,f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
     xtick_labels = [model.title() for model in models]
-    colors = ["blue", "orange"]#, "deepskyblue","darkorange"]
+    colors = ["blue", "deepskyblue", "orange"]#, "deepskyblue","darkorange"]
     #colors = ["blue", "orange", "deepskyblue","darkorange"]
     print(dev)
-    for i in range(0,len(Y),2):
-        speedup = []
-        for y1,y2 in zip(Y[i],Y[i+1]):
-            if y1 != 0:
-                speedup.append(y1/y2)
-        print(f"Average speedup: {sum(speedup)/len(speedup)}")
-        print(f"All speedups: {speedup}")
+#    for i in range(0,len(Y),2):
+#        speedup = []
+#        for y1,y2 in zip(Y[i],Y[i+1]):
+#            if y1 != 0:
+#                speedup.append(y1/y2)
+#        print(f"Average speedup: {sum(speedup)/len(speedup)}")
+#        print(f"All speedups: {speedup}")
     print("Raw values")
     for y in Y:
         print(y)

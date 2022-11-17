@@ -93,16 +93,16 @@ def run_models_exp(batch_size, models, freeze_idxs, CPU=False, bw=1024, dataset=
     assert len(models) == len(freeze_idxs)
     for model, freeze_idx in zip(models, freeze_idxs):
         empty_gpu()
-        #run vanilla
+#        #run vanilla
         os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
 		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
-		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
-        empty_gpu()
+		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}_transformed')
+#        empty_gpu()
         #run split
         #TWO IMPORTANT NOTES HERE: (1) we use the intermediate server for this experiment, (2) we set server batch size to 200 always
-        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
-		> {logdir}/models_exp_{dataset}/test_split_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+#        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
+#                 --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
+#		> {logdir}/models_exp_{dataset}/cached_test_split_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
 
     os.system(f'{wondershaper_exec} -c -a eth0')
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
@@ -172,14 +172,14 @@ def run_bw_exp(BW, model, freeze_idx, batch_size=8000, dataset='imagenet'):
     for bw in BW:
         os.system(f'{wondershaper_exec} -c -a eth0')
         os.system(f'{wondershaper_exec} -a eth0 -d {bw} -u {bw}')
-        #empty_gpu()
+        empty_gpu()
         #run vanilla
         os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} > {logdir}/bw_exp_{dataset}/vanilla_{bw/1024}_{model}')
-        empty_gpu()
-        #run split
-        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/bw_exp_{dataset}/split_{bw/1024}_{model}')
+                 --freeze --freeze_idx {freeze_idx} > {logdir}/bw_exp_{dataset}/vanilla_{bw/1024}_{model}_transformed')
+#        empty_gpu()
+#        #run split
+#        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
+#                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/bw_exp_{dataset}/split_{bw/1024}_{model}')
     #Back to the default BW (1Gbps)
     os.system(f'{wondershaper_exec} -c -a eth0')
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
@@ -273,6 +273,8 @@ if __name__ == '__main__':
 
 #    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 15*1024*1024]
 #    run_bw_exp_freeze_split(BW, "alexnet", 17)
+    #bsz=512
+    #run_alexnet_all_indexes(bsz, 17)
 ##################################EXP 0: MODELS EXP MIN SPLIT#############################################
     #for bw in BWS:
         #bsz = 8000
@@ -298,6 +300,9 @@ if __name__ == '__main__':
     #freeze_idxs=[11]
     #freeze_idxs=[36]
     #freeze_idxs=[17]
+
+
+    # FROM HERE
     models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
     freeze_idxs=[11, 21, 25, 36, 17, 20]
 
@@ -306,10 +311,10 @@ if __name__ == '__main__':
     dataset = 'imagenet'
     run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
 
-    bw = 50
-    run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
+    #bw = 50
+    #run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
     #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=50, dataset=dataset)
-
+    # TO HERE
 
     #dataset = 'plantleave'
     
@@ -362,12 +367,13 @@ if __name__ == '__main__':
         #:run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw) #CPU on the client side
 ################################################################################################
 ##################################EXP 2: BW EXP#################################################
-    #BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
+    bsz=512
+    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
 #    #BW = [50*1024]
 #    BW = [1024*1024, 12*1024*1024]
 ##    run_bw_exp(BW, "vit", 17)
 
-    #run_bw_exp(BW, "alexnet", 17, batch_size=bsz, dataset=dataset)
+    run_bw_exp(BW, "alexnet", 17, batch_size=bsz, dataset=dataset)
 ##################################################################################################
 ###################################EXP 3: Scalability with multi-tenants EXP#####################
     #max_tenants = 11
