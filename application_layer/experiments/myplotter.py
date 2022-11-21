@@ -17,8 +17,9 @@ for font_file in font_files:
 #mgr.fontManager.ttflist.extend(font_list)
 plt.rcParams['font.family'] = 'Latin Modern Roman'
 
-fontsize=40
+#fontsize=40
 figsize = (15, 8)
+fontsize=30
 def plot_lines(X, Y, sys_legends, linestyles, xlabel, ylabel, output_file, markers=None):
     #This function plot two variables (X,Y) for multiple systems (i.e., competitors)
     #The first 3 inputs should be lists of the same size

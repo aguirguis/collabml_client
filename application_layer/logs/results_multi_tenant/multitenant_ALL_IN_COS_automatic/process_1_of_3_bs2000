@@ -1,0 +1,52 @@
+Namespace(batch_size=2000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=17, model='alexnet', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+==> Preparing data..
+==> Building model..
+Using split index: 100
+Freezing the lower layers of the model (alexnet) till index 17
+The mode is:  vanilla
+Start 0, end 2000, post_step 1000
+
+Memory occpied: (2985.0, 3.0)
+Memory occpied: (2985.0, 3.0)
+Memory occpied: (2985.0, 3.0)
+Read 1148.525468826294 MBs for this batch
+Memory occpied: (2985.0, 3.0)
+Streaming imagenet data took 4.200849294662476 seconds
+The mode is:  vanilla
+Start 2000, end 4000, post_step 1000
+
+
+Epoch: 0
+Memory occpied: (4135.0, 778.0)
+Time of next(dataloader) is: 1.0026638507843018
+Time for copying to cuda: 0.35152316093444824
+Memory occpied: (5285.0, 1973.0)
+Memory occpied: (5285.0, 2857.0)
+Read 1148.525468826294 MBs for this batch
+Streaming imagenet data took 4.290235996246338 seconds
+Memory occpied: (10381.0, 8659.0)
+Memory occpied: (10227.0, 15005.0)
+Memory occpied: (10227.0, 12761.0)
+Memory occpied: (6045.0, 12761.0)
+Memory occpied: (6045.0, 12777.0)
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torchvision/models/alexnet.py", line 49, in forward
+    x = self.features(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/container.py", line 141, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 447, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 443, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+RuntimeError: CUDA out of memory. Tried to allocate 740.00 MiB (GPU 0; 14.76 GiB total capacity; 1.35 GiB already allocated; 432.75 MiB free; 1.36 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+The whole process took 22.575949907302856seconds

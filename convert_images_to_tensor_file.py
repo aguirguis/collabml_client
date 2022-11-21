@@ -12,7 +12,7 @@ import torch
 
 home=expanduser("~")
 #prepare files
-for i in range(0,50000):
+for i in range(0,24320):
     idtostr = lambda idx: "val/ILSVRC2012_val_000"+((5-len(str(idx+1)))*"0")+str(idx+1)+".JPEG"
     file_image = os.path.join(home, "dataset/imagenet", idtostr(i))
     convert = lambda file: Image.open(io.BytesIO(file.read())).convert('RGB')

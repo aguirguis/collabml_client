@@ -18,6 +18,7 @@ def get_total_exec_time(filenames):
                         line = l
                         break
                     if l.startswith("The whole"):
+                        print(l)
                         line = l
                         break
             try:

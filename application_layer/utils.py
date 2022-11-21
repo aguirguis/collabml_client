@@ -47,6 +47,7 @@ SERVER_BATCH = 25
 
 CACHED = True
 TRANSFORMED = True
+ALL_IN_COS = True
 
 def get_model(model_str, dataset):
     """
@@ -738,20 +739,27 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
             images = []
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 futures = [executor.submit(send_request, post_obj.options) for post_obj in post_objects]
-                for fut in futures:
-                    res = fut.result()
-                    read_bytes += int(len(res))
-                    #images.extend(pickle.loads(res))
-                    time_concurrent = time.time()
-                    f2 = BytesIO(res)
-                    zipff = zipfile.ZipFile(f2, 'r')
-                    print("Decompress data took {} seconds".format(time.time() - time_concurrent))
-                    if not TRANSFORMED:
-                        images.extend(np.array(Image.open(io.BytesIO(zipff.open(f3).read())).convert('RGB')) for f3 in zipff.infolist())
-                    else:
-                        images.extend(np.array(torch.load(io.BytesIO(zipff.open(f3).read()))) for f3 in zipff.infolist())
+                if not ALL_IN_COS:
+                    for fut in futures:
+                        res = fut.result()
+                        read_bytes += int(len(res))
+                        #images.extend(pickle.loads(res))
+                        time_concurrent = time.time()
+                        f2 = BytesIO(res)
+                        zipff = zipfile.ZipFile(f2, 'r')
+                        print("Decompress data took {} seconds".format(time.time() - time_concurrent))
+                        if not TRANSFORMED:
+                            images.extend(np.array(Image.open(io.BytesIO(zipff.open(f3).read())).convert('RGB')) for f3 in zipff.infolist())
+                        else:
+                            images.extend(np.array(torch.load(io.BytesIO(zipff.open(f3).read()))) for f3 in zipff.infolist())
+                            transform=None
+                        print("Total decompress data took {} seconds".format(time.time() - time_concurrent))
+                else:
+                    for fut in futures:
+                        res = fut.result()
+                        read_bytes += int(len(res))
+                        images.extend(pickle.loads(res))
                         transform=None
-                    print("Total decompress data took {} seconds".format(time.time() - time_concurrent))
             print("Read {} MBs for this batch".format(read_bytes / (1024 * 1024)))
     # use only labels corresponding to the required images
     labels = labels[lstart:lend]

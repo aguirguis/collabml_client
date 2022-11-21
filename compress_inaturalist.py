@@ -6,15 +6,15 @@ from os.path import expanduser
 import io
 home=expanduser("~")
 #prepare files
-step = 1000
+step = 250
 for i in range(0,24426,step):
     start, end = i,i+step if i+step < 24426 else 24426
     print(f"Compressing images from {start} to {end}")
     #idtostr = lambda idx: "val/ILSVRC2012_val_000"+((5-len(str(idx+1)))*"0")+str(idx+1)+".PTB"
     idtostr = lambda idx: "val/ILSVRC2012_val_000"+((5-len(str(idx+1)))*"0")+str(idx+1)+".JPEG"
     objects = [idtostr(idx) for idx in range(start,end)]
-    list_files = [os.path.join(home, "dataset/plantleave",obj) for obj in objects]
+    list_files = [os.path.join(home, "dataset/inaturalist",obj) for obj in objects]
     #   compress
-    with zipfile.ZipFile(os.path.join(home, "dataset/plantleave/compressed",f'vals{start}e{end}.zip'), 'w') as zipf:
+    with zipfile.ZipFile(os.path.join(home, "dataset/inaturalist/compressed",f'vals{start}e{end}.zip'), 'w') as zipf:
         for file in list_files:
             zipf.write(file, compress_type=zipfile.ZIP_DEFLATED)
