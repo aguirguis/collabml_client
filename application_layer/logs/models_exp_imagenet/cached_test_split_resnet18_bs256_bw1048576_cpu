@@ -1,0 +1,1519 @@
+Namespace(batch_size=256, cpuonly=True, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=11, model='myresnet18', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=True)
+==> Preparing data..
+==> Building model..
+IN SPLITTING ALGO
+Recorded bandwidth: 908.4318246977234 Mbps
+In _get_intermediate_outputs_and_time
+Done intermediate outputs and time
+Sizes  [3.211264e+06 3.211264e+06 3.211264e+06 8.028160e+05 4.816896e+06
+ 4.816896e+06 2.408448e+06 2.408448e+06 1.204224e+06 1.204224e+06
+ 6.021120e+05 6.021120e+05 2.048000e+03 4.000000e+03]
+Input_size  0.57421875
+TESTING *****************************
+Input size, BW, MIN:
+1505280000.0 119069976.12678 119069976.12678
+All candidates indexes:  (array([12, 13]),)
+SPLIT IDX CHOICE, split idx manual, freeze_idx:  automatic 100 11
+Intermediate:  0.095703125
+6.125
+Total layers size  27.185455322265625
+Server, client, server+client, vanilla  167.48046875 76.453125 243.93359375 1766.953125
+Fixed, scale_with_bsz  0 6.69921875
+Mem usage  1250.0 3.0
+Using split index: 11
+Freezing the lower layers of the model (myresnet18) till index 11
+The mode is:  split
+Start 0, end 256, post_step 128
+
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0695571899414062 seconds
+Streaming imagenet data took 1.0799052715301514 seconds
+The mode is:  split
+Start 256, end 512, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3114655017852783
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.1876373291015625
+Time for backpropagation: 0.2664189338684082
+Memory occpied: (1250.0, 3.0)
+One training iteration takes: 0.8313214778900146 seconds
+Index: 0
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9224855899810791 seconds
+Streaming imagenet data took 0.932805061340332 seconds
+Then, training+dataloading take 0.9332003593444824 seconds
+The mode is:  split
+Start 512, end 768, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.24978184700012207
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.2689359188079834
+Time for backpropagation: 0.2712440490722656
+One training iteration takes: 0.8674218654632568 seconds
+Index: 1
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9611549377441406 seconds
+Streaming imagenet data took 0.971254825592041 seconds
+Then, training+dataloading take 0.9717514514923096 seconds
+The mode is:  split
+Start 768, end 1024, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2888369560241699
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.2546989917755127
+Time for backpropagation: 0.29958391189575195
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9047691822052002 seconds
+Streaming imagenet data took 0.9183154106140137 seconds
+One training iteration takes: 0.9280846118927002 seconds
+Index: 2
+Then, training+dataloading take 0.9282832145690918 seconds
+The mode is:  split
+Start 1024, end 1280, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.28069067001342773
+Time for copying to cuda: 7.867813110351562e-06
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.27245473861694336
+Time for backpropagation: 0.28653573989868164
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9278464317321777 seconds
+One training iteration takes: 0.9347031116485596 seconds
+Index: 3
+Streaming imagenet data took 0.9416704177856445 seconds
+Then, training+dataloading take 0.9419729709625244 seconds
+The mode is:  split
+Start 1280, end 1536, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2712056636810303
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.31318140029907227
+Memory occpied: (1250.0, 3.0)
+Time for backpropagation: 0.38303303718566895
+One training iteration takes: 1.0541560649871826 seconds
+Index: 4
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.06022047996521 seconds
+Streaming imagenet data took 1.0702805519104004 seconds
+Then, training+dataloading take 1.0707120895385742 seconds
+The mode is:  split
+Start 1536, end 1792, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.28302621841430664
+Time for copying to cuda: 6.4373016357421875e-06
+Time for forward pass: 0.2426309585571289
+Memory occpied: (1250.0, 3.0)
+Time for backpropagation: 0.3871159553527832
+One training iteration takes: 0.9997055530548096 seconds
+Index: 5
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0495710372924805 seconds
+Streaming imagenet data took 1.0557610988616943 seconds
+Then, training+dataloading take 1.0564782619476318 seconds
+The mode is:  split
+Start 1792, end 2048, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2611403465270996
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.22240328788757324
+Time for backpropagation: 0.3107285499572754
+One training iteration takes: 0.8822147846221924 seconds
+Index: 6
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9817163944244385 seconds
+Streaming imagenet data took 0.9894914627075195 seconds
+Then, training+dataloading take 0.9899611473083496 seconds
+The mode is:  split
+Start 2048, end 2304, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.26839613914489746
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.17326998710632324
+Time for backpropagation: 0.3144958019256592
+One training iteration takes: 0.8406674861907959 seconds
+Index: 7
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0277514457702637 seconds
+Streaming imagenet data took 1.0648267269134521 seconds
+Then, training+dataloading take 1.066267967224121 seconds
+The mode is:  split
+Start 2304, end 2560, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.29941701889038086
+Time for copying to cuda: 7.3909759521484375e-06
+Time for forward pass: 0.23348164558410645
+Time for backpropagation: 0.3017408847808838
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9093480110168457 seconds
+One training iteration takes: 0.9168508052825928 seconds
+Index: 8
+Streaming imagenet data took 0.9232022762298584 seconds
+Then, training+dataloading take 0.9237027168273926 seconds
+The mode is:  split
+Start 2560, end 2816, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.257932186126709
+Time for copying to cuda: 6.4373016357421875e-06
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.34029674530029297
+Time for backpropagation: 0.2940683364868164
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9199132919311523 seconds
+Streaming imagenet data took 0.9344279766082764 seconds
+One training iteration takes: 0.98193359375 seconds
+Index: 9
+Then, training+dataloading take 0.9821462631225586 seconds
+The mode is:  split
+Start 2816, end 3072, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2608826160430908
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.21498584747314453
+Memory occpied: (1250.0, 3.0)
+Time for backpropagation: 0.41614508628845215
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9342260360717773 seconds
+Streaming imagenet data took 0.945828914642334 seconds
+One training iteration takes: 0.9831128120422363 seconds
+Index: 10
+Then, training+dataloading take 0.9831664562225342 seconds
+The mode is:  split
+Start 3072, end 3328, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.26887941360473633
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.21175479888916016
+Time for backpropagation: 0.36135029792785645
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9370670318603516 seconds
+One training iteration takes: 0.9423646926879883 seconds
+Index: 11
+Memory occpied: (1250.0, 3.0)
+Streaming imagenet data took 0.9486618041992188 seconds
+Then, training+dataloading take 0.9490261077880859 seconds
+The mode is:  split
+Start 3328, end 3584, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2665095329284668
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.22124171257019043
+Time for backpropagation: 0.322998046875
+One training iteration takes: 0.8924176692962646 seconds
+Index: 12
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9211902618408203 seconds
+Streaming imagenet data took 0.9309470653533936 seconds
+Then, training+dataloading take 0.9312896728515625 seconds
+The mode is:  split
+Start 3584, end 3840, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.29884958267211914
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.24160313606262207
+Time for backpropagation: 0.289539098739624
+One training iteration takes: 0.927680253982544 seconds
+Index: 13
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0416643619537354 seconds
+Streaming imagenet data took 1.0482738018035889 seconds
+Then, training+dataloading take 1.0489721298217773 seconds
+The mode is:  split
+Start 3840, end 4096, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2676353454589844
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.2201530933380127
+Time for backpropagation: 0.2837483882904053
+One training iteration takes: 0.8510472774505615 seconds
+Index: 14
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.1002936363220215 seconds
+Streaming imagenet data took 1.11049485206604 seconds
+Then, training+dataloading take 1.111022710800171 seconds
+The mode is:  split
+Start 4096, end 4352, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2754392623901367
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.2854619026184082
+Time for backpropagation: 0.2994577884674072
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9294824600219727 seconds
+One training iteration takes: 0.9346091747283936 seconds
+Index: 15
+Streaming imagenet data took 0.9399771690368652 seconds
+Then, training+dataloading take 0.940575122833252 seconds
+The mode is:  split
+Start 4352, end 4608, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3227882385253906
+Time for copying to cuda: 8.106231689453125e-06
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.25548744201660156
+Time for backpropagation: 0.2796318531036377
+One training iteration takes: 0.9375402927398682 seconds
+Index: 16
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0572943687438965 seconds
+Streaming imagenet data took 1.0674798488616943 seconds
+Then, training+dataloading take 1.067857265472412 seconds
+The mode is:  split
+Start 4608, end 4864, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2709980010986328
+Time for copying to cuda: 6.4373016357421875e-06
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.3338344097137451
+Time for backpropagation: 0.2933788299560547
+One training iteration takes: 0.9701583385467529 seconds
+Index: 17
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0408899784088135 seconds
+Streaming imagenet data took 1.047635555267334 seconds
+Then, training+dataloading take 1.0483059883117676 seconds
+The mode is:  split
+Start 4864, end 5120, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.26993656158447266
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.3341372013092041
+Memory occpied: (1250.0, 3.0)
+Time for backpropagation: 0.2896230220794678
+One training iteration takes: 0.9824254512786865 seconds
+Index: 18
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0067777633666992 seconds
+Streaming imagenet data took 1.0165903568267822 seconds
+Then, training+dataloading take 1.016948938369751 seconds
+The mode is:  split
+Start 5120, end 5376, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.26749634742736816
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.22351527214050293
+Time for backpropagation: 0.3827028274536133
+Memory occpied: (1250.0, 3.0)
+One training iteration takes: 0.954056978225708 seconds
+Index: 19
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0665898323059082 seconds
+Streaming imagenet data took 1.0732536315917969 seconds
+Then, training+dataloading take 1.073979377746582 seconds
+The mode is:  split
+Start 5376, end 5632, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2817356586456299
+Time for copying to cuda: 7.62939453125e-06
+Time for forward pass: 0.2243030071258545
+Time for backpropagation: 0.34705114364624023
+One training iteration takes: 0.9655539989471436 seconds
+Index: 20
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9954299926757812 seconds
+Memory occpied: (1250.0, 3.0)
+Streaming imagenet data took 1.005626916885376 seconds
+Then, training+dataloading take 1.0060017108917236 seconds
+The mode is:  split
+Start 5632, end 5888, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2788097858428955
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.2645421028137207
+Time for backpropagation: 0.319272518157959
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9056229591369629 seconds
+Streaming imagenet data took 0.920159101486206 seconds
+One training iteration takes: 0.9433331489562988 seconds
+Index: 21
+Then, training+dataloading take 0.9435489177703857 seconds
+The mode is:  split
+Start 5888, end 6144, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2984273433685303
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.240264892578125
+Time for backpropagation: 0.2912890911102295
+One training iteration takes: 0.929391622543335 seconds
+Index: 22
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9550623893737793 seconds
+Streaming imagenet data took 0.9640052318572998 seconds
+Then, training+dataloading take 0.9644443988800049 seconds
+The mode is:  split
+Start 6144, end 6400, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.26736927032470703
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.2343437671661377
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9389548301696777 seconds
+Streaming imagenet data took 0.9523310661315918 seconds
+Time for backpropagation: 0.4388892650604248
+One training iteration takes: 1.0212295055389404 seconds
+Index: 23
+Then, training+dataloading take 1.0212867259979248 seconds
+The mode is:  split
+Start 6400, end 6656, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3421192169189453
+Time for copying to cuda: 1.9788742065429688e-05
+Time for forward pass: 0.3069438934326172
+Time for backpropagation: 0.27572178840637207
+Memory occpied: (1250.0, 3.0)
+One training iteration takes: 1.0101163387298584 seconds
+Index: 24
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.052506446838379 seconds
+Streaming imagenet data took 1.0629498958587646 seconds
+Then, training+dataloading take 1.0634701251983643 seconds
+The mode is:  split
+Start 6656, end 6912, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27554917335510254
+Time for copying to cuda: 7.62939453125e-06
+Time for forward pass: 0.29131317138671875
+Time for backpropagation: 0.29079246520996094
+One training iteration takes: 0.9696996212005615 seconds
+Index: 25
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0175526142120361 seconds
+Streaming imagenet data took 1.0586621761322021 seconds
+Then, training+dataloading take 1.060030221939087 seconds
+The mode is:  split
+Start 6912, end 7168, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2788107395172119
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.2671647071838379
+Time for backpropagation: 0.30674052238464355
+One training iteration takes: 0.9425020217895508 seconds
+Index: 26
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0373053550720215 seconds
+Streaming imagenet data took 1.0439257621765137 seconds
+Then, training+dataloading take 1.0447821617126465 seconds
+The mode is:  split
+Start 7168, end 7424, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.30951547622680664
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.25637125968933105
+Time for backpropagation: 0.3184070587158203
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9369080066680908 seconds
+Streaming imagenet data took 0.9427385330200195 seconds
+One training iteration takes: 0.994481086730957 seconds
+Index: 27
+Then, training+dataloading take 0.9946908950805664 seconds
+The mode is:  split
+Start 7424, end 7680, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.27878618240356445
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.22895526885986328
+Time for backpropagation: 0.2963719367980957
+One training iteration takes: 0.9034898281097412 seconds
+Index: 28
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0597586631774902 seconds
+Streaming imagenet data took 1.0663869380950928 seconds
+Then, training+dataloading take 1.0668919086456299 seconds
+The mode is:  split
+Start 7680, end 7936, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3049914836883545
+Time for copying to cuda: 8.106231689453125e-06
+Time for forward pass: 0.2731773853302002
+Time for backpropagation: 0.28078198432922363
+One training iteration takes: 0.9577274322509766 seconds
+Index: 29
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.061103105545044 seconds
+Streaming imagenet data took 1.0708904266357422 seconds
+Then, training+dataloading take 1.0713601112365723 seconds
+The mode is:  split
+Start 7936, end 8192, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27667951583862305
+Time for copying to cuda: 7.3909759521484375e-06
+Time for forward pass: 0.23821592330932617
+Time for backpropagation: 0.286207914352417
+One training iteration takes: 0.88559889793396 seconds
+Index: 30
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.8967275619506836 seconds
+Streaming imagenet data took 0.9032104015350342 seconds
+Then, training+dataloading take 0.9039292335510254 seconds
+The mode is:  split
+Start 8192, end 8448, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.31209444999694824
+Time for copying to cuda: 6.198883056640625e-06
+Time for forward pass: 0.2483961582183838
+Time for backpropagation: 0.28167295455932617
+One training iteration takes: 0.9396712779998779 seconds
+Index: 31
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.042353630065918 seconds
+Streaming imagenet data took 1.053133487701416 seconds
+Then, training+dataloading take 1.0535881519317627 seconds
+The mode is:  split
+Start 8448, end 8704, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2686583995819092
+Time for copying to cuda: 6.4373016357421875e-06
+Time for forward pass: 0.20894622802734375
+Time for backpropagation: 0.32753658294677734
+One training iteration takes: 0.8860266208648682 seconds
+Index: 32
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.106745958328247 seconds
+Streaming imagenet data took 1.1193435192108154 seconds
+Then, training+dataloading take 1.120959997177124 seconds
+The mode is:  split
+Start 8704, end 8960, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.26979589462280273
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.26581358909606934
+Time for backpropagation: 0.28187108039855957
+One training iteration takes: 0.9206850528717041 seconds
+Index: 33
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.2045605182647705 seconds
+Streaming imagenet data took 1.2140882015228271 seconds
+Then, training+dataloading take 1.214827299118042 seconds
+The mode is:  split
+Start 8960, end 9216, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2721123695373535
+Time for copying to cuda: 1.9788742065429688e-05
+Time for forward pass: 0.2511715888977051
+Time for backpropagation: 0.2869141101837158
+One training iteration takes: 0.8926117420196533 seconds
+Index: 34
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.8996541500091553 seconds
+Streaming imagenet data took 0.9062180519104004 seconds
+Then, training+dataloading take 0.9066436290740967 seconds
+The mode is:  split
+Start 9216, end 9472, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.30058956146240234
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.23812055587768555
+Time for backpropagation: 0.29463839530944824
+One training iteration takes: 0.9331872463226318 seconds
+Index: 35
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0370252132415771 seconds
+Streaming imagenet data took 1.0469388961791992 seconds
+Then, training+dataloading take 1.04736328125 seconds
+The mode is:  split
+Start 9472, end 9728, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2690856456756592
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.22005701065063477
+Time for backpropagation: 0.2907998561859131
+One training iteration takes: 0.8613574504852295 seconds
+Index: 36
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.8937718868255615 seconds
+Streaming imagenet data took 0.9003646373748779 seconds
+Then, training+dataloading take 0.9009895324707031 seconds
+The mode is:  split
+Start 9728, end 9984, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3026249408721924
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.2710750102996826
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9132812023162842 seconds
+Time for backpropagation: 0.3279547691345215
+Streaming imagenet data took 0.9222116470336914 seconds
+One training iteration takes: 1.005112886428833 seconds
+Index: 37
+Then, training+dataloading take 1.0052976608276367 seconds
+The mode is:  split
+Start 9984, end 10240, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.27532005310058594
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.2058124542236328
+Time for backpropagation: 0.31939196586608887
+One training iteration takes: 0.8839423656463623 seconds
+Index: 38
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9266645908355713 seconds
+Streaming imagenet data took 0.9337728023529053 seconds
+Then, training+dataloading take 0.9378640651702881 seconds
+The mode is:  split
+Start 10240, end 10496, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2959918975830078
+Time for copying to cuda: 7.867813110351562e-06
+Time for forward pass: 0.2650115489959717
+Time for backpropagation: 0.28584885597229004
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9279210567474365 seconds
+One training iteration takes: 0.9604384899139404 seconds
+Index: 39
+Streaming imagenet data took 0.9698841571807861 seconds
+Then, training+dataloading take 0.9710705280303955 seconds
+The mode is:  split
+Start 10496, end 10752, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2682955265045166
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.211043119430542
+Time for backpropagation: 0.32331395149230957
+One training iteration takes: 0.8731944561004639 seconds
+Index: 40
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.061044454574585 seconds
+Streaming imagenet data took 1.0677592754364014 seconds
+Then, training+dataloading take 1.068500280380249 seconds
+The mode is:  split
+Start 10752, end 11008, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2984936237335205
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.24001026153564453
+Time for backpropagation: 0.286179780960083
+One training iteration takes: 0.9253778457641602 seconds
+Index: 41
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0008103847503662 seconds
+Streaming imagenet data took 1.0085265636444092 seconds
+Then, training+dataloading take 1.0089812278747559 seconds
+The mode is:  split
+Start 11008, end 11264, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27213621139526367
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.23510146141052246
+Time for backpropagation: 0.30216288566589355
+One training iteration takes: 0.9007198810577393 seconds
+Index: 42
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9063992500305176 seconds
+Streaming imagenet data took 0.9129574298858643 seconds
+Then, training+dataloading take 0.9176743030548096 seconds
+The mode is:  split
+Start 11264, end 11520, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.32675743103027344
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.2941110134124756
+Time for backpropagation: 0.3211355209350586
+One training iteration takes: 1.025932788848877 seconds
+Index: 43
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0315606594085693 seconds
+Streaming imagenet data took 1.0416641235351562 seconds
+Then, training+dataloading take 1.0420114994049072 seconds
+The mode is:  split
+Start 11520, end 11776, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.29593944549560547
+Time for copying to cuda: 1.0251998901367188e-05
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.29757213592529297
+Time for backpropagation: 0.31415510177612305
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9349629878997803 seconds
+Streaming imagenet data took 0.9492948055267334 seconds
+One training iteration takes: 0.9933826923370361 seconds
+Index: 44
+Then, training+dataloading take 0.9935908317565918 seconds
+The mode is:  split
+Start 11776, end 12032, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.26804566383361816
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.27224278450012207
+Memory occpied: (1250.0, 3.0)
+Time for backpropagation: 0.3749983310699463
+One training iteration takes: 1.013599157333374 seconds
+Index: 45
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0314664840698242 seconds
+Streaming imagenet data took 1.0417654514312744 seconds
+Then, training+dataloading take 1.0420715808868408 seconds
+The mode is:  split
+Start 12032, end 12288, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27619361877441406
+Time for copying to cuda: 7.3909759521484375e-06
+Time for forward pass: 0.2585136890411377
+Memory occpied: (1250.0, 3.0)
+Time for backpropagation: 0.37779688835144043
+One training iteration takes: 0.9982211589813232 seconds
+Index: 46
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0325901508331299 seconds
+Streaming imagenet data took 1.042680263519287 seconds
+Then, training+dataloading take 1.0430951118469238 seconds
+The mode is:  split
+Start 12288, end 12544, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.28159499168395996
+Time for copying to cuda: 7.3909759521484375e-06
+Time for forward pass: 0.2558619976043701
+Time for backpropagation: 0.28550148010253906
+One training iteration takes: 0.9189741611480713 seconds
+Index: 47
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.1016058921813965 seconds
+Streaming imagenet data took 1.1084656715393066 seconds
+Then, training+dataloading take 1.1092708110809326 seconds
+The mode is:  split
+Start 12544, end 12800, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27315402030944824
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.2518794536590576
+Time for backpropagation: 0.3284757137298584
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9292831420898438 seconds
+One training iteration takes: 0.9372174739837646 seconds
+Index: 48
+Streaming imagenet data took 0.942908525466919 seconds
+Then, training+dataloading take 0.9433152675628662 seconds
+The mode is:  split
+Start 12800, end 13056, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3014638423919678
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.18797993659973145
+Time for backpropagation: 0.33275485038757324
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9622397422790527 seconds
+One training iteration takes: 0.9644515514373779 seconds
+Index: 49
+Streaming imagenet data took 0.9789421558380127 seconds
+Then, training+dataloading take 0.9796891212463379 seconds
+The mode is:  split
+Start 13056, end 13312, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.27228784561157227
+Time for copying to cuda: 6.4373016357421875e-06
+Time for forward pass: 0.2654914855957031
+Time for backpropagation: 0.29566526412963867
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9076848030090332 seconds
+One training iteration takes: 0.9164767265319824 seconds
+Index: 50
+Streaming imagenet data took 0.9215841293334961 seconds
+Then, training+dataloading take 0.9220106601715088 seconds
+The mode is:  split
+Start 13312, end 13568, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.32259416580200195
+Time for copying to cuda: 6.4373016357421875e-06
+Time for forward pass: 0.27687811851501465
+Time for backpropagation: 0.28974270820617676
+One training iteration takes: 1.0094897747039795 seconds
+Index: 51
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0727038383483887 seconds
+Streaming imagenet data took 1.0792558193206787 seconds
+Then, training+dataloading take 1.0799129009246826 seconds
+The mode is:  split
+Start 13568, end 13824, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2770569324493408
+Time for copying to cuda: 7.867813110351562e-06
+Time for forward pass: 0.22693467140197754
+Time for backpropagation: 0.2787163257598877
+One training iteration takes: 0.8648130893707275 seconds
+Index: 52
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.1266920566558838 seconds
+Streaming imagenet data took 1.136800765991211 seconds
+Then, training+dataloading take 1.137354850769043 seconds
+The mode is:  split
+Start 13824, end 14080, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2897930145263672
+Time for copying to cuda: 7.867813110351562e-06
+Time for forward pass: 0.23046255111694336
+Time for backpropagation: 0.30666089057922363
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9037635326385498 seconds
+One training iteration takes: 0.9113578796386719 seconds
+Index: 53
+Streaming imagenet data took 0.9143054485321045 seconds
+Then, training+dataloading take 0.9150102138519287 seconds
+The mode is:  split
+Start 14080, end 14336, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3060648441314697
+Time for copying to cuda: 5.9604644775390625e-06
+Time for forward pass: 0.24506354331970215
+Time for backpropagation: 0.3048558235168457
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.903144359588623 seconds
+Streaming imagenet data took 0.9146735668182373 seconds
+One training iteration takes: 0.9684805870056152 seconds
+Index: 54
+Then, training+dataloading take 0.9686789512634277 seconds
+The mode is:  split
+Start 14336, end 14592, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2679269313812256
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.1641559600830078
+Time for backpropagation: 0.30912160873413086
+One training iteration takes: 0.8218121528625488 seconds
+Index: 55
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9175984859466553 seconds
+Streaming imagenet data took 0.9240176677703857 seconds
+Then, training+dataloading take 0.9247419834136963 seconds
+The mode is:  split
+Start 14592, end 14848, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.32166051864624023
+Time for copying to cuda: 1.2874603271484375e-05
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.2617924213409424
+Time for backpropagation: 0.2935793399810791
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9474625587463379 seconds
+Streaming imagenet data took 0.9575037956237793 seconds
+One training iteration takes: 0.9715397357940674 seconds
+Index: 56
+Then, training+dataloading take 0.9715850353240967 seconds
+The mode is:  split
+Start 14848, end 15104, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.26987147331237793
+Time for copying to cuda: 7.3909759521484375e-06
+Time for forward pass: 0.32879161834716797
+Memory occpied: (1250.0, 3.0)
+Time for backpropagation: 0.31858181953430176
+One training iteration takes: 0.9990439414978027 seconds
+Index: 57
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0342493057250977 seconds
+Streaming imagenet data took 1.0447278022766113 seconds
+Then, training+dataloading take 1.045267105102539 seconds
+The mode is:  split
+Start 15104, end 15360, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2767033576965332
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.2588984966278076
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9531707763671875 seconds
+Streaming imagenet data took 0.9631068706512451 seconds
+Time for backpropagation: 0.46042752265930176
+One training iteration takes: 1.0789566040039062 seconds
+Index: 58
+Then, training+dataloading take 1.0790040493011475 seconds
+The mode is:  split
+Start 15360, end 15616, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2723867893218994
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.22101116180419922
+Time for backpropagation: 0.28350043296813965
+One training iteration takes: 0.886688232421875 seconds
+Index: 59
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.956890344619751 seconds
+Streaming imagenet data took 0.9658637046813965 seconds
+Then, training+dataloading take 0.9664602279663086 seconds
+The mode is:  split
+Start 15616, end 15872, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.28200674057006836
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.18973326683044434
+Time for backpropagation: 0.31699562072753906
+One training iteration takes: 0.8741946220397949 seconds
+Index: 60
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9270555973052979 seconds
+Streaming imagenet data took 0.9326069355010986 seconds
+Then, training+dataloading take 0.9330294132232666 seconds
+The mode is:  split
+Start 15872, end 16128, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.31525349617004395
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.2552187442779541
+Time for backpropagation: 0.2731356620788574
+One training iteration takes: 0.9454629421234131 seconds
+Index: 61
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0504944324493408 seconds
+Streaming imagenet data took 1.0571010112762451 seconds
+Then, training+dataloading take 1.0628705024719238 seconds
+The mode is:  split
+Start 16128, end 16384, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27797675132751465
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.21256303787231445
+Time for backpropagation: 0.2920567989349365
+One training iteration takes: 0.8666715621948242 seconds
+Index: 62
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9219014644622803 seconds
+Streaming imagenet data took 0.931720495223999 seconds
+Then, training+dataloading take 0.9321107864379883 seconds
+The mode is:  split
+Start 16384, end 16640, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.31492018699645996
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.2932586669921875
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9280002117156982 seconds
+Streaming imagenet data took 0.9568419456481934 seconds
+Time for backpropagation: 0.3408064842224121
+One training iteration takes: 1.0492560863494873 seconds
+Index: 63
+Then, training+dataloading take 1.0495152473449707 seconds
+The mode is:  split
+Start 16640, end 16896, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.27960777282714844
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.21399617195129395
+Time for backpropagation: 0.3082137107849121
+One training iteration takes: 0.8833732604980469 seconds
+Index: 64
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0934522151947021 seconds
+Streaming imagenet data took 1.1335201263427734 seconds
+Then, training+dataloading take 1.1349818706512451 seconds
+The mode is:  split
+Start 16896, end 17152, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3078341484069824
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.24151349067687988
+Time for backpropagation: 0.288010835647583
+Memory occpied: (1250.0, 3.0)
+One training iteration takes: 0.9103989601135254 seconds
+Index: 65
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.1049985885620117 seconds
+Streaming imagenet data took 1.1148521900177002 seconds
+Then, training+dataloading take 1.1154818534851074 seconds
+The mode is:  split
+Start 17152, end 17408, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2896902561187744
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.20740103721618652
+Time for backpropagation: 0.35077404975891113
+One training iteration takes: 0.9431397914886475 seconds
+Index: 66
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.97886061668396 seconds
+Streaming imagenet data took 0.9855921268463135 seconds
+Then, training+dataloading take 0.9862499237060547 seconds
+The mode is:  split
+Start 17408, end 17664, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2847278118133545
+Time for copying to cuda: 6.4373016357421875e-06
+Time for forward pass: 0.2634003162384033
+Time for backpropagation: 0.3004140853881836
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9399700164794922 seconds
+One training iteration takes: 0.9440741539001465 seconds
+Index: 67
+Streaming imagenet data took 0.9534099102020264 seconds
+Then, training+dataloading take 0.9537556171417236 seconds
+The mode is:  split
+Start 17664, end 17920, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3316531181335449
+Time for copying to cuda: 8.106231689453125e-06
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.26084184646606445
+Time for backpropagation: 0.30642008781433105
+One training iteration takes: 0.9921138286590576 seconds
+Index: 68
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0656077861785889 seconds
+Streaming imagenet data took 1.0722332000732422 seconds
+Then, training+dataloading take 1.0728087425231934 seconds
+The mode is:  split
+Start 17920, end 18176, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2745366096496582
+Time for copying to cuda: 6.67572021484375e-06
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.3245406150817871
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9312212467193604 seconds
+Streaming imagenet data took 0.943612813949585 seconds
+Time for backpropagation: 0.32878923416137695
+One training iteration takes: 0.9978156089782715 seconds
+Index: 69
+Then, training+dataloading take 0.9978597164154053 seconds
+The mode is:  split
+Start 18176, end 18432, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2754695415496826
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.31699252128601074
+Memory occpied: (1250.0, 3.0)
+Time for backpropagation: 0.39957332611083984
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0456335544586182 seconds
+Streaming imagenet data took 1.0599734783172607 seconds
+One training iteration takes: 1.0771980285644531 seconds
+Index: 70
+Then, training+dataloading take 1.0774273872375488 seconds
+The mode is:  split
+Start 18432, end 18688, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2809264659881592
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.23838186264038086
+Time for backpropagation: 0.3982734680175781
+Memory occpied: (1250.0, 3.0)
+One training iteration takes: 1.0036883354187012 seconds
+Index: 71
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0369679927825928 seconds
+Streaming imagenet data took 1.0475354194641113 seconds
+Then, training+dataloading take 1.047954797744751 seconds
+The mode is:  split
+Start 18688, end 18944, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2777400016784668
+Time for copying to cuda: 7.3909759521484375e-06
+Time for forward pass: 0.24017930030822754
+Time for backpropagation: 0.288496732711792
+One training iteration takes: 0.8960938453674316 seconds
+Index: 72
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0810723304748535 seconds
+Streaming imagenet data took 1.0911123752593994 seconds
+Then, training+dataloading take 1.0915780067443848 seconds
+The mode is:  split
+Start 18944, end 19200, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27152514457702637
+Time for copying to cuda: 7.3909759521484375e-06
+Time for forward pass: 0.22651886940002441
+Time for backpropagation: 0.3108785152435303
+One training iteration takes: 0.8904666900634766 seconds
+Index: 73
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9200987815856934 seconds
+Streaming imagenet data took 0.9274935722351074 seconds
+Then, training+dataloading take 0.9282236099243164 seconds
+The mode is:  split
+Start 19200, end 19456, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3499271869659424
+Time for copying to cuda: 6.4373016357421875e-06
+Time for forward pass: 0.2485182285308838
+Time for backpropagation: 0.2831754684448242
+Memory occpied: (1250.0, 3.0)
+One training iteration takes: 0.9653699398040771 seconds
+Index: 74
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0326778888702393 seconds
+Streaming imagenet data took 1.0383307933807373 seconds
+Then, training+dataloading take 1.0386812686920166 seconds
+The mode is:  split
+Start 19456, end 19712, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27785372734069824
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.24682402610778809
+Time for backpropagation: 0.275097131729126
+One training iteration takes: 0.8810856342315674 seconds
+Index: 75
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0639944076538086 seconds
+Streaming imagenet data took 1.077695608139038 seconds
+Then, training+dataloading take 1.082932949066162 seconds
+The mode is:  split
+Start 19712, end 19968, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.27401185035705566
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.1909177303314209
+Time for backpropagation: 0.31007838249206543
+One training iteration takes: 0.8548243045806885 seconds
+Index: 76
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9800393581390381 seconds
+Streaming imagenet data took 0.9856257438659668 seconds
+Then, training+dataloading take 0.9860594272613525 seconds
+The mode is:  split
+Start 19968, end 20224, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3550443649291992
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.23723769187927246
+Time for backpropagation: 0.27658820152282715
+Memory occpied: (1250.0, 3.0)
+One training iteration takes: 0.9530434608459473 seconds
+Index: 77
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0515766143798828 seconds
+Streaming imagenet data took 1.0586891174316406 seconds
+Then, training+dataloading take 1.0590484142303467 seconds
+The mode is:  split
+Start 20224, end 20480, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2781836986541748
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.23435187339782715
+Time for backpropagation: 0.28885626792907715
+One training iteration takes: 0.8853602409362793 seconds
+Index: 78
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.1119561195373535 seconds
+Streaming imagenet data took 1.1225073337554932 seconds
+Then, training+dataloading take 1.1230762004852295 seconds
+The mode is:  split
+Start 20480, end 20736, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.30194664001464844
+Time for copying to cuda: 7.867813110351562e-06
+Time for forward pass: 0.2614462375640869
+Time for backpropagation: 0.2915198802947998
+One training iteration takes: 0.9262130260467529 seconds
+Index: 79
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0105540752410889 seconds
+Streaming imagenet data took 1.022660493850708 seconds
+Then, training+dataloading take 1.0234324932098389 seconds
+The mode is:  split
+Start 20736, end 20992, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.30977439880371094
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.2101285457611084
+Time for backpropagation: 0.3342142105102539
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9262509346008301 seconds
+One training iteration takes: 0.9317536354064941 seconds
+Index: 80
+Streaming imagenet data took 0.9397644996643066 seconds
+Then, training+dataloading take 0.9401957988739014 seconds
+The mode is:  split
+Start 20992, end 21248, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27315354347229004
+Time for copying to cuda: 7.867813110351562e-06
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.3193683624267578
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9494245052337646 seconds
+Streaming imagenet data took 0.9818074703216553 seconds
+Time for backpropagation: 0.3472418785095215
+One training iteration takes: 1.0415894985198975 seconds
+Index: 81
+Then, training+dataloading take 1.0418152809143066 seconds
+The mode is:  split
+Start 21248, end 21504, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2724745273590088
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.3626892566680908
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9599142074584961 seconds
+Streaming imagenet data took 0.9890706539154053 seconds
+Time for backpropagation: 0.3505403995513916
+One training iteration takes: 1.0726048946380615 seconds
+Index: 82
+Then, training+dataloading take 1.07265043258667 seconds
+The mode is:  split
+Start 21504, end 21760, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27515649795532227
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.20868229866027832
+Memory occpied: (1250.0, 3.0)
+Time for backpropagation: 0.45059990882873535
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0150408744812012 seconds
+One training iteration takes: 1.0273032188415527 seconds
+Index: 83
+Streaming imagenet data took 1.0291650295257568 seconds
+Then, training+dataloading take 1.0294556617736816 seconds
+The mode is:  split
+Start 21760, end 22016, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.285463809967041
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.21378493309020996
+Time for backpropagation: 0.3696436882019043
+One training iteration takes: 0.9548165798187256 seconds
+Index: 84
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9678220748901367 seconds
+Streaming imagenet data took 0.9746322631835938 seconds
+Then, training+dataloading take 0.9753115177154541 seconds
+The mode is:  split
+Start 22016, end 22272, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2842381000518799
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.23626327514648438
+Time for backpropagation: 0.29799556732177734
+One training iteration takes: 0.9009358882904053 seconds
+Index: 85
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9241445064544678 seconds
+Streaming imagenet data took 0.9296925067901611 seconds
+Then, training+dataloading take 0.9300427436828613 seconds
+The mode is:  split
+Start 22272, end 22528, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.33090901374816895
+Time for copying to cuda: 9.059906005859375e-06
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.2439868450164795
+Time for backpropagation: 0.27965736389160156
+One training iteration takes: 0.9376533031463623 seconds
+Index: 86
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9704344272613525 seconds
+Streaming imagenet data took 0.9769878387451172 seconds
+Then, training+dataloading take 0.9842286109924316 seconds
+The mode is:  split
+Start 22528, end 22784, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2795870304107666
+Time for copying to cuda: 7.152557373046875e-06
+Memory occpied: (1250.0, 3.0)
+Time for forward pass: 0.341341495513916
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9423823356628418 seconds
+Streaming imagenet data took 0.9498169422149658 seconds
+Time for backpropagation: 0.34351325035095215
+One training iteration takes: 1.0479590892791748 seconds
+Index: 87
+Then, training+dataloading take 1.0480070114135742 seconds
+The mode is:  split
+Start 22784, end 23040, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.27747392654418945
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.15864324569702148
+Memory occpied: (1250.0, 3.0)
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9311380386352539 seconds
+Streaming imagenet data took 0.9434051513671875 seconds
+Time for backpropagation: 0.515146017074585
+One training iteration takes: 1.0328290462493896 seconds
+Index: 88
+Then, training+dataloading take 1.0373592376708984 seconds
+The mode is:  split
+Start 23040, end 23296, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2752673625946045
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.23144102096557617
+Time for backpropagation: 0.316331148147583
+One training iteration takes: 0.9448435306549072 seconds
+Index: 89
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.976900577545166 seconds
+Streaming imagenet data took 0.9872195720672607 seconds
+Then, training+dataloading take 0.987562894821167 seconds
+The mode is:  split
+Start 23296, end 23552, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2751150131225586
+Time for copying to cuda: 6.9141387939453125e-06
+Time for forward pass: 0.25901246070861816
+Time for backpropagation: 0.2792811393737793
+One training iteration takes: 0.8839645385742188 seconds
+Index: 90
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0295593738555908 seconds
+Streaming imagenet data took 1.070526123046875 seconds
+Then, training+dataloading take 1.0719053745269775 seconds
+The mode is:  split
+Start 23552, end 23808, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.30780959129333496
+Time for copying to cuda: 6.67572021484375e-06
+Time for forward pass: 0.22508955001831055
+Time for backpropagation: 0.29135632514953613
+Memory occpied: (1250.0, 3.0)
+One training iteration takes: 0.9107711315155029 seconds
+Index: 91
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 0.9212501049041748 seconds
+Streaming imagenet data took 0.9280357360839844 seconds
+Then, training+dataloading take 0.9288616180419922 seconds
+The mode is:  split
+Start 23808, end 24064, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.2816300392150879
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.241774320602417
+Time for backpropagation: 0.29312825202941895
+One training iteration takes: 0.9004743099212646 seconds
+Index: 92
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.134484052658081 seconds
+Streaming imagenet data took 1.1424331665039062 seconds
+Then, training+dataloading take 1.1428909301757812 seconds
+The mode is:  split
+Start 24064, end 24320, post_step 128
+
+
+Epoch: 0
+Memory occpied: (1250.0, 3.0)
+Time of next(dataloader) is: 0.2803027629852295
+Time for copying to cuda: 6.4373016357421875e-06
+Time for forward pass: 0.22280287742614746
+Time for backpropagation: 0.30187392234802246
+One training iteration takes: 0.8863859176635742 seconds
+Index: 93
+Read 24.51170539855957 MBs for this batch
+Executing all posts took 1.0328302383422852 seconds
+Streaming imagenet data took 1.0761117935180664 seconds
+Then, training+dataloading take 1.0783238410949707 seconds
+
+Epoch: 0
+Time of next(dataloader) is: 0.3188655376434326
+Time for copying to cuda: 7.152557373046875e-06
+Time for forward pass: 0.19522714614868164
+Time for backpropagation: 0.27677345275878906
+Memory occpied: (1250.0, 3.0)
+The whole process took 104.3004629611969 seconds

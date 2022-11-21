@@ -175,6 +175,7 @@ def get_mem_consumption(model_str, model_size, input_size, outputs_, split_idx, 
                                intermediate_input_size + splittofreeze_size + diff_bs1 + freezetoend_size * 2) * client_batch + model_size
     vanilla = (
                           input_size + begtosplit_size + splittofreeze_size + diff_bs1 + freezetoend_size * 2) * client_batch + model_size
+    print("Server, client, server+client, vanilla ", total_server, total_client, total_server + total_client, vanilla)
     return total_server, total_client, vanilla, model_size, begtosplit_size, diff_bs1
 
 
@@ -236,9 +237,10 @@ def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, s
     print("Input_size ", input_size)
     print("TESTING *****************************")
     print("Input size, BW, MIN:")
-    print(input_size * (1024. ** 2) * SERVER_BATCH * 100, bw, min(input_size * (1024. ** 2) * SERVER_BATCH * 100, bw))
+    _input_size = np.prod(np.array(torch.rand((1,3,224,224)).size()))*4/4.5	
+    print(_input_size * (1024. ** 2) * SERVER_BATCH * 100, bw, min(_input_size * (1024. ** 2) * SERVER_BATCH * 100, bw))
     pot_idxs = np.where(
-        (sizes * SERVER_BATCH * 100 < min(input_size * (1024. ** 2) * SERVER_BATCH * 100, bw)) & (sizes > 0))
+        (sizes * SERVER_BATCH * 100 < min(_input_size * SERVER_BATCH * 100, bw)) & (sizes > 0))
     # pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
     # Step 2: select an index whose memory utilition is less than that in vanilla cases
     print("All candidates indexes: ", pot_idxs)
@@ -584,8 +586,8 @@ def send_request(request_dict):
 def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model,
                           mode='vanilla', split_idx=100, mem_cons=(0, 0), sequential=False, use_intermediate=False):
     stream_time = time.time()
-    #COMP_FILE_SIZE = 1000  # defines how many image per object (after compression)
-    COMP_FILE_SIZE = 128  # defines how many image per object (after compression)
+    COMP_FILE_SIZE = 1000  # defines how many image per object (after compression)
+    #COMP_FILE_SIZE = 128  # defines how many image per object (after compression)
     print("The mode is: ", mode)
     if mode == 'split':
         parallel_posts = int((lend - lstart) / COMP_FILE_SIZE)  # number of posts request to run in parallel
@@ -683,6 +685,7 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
                     bytes = f.read()
                 #      zipbytes = query['contents']
                 #      f2 = BytesIO(b''.join(zipbytes))
+                #print("READ TEST :", len(bytes)/1024./1024.)
                 f2 = BytesIO(bytes)
                 zipff = zipfile.ZipFile(f2, 'r')  # as zipf:
                 # infolist = zipf.infolist().copy()
@@ -737,16 +740,19 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
                 futures = [executor.submit(send_request, post_obj.options) for post_obj in post_objects]
                 for fut in futures:
                     res = fut.result()
-                    #read_bytes += int(len(res))
+                    read_bytes += int(len(res))
                     #images.extend(pickle.loads(res))
+                    time_concurrent = time.time()
                     f2 = BytesIO(res)
                     zipff = zipfile.ZipFile(f2, 'r')
+                    print("Decompress data took {} seconds".format(time.time() - time_concurrent))
                     if not TRANSFORMED:
-                        images.extend(np.array(Image.open(BytesIO(zipff.open(f3).read())).convert('RGB')) for f3 in zipff.infolist())
+                        images.extend(np.array(Image.open(io.BytesIO(zipff.open(f3).read())).convert('RGB')) for f3 in zipff.infolist())
                     else:
                         images.extend(np.array(torch.load(io.BytesIO(zipff.open(f3).read()))) for f3 in zipff.infolist())
                         transform=None
-
+                    print("Total decompress data took {} seconds".format(time.time() - time_concurrent))
+            print("Read {} MBs for this batch".format(read_bytes / (1024 * 1024)))
     # use only labels corresponding to the required images
     labels = labels[lstart:lend]
     assert len(images) == len(labels)

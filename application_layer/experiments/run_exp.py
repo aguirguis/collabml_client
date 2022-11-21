@@ -314,32 +314,32 @@ if __name__ == '__main__':
         #run_alexnet_all_indexes(bsz, 17, CPU=True, bw=bw)
 
 ##################################EXP 1: MODELS EXP#############################################
-    #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
-    #models=['resnet50', 'vgg11','vgg19', 'densenet121', 'resnet18', 'vit']
-    #models=['alexnet']
-    #models=['vgg19']
-    #models=['resnet18']
-    #models=['vit']
-
-    #models=['vit']
-    #freeze_idxs=[17]
-    #freeze_idxs=[11, 21, 25, 36, 17, 20]
-    #freeze_idxs=[25]
-
-    #freeze_idxs=[11]
-    #freeze_idxs=[36]
-    #freeze_idxs=[17]
-
-
-#    # FROM HERE
-#    models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
-#    freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
-##
-##    #bsz = 512
-#    bsz = 256
+#    #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121']
+#    #models=['resnet50', 'vgg11','vgg19', 'densenet121', 'resnet18', 'vit']
+#    #models=['alexnet']
+#    #models=['vgg19']
+#    #models=['resnet18']
+#    models=['vit']
+#
+#    #models=['vit']
+#    freeze_idxs=[17]
+#    #freeze_idxs=[11, 21, 25, 36, 17, 20]
+#    #freeze_idxs=[25]
+#
+#    #freeze_idxs=[11]
+#    #freeze_idxs=[36]
+#    #freeze_idxs=[17]
+#
+#
+##    # FROM HERE
+##    models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
+##    freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
+###
+#    bsz = 512
+##    bsz = 256
 #    bw = 1024
 #    dataset = 'imagenet'
-#    run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw, dataset=dataset)   #GPU on the client side
+#    run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
 #
 #    #bw = 50
 #    #run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
@@ -400,6 +400,7 @@ if __name__ == '__main__':
 #    bsz=8000
 #    dataset='imagenet'
 #    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
+#    BW = [3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
 ##    #BW = [50*1024]
 ##    BW = [1024*1024, 12*1024*1024]
 ###    run_bw_exp(BW, "vit", 17)
@@ -420,12 +421,12 @@ if __name__ == '__main__':
 ####Not really a complete experiment, yet this is useful to compare vanilla to split###########
 #Note that: for this experiment only, I'm setting the server batch size to 1000 (in order to overload the server memory)
     #batch_sizes = [1000,2000,3000,4000, 5000, 6000,7000,8000, 10000,12000,14000]
-    batch_sizes = [1000, 2000,4000,6000,8000]#,10000,12000]
-    for bsz in batch_sizes:
-        empty_gpu()
-        #_run_vanilla(0, bsz, 1,special_dir='dataReduction')
-        #empty_gpu()
-        _run_split(0, bsz, 1,special_dir='dataReduction')		#note that: the dir without batch adaptation is: 'batchAdatp_exp'
+#    batch_sizes = [1000, 2000,4000,6000,8000]#,10000,12000]
+#    for bsz in batch_sizes:
+#        empty_gpu()
+#        #_run_vanilla(0, bsz, 1,special_dir='dataReduction')
+#        #empty_gpu()
+#        _run_split(0, bsz, 1,special_dir='dataReduction')		#note that: the dir without batch adaptation is: 'batchAdatp_exp'
 ###############################################################################################
 ##############################EXP 5: run computation inside and outside of Swift#################
 #    models=['resnet18', 'resnet50', 'alexnet', 'densenet121']
