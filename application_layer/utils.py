@@ -47,7 +47,7 @@ SERVER_BATCH = 25
 
 CACHED = True
 TRANSFORMED = True
-ALL_IN_COS = True
+ALL_IN_COS = False#True
 
 def get_model(model_str, dataset):
     """
