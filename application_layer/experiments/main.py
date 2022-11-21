@@ -189,31 +189,31 @@ SPLIT="HAPI"
 #    plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}_{dataset}_{bw}_{bsz}", text=text,colors=colors, rotation=30)
 ###################################################################################################
 ##EXP2: BW exp
-exp_name="bw_exp"
-model = 'alexnet'
-#dataset = 'plantleave'
-dataset = 'imagenet'
-specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
-BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024, 5*1024*1024, 10*1024*1024, 12*1024*1024]
-bs = 8000
-#BW = [1024*1024, 12*1024*1024]
-Y=[]
-Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}_{bs}") for bw in BW])
-Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}_{bs}_transformed") for bw in BW])
-#Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}_{bs}") for bw in BW])
-Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}") for bw in BW])
-exec_time = [get_total_exec_time(filenames) for filenames in Y]
-print(f"Bandwidth speedup: {np.array(exec_time[0])/np.array(exec_time[1])}")
-sys_legends = [f"{BASELINE}", f"{BASELINE} transformed", f"{SPLIT}"]
-xtick_labels = [round(bw/(1024*1024),2) for bw in BW]
-#xtick_labels[:3] = [0.05,0.1,0.5]
-plot_bars(exec_time, sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Execution Time (sec.)", f"results/{exp_name}_exectime_{dataset}")
-#######Another thing we want to see is the split index in each case
-split_idxs =[get_split_idx(Y[2])]
-plot_bars(split_idxs, sys_legends[2:], xtick_labels, hatches, "Bandwidth (Gbps)", "Split Index", f"results/{exp_name}_splitidx_{dataset}")
-########THe third thing to plot is the output size in each case
-output_sizes = [get_output_size(y) for y in Y]
-plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes_{dataset}")
+#exp_name="bw_exp"
+#model = 'alexnet'
+##dataset = 'plantleave'
+#dataset = 'imagenet'
+#specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
+#BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024, 5*1024*1024, 10*1024*1024, 12*1024*1024]
+#bs = 8000
+##BW = [1024*1024, 12*1024*1024]
+#Y=[]
+#Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}_{bs}") for bw in BW])
+#Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}_{bs}_transformed") for bw in BW])
+##Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}_{bs}") for bw in BW])
+#Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}") for bw in BW])
+#exec_time = [get_total_exec_time(filenames) for filenames in Y]
+#print(f"Bandwidth speedup: {np.array(exec_time[0])/np.array(exec_time[1])}")
+#sys_legends = [f"{BASELINE}", f"{BASELINE} transformed", f"{SPLIT}"]
+#xtick_labels = [round(bw/(1024*1024),2) for bw in BW]
+##xtick_labels[:3] = [0.05,0.1,0.5]
+#plot_bars(exec_time, sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Execution Time (sec.)", f"results/{exp_name}_exectime_{dataset}")
+########Another thing we want to see is the split index in each case
+#split_idxs =[get_split_idx(Y[2])]
+#plot_bars(split_idxs, sys_legends[2:], xtick_labels, hatches, "Bandwidth (Gbps)", "Split Index", f"results/{exp_name}_splitidx_{dataset}")
+#########THe third thing to plot is the output size in each case
+#output_sizes = [get_output_size(y) for y in Y]
+#plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes_{dataset}")
 #################################################################################################
 ##EXP3: Scalability with multiple tenants exp
 #exp_name="multitenant_exp"
@@ -302,14 +302,17 @@ plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "
 ##################################################################################################
 ##EXP4: Data Reduction experiment
 #batch_sizes = [1000,2000,3000,4000,6000,8000]
-#Y=[]
-#y_split = get_output_size([f"{logdir}/multitenant_exp/process_1_of_1_bs{bsz}" for bsz in batch_sizes])
-#y_vanilla = get_output_size([f"{logdir}/vanilla_run/process_1_of_1_bs{bsz}" for bsz in batch_sizes])
-#Y.append(y_vanilla)
-#Y.append(y_split)
-#sys_legends = [f"{BASELINE}", f"{SPLIT}"]
-#print(f"Data reduction: {np.array(Y[0])/np.array(Y[1])}")
-#plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Transferred Data (MBs)", f"results/batch_outputsizes")
+batch_sizes = [1000,2000,4000,6000,8000]
+Y=[]
+y_split = get_output_size([f"{logdir}/dataReduction_automatic/split_process_1_of_1_bs{bsz}" for bsz in batch_sizes])
+y_vanilla = get_output_size([f"{logdir}/dataReduction_automatic/process_1_of_1_bs{bsz}" for bsz in batch_sizes])
+y_vanilla_transformed = get_output_size([f"{logdir}/dataReduction_automatic/process_1_of_1_bs{bsz}_transformed" for bsz in batch_sizes])
+Y.append(y_vanilla)
+Y.append(y_vanilla_transformed)
+Y.append(y_split)
+sys_legends = [f"{BASELINE}", f"{BASELINE} transformed", f"{SPLIT}"]
+print(f"Data reduction: {np.array(Y[0])/np.array(Y[1])}")
+plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Transferred Data (MBs)", f"results/batch_outputsizes")
 ##################################################################################################
 ##EXP 5: Batch adaptation experiments
 ##5a) compare exec time of with batch adaptation to no batch adaptation

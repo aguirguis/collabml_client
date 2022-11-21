@@ -81,9 +81,9 @@ if __name__ == '__main__':
 
     wondershaper_exec = os.path.join(homedir,"wondershaper","wondershaper")
     os.system(f'{wondershaper_exec} -c -a eth0')
-    #bw = 1024
-    #m_bw = bw * 1024 * 1024
-    #os.system(f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
+    bw = 1024
+    m_bw = bw * 1024
+    os.system(f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
     
     batch_size = args.batch_size
     target = args.target

@@ -217,16 +217,18 @@ def _run_split(process_idx, batch_size, num_processes, special_dir="", split_cho
     model, freeze_idx = models_dict[process_idx%len(models_dict)]
     dir = 'multitenant_exp' if special_dir=="" else special_dir
     os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate --split_choice {split_choice} > {logdir}/{dir}_{split_choice}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate --split_choice {split_choice} > {logdir}/{dir}_{split_choice}/split_process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
 
-def _run_vanilla(process_idx, batch_size, num_processes,special_dir=""):
+def _run_vanilla(process_idx, batch_size, num_processes,special_dir="", split_choice="automatic"):
     #This helper function runs one ML request (the total number of requests is specified in num_processes)
-    #models_dict={0:("alexnet",17), 1:("resnet18",11), 2:("resnet50",21), 3:("vgg11",25), 4:("vgg19",36),5:("densenet121",20)}
-    models_dict={0:("alexnet",17)}
-    model, freeze_idx = models_dict[0]	#[process_idx]
+    models_dict={0:("alexnet",17), 1:("resnet18",11), 2:("resnet50",21), 3:("vgg11",25), 4:("vgg19",36),5:("densenet121",20)}
+    #models_dict={0:("alexnet",17)}
+    #model, freeze_idx = models_dict[0]	#[process_idx]
+    model, freeze_idx = models_dict[process_idx%len(models_dict)]
+    print(model)
     dir = 'vanilla_run' if special_dir=="" else special_dir
-    os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} > {logdir}/{dir}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
+    #os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size} --freeze --freeze_idx {freeze_idx} > {logdir}/{dir}_{split_choice}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}_transformed')
+    os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size} --freeze --freeze_idx {freeze_idx} > {logdir}/{dir}_{split_choice}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
 
 def run_scalability_multitenants(max_tenants, batch_sizes, target="split", split_choice="automatic", bw=1024):
     #Test the scalability of our system (i.e., split) with multi-tenants and different batch sizes
@@ -418,15 +420,16 @@ if __name__ == '__main__':
     #run_scalability_multitenants(max_tenants, batch_sizes[1:])
 ###############################################################################################
 ##############################EXP 4: Data reduction with different batch sizes#################
-####Not really a complete experiment, yet this is useful to compare vanilla to split###########
+#####Not really a complete experiment, yet this is useful to compare vanilla to split###########
 #Note that: for this experiment only, I'm setting the server batch size to 1000 (in order to overload the server memory)
-    #batch_sizes = [1000,2000,3000,4000, 5000, 6000,7000,8000, 10000,12000,14000]
+#    #batch_sizes = [1000,2000,3000,4000, 5000, 6000,7000,8000, 10000,12000,14000]
 #    batch_sizes = [1000, 2000,4000,6000,8000]#,10000,12000]
+#    #batch_sizes = [1000]
 #    for bsz in batch_sizes:
 #        empty_gpu()
-#        #_run_vanilla(0, bsz, 1,special_dir='dataReduction')
+#        _run_vanilla(0, bsz, 1,special_dir='dataReduction')
 #        #empty_gpu()
-#        _run_split(0, bsz, 1,special_dir='dataReduction')		#note that: the dir without batch adaptation is: 'batchAdatp_exp'
+#       # _run_split(0, bsz, 1,special_dir='dataReduction')		#note that: the dir without batch adaptation is: 'batchAdatp_exp'
 ###############################################################################################
 ##############################EXP 5: run computation inside and outside of Swift#################
 #    models=['resnet18', 'resnet50', 'alexnet', 'densenet121']
