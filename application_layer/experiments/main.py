@@ -215,96 +215,96 @@ SPLIT="HAPI"
 #output_sizes = [get_output_size(y) for y in Y]
 #plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes_{dataset}")
 #################################################################################################
-##EXP3: Scalability with multiple tenants exp
-exp_name="multitenant_exp"
-specific_dir = os.path.join(logdir, exp_name)
-#batch_sizes = [500, 1000,2000, 4000]
-#max_tenants = 5
-#Y = []
-#for batch_size in batch_sizes:
-#    times = []
-#    for t in range(max_tenants):
-#        num_tenants = t+1
-#        filenames = [os.path.join(specific_dir,f"process_{idx+1}_of_{num_tenants}_bs{batch_size}") for idx in range(num_tenants)]
+###EXP3: Scalability with multiple tenants exp
+#exp_name="multitenant_exp"
+#specific_dir = os.path.join(logdir, exp_name)
+##batch_sizes = [500, 1000,2000, 4000]
+##max_tenants = 5
+##Y = []
+##for batch_size in batch_sizes:
+##    times = []
+##    for t in range(max_tenants):
+##        num_tenants = t+1
+##        filenames = [os.path.join(specific_dir,f"process_{idx+1}_of_{num_tenants}_bs{batch_size}") for idx in range(num_tenants)]
+##        exec_time=get_total_exec_time(filenames)
+##        if len(exec_time) > 4:
+##            exec_time = exec_time[:4]
+##        avg = sum(exec_time)/len(exec_time)
+##        times.append(avg)
+##    Y.append(times)
+##sys_legends = [f"B={bsz}" for bsz in batch_sizes]
+##xtick_labels = list(np.arange(1, max_tenants+1))
+##plot_bars(Y, sys_legends, xtick_labels, hatches, "Number of Tenants", "Average Execution Time (sec.)", f"results/{exp_name}")
+###Trial 2 for the same experiment....here, we do not do actual training so that the client cannot crash
+##exp_names=["multitenant_exp_notraining_automatic", "multitenant_exp_notraining_to_min", "multitenant_exp_notraining_new_automatic"] #,"multitenant_exp_vanilla_notraining"]
+##exp_names=["multitenant_exp_automatic", "multitenant_exp_to_min"] #,"multitenant_exp_vanilla_notraining"]
+#exp_names=["multitenant_exp_split_automatic"]
+###batch_sizes = [1000, 4000]
+#Y=[]
+##max_tenants = 11
+##num_tenants = range(5,6)
+#num_tenants = 8
+#for exp_name in exp_names:
+#    specific_dir = os.path.join(logdir, exp_name)
+#    times, times2 = [], []
+#    #for n in num_tenants:
+#    for i in range(num_tenants):
+#        n = i + 1
+#        filenames = [os.path.join(specific_dir,f"process_{idx+1}_of_{n}_bs2000") for idx in range(n)]
+#        #print(filenames)
 #        exec_time=get_total_exec_time(filenames)
-#        if len(exec_time) > 4:
-#            exec_time = exec_time[:4]
+#        #print("EXEC TIMES: ", exec_time)
+#        exec_time = [et for et in exec_time if et != 0]		#remove zeros
+#        print(f"Num of tenants: {n}, finished processes: {len(exec_time)}")
 #        avg = sum(exec_time)/len(exec_time)
-#        times.append(avg)
+#        maxi = max(exec_time)
+#        times.append(maxi)
+#        times2.append(avg)
 #    Y.append(times)
-#sys_legends = [f"B={bsz}" for bsz in batch_sizes]
-#xtick_labels = list(np.arange(1, max_tenants+1))
-#plot_bars(Y, sys_legends, xtick_labels, hatches, "Number of Tenants", "Average Execution Time (sec.)", f"results/{exp_name}")
-##Trial 2 for the same experiment....here, we do not do actual training so that the client cannot crash
-#exp_names=["multitenant_exp_notraining_automatic", "multitenant_exp_notraining_to_min", "multitenant_exp_notraining_new_automatic"] #,"multitenant_exp_vanilla_notraining"]
-#exp_names=["multitenant_exp_automatic", "multitenant_exp_to_min"] #,"multitenant_exp_vanilla_notraining"]
-exp_names=["multitenant_exp_split_automatic"]
-##batch_sizes = [1000, 4000]
-Y=[]
-#max_tenants = 11
-#num_tenants = range(5,6)
-num_tenants = 8
-for exp_name in exp_names:
-    specific_dir = os.path.join(logdir, exp_name)
-    times, times2 = [], []
-    #for n in num_tenants:
-    for i in range(num_tenants):
-        n = i + 1
-        filenames = [os.path.join(specific_dir,f"process_{idx+1}_of_{n}_bs2000") for idx in range(n)]
-        #print(filenames)
-        exec_time=get_total_exec_time(filenames)
-        #print("EXEC TIMES: ", exec_time)
-        exec_time = [et for et in exec_time if et != 0]		#remove zeros
-        print(f"Num of tenants: {n}, finished processes: {len(exec_time)}")
-        avg = sum(exec_time)/len(exec_time)
-        maxi = max(exec_time)
-        times.append(maxi)
-        times2.append(avg)
-    Y.append(times)
-    Y.append(times2)
-    print(exp_name, " max: ", times, " avg: ", times2)
-print(Y)
-#linear = [Y[0][0]*n/range(num_tenants)[1] for n in range(num_tenants)]
-#Y.append(linear)
-#The following two rows come from logs/swiftOnly_exp
-#swiftonly_avg = [446.4932259321213, 715.1012377738953, 1521.1284693876903, 3418.3286892473698, 6968.817616629601]
-#swiftonly_makespan = [449.2653920650482, 718.3016254901886, 1797.2527532577515, 3745.4075553417206, 8045.859074831009]
-#Y.append(swiftonly_makespan)
-#Y.append(swiftonly_avg)
-exp_names=["multitenant_ALL_IN_COS_automatic"]
-num_tenants = 8
-for exp_name in exp_names:
-    specific_dir = os.path.join(logdir, exp_name)
-    times, times2 = [], []
-    #for n in num_tenants:
-    for i in range(num_tenants):
-        n = i + 1
-        filenames = [os.path.join(specific_dir,f"process_{idx+1}_of_{n}_bs2000") for idx in range(n)]
-        #print(filenames)
-        exec_time=get_total_exec_time(filenames)
-        #print("EXEC TIMES: ", exec_time)
-        exec_time = [et for et in exec_time if et != 0]         #remove zeros
-        print(f"Num of tenants: {n}, finished processes: {len(exec_time)}")
-        avg = sum(exec_time)/len(exec_time)
-        maxi = max(exec_time)
-        times.append(maxi)
-        times2.append(avg)
-    Y.append(times)
-    Y.append(times2)
-    print(exp_name, " max: ", times, " avg: ", times2)
-print("Results of multi-tenant experiment")
-for y in Y:
-    print(y)
-#gains = np.array(Y[4])/np.array(Y[1])
-#print(f"Average gain on average JCT of {SPLIT} compared to the trivial solution is {sum(gains)/len(gains)}")
-#print(f"All gains: {gains}")
-#sys_legends = [f"B={bsz}" for bsz in batch_sizes]
-#sys_legends.append("Linear")
-#sys_legends = [f"{SPLIT} - Makespan", f"{SPLIT} - Average" ,"Linear", "ALL_IN_COS - Makespan", "ALL_IN_COS - Average"]
-sys_legends = [f"{SPLIT} - Makespan", f"{SPLIT} - Average" ,"ALL_IN_COS - Makespan", "ALL_IN_COS - Average"]
-#markers = ["o","x",None, "v", "^"]
-markers = ["o","x", "v", "^"]
-plot_lines(range(num_tenants), Y, sys_legends, linestyles, "Number of Tenants", "Execution Time (sec.)", f"results/{exp_names[0]}", markers)
+#    Y.append(times2)
+#    print(exp_name, " max: ", times, " avg: ", times2)
+#print(Y)
+##linear = [Y[0][0]*n/range(num_tenants)[1] for n in range(num_tenants)]
+##Y.append(linear)
+##The following two rows come from logs/swiftOnly_exp
+##swiftonly_avg = [446.4932259321213, 715.1012377738953, 1521.1284693876903, 3418.3286892473698, 6968.817616629601]
+##swiftonly_makespan = [449.2653920650482, 718.3016254901886, 1797.2527532577515, 3745.4075553417206, 8045.859074831009]
+##Y.append(swiftonly_makespan)
+##Y.append(swiftonly_avg)
+#exp_names=["multitenant_ALL_IN_COS_automatic"]
+#num_tenants = 8
+#for exp_name in exp_names:
+#    specific_dir = os.path.join(logdir, exp_name)
+#    times, times2 = [], []
+#    #for n in num_tenants:
+#    for i in range(num_tenants):
+#        n = i + 1
+#        filenames = [os.path.join(specific_dir,f"process_{idx+1}_of_{n}_bs2000") for idx in range(n)]
+#        #print(filenames)
+#        exec_time=get_total_exec_time(filenames)
+#        #print("EXEC TIMES: ", exec_time)
+#        exec_time = [et for et in exec_time if et != 0]         #remove zeros
+#        print(f"Num of tenants: {n}, finished processes: {len(exec_time)}")
+#        avg = sum(exec_time)/len(exec_time)
+#        maxi = max(exec_time)
+#        times.append(maxi)
+#        times2.append(avg)
+#    Y.append(times)
+#    Y.append(times2)
+#    print(exp_name, " max: ", times, " avg: ", times2)
+#print("Results of multi-tenant experiment")
+#for y in Y:
+#    print(y)
+##gains = np.array(Y[4])/np.array(Y[1])
+##print(f"Average gain on average JCT of {SPLIT} compared to the trivial solution is {sum(gains)/len(gains)}")
+##print(f"All gains: {gains}")
+##sys_legends = [f"B={bsz}" for bsz in batch_sizes]
+##sys_legends.append("Linear")
+##sys_legends = [f"{SPLIT} - Makespan", f"{SPLIT} - Average" ,"Linear", "ALL_IN_COS - Makespan", "ALL_IN_COS - Average"]
+#sys_legends = [f"{SPLIT} - Makespan", f"{SPLIT} - Average" ,"ALL_IN_COS - Makespan", "ALL_IN_COS - Average"]
+##markers = ["o","x",None, "v", "^"]
+#markers = ["o","x", "v", "^"]
+#plot_lines(range(num_tenants), Y, sys_legends, linestyles, "Number of Tenants", "Execution Time (sec.)", f"results/{exp_names[0]}", markers)
 ##################################################################################################
 ##3a: throughput comparison: split to Vanilla with up to 6 tenants (batch size of 500)
 #Y = []
@@ -339,51 +339,53 @@ plot_lines(range(num_tenants), Y, sys_legends, linestyles, "Number of Tenants", 
 #print(f"Data reduction: {np.array(Y[0])/np.array(Y[1])}")
 #plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Transferred Data (MBs)", f"results/batch_outputsizes")
 ##################################################################################################
-##EXP 5: Batch adaptation experiments
-##5a) compare exec time of with batch adaptation to no batch adaptation
-#batch_sizes = [1000,2000,3000,4000, 6000,7000,8000]
-#specific_dir = os.path.join(logdir, "batchAdatp_exp")	#no batch adaptation
-#filenames = [os.path.join(specific_dir,f"process_1_of_1_bs{bsz}") for bsz in batch_sizes]
-#exec_time_noadapt=get_total_exec_time(filenames)
+#EXP 5: Batch adaptation experiments
+#5a) compare exec time of with batch adaptation to no batch adaptation
+#batch_sizes = [1000,2000,3000,4000, 5000, 6000,7000,8000]
+batch_sizes = [1000,2000,4000, 6000, 8000]
+specific_dir = os.path.join(logdir, "batchAdatp_exp")	#no batch adaptation
+filenames = [os.path.join(specific_dir,f"noAdapt_process_1_of_1_bs{bsz}") for bsz in batch_sizes]
+exec_time_noadapt=get_total_exec_time(filenames)
 #specific_dir = os.path.join(logdir, "withbatchAdatp_exp")   #no batch adaptation
-#filenames = [os.path.join(specific_dir,f"process_1_of_1_bs{bsz}") for bsz in batch_sizes]
-#exec_time_withadapt=get_total_exec_time(filenames)
-#Y=[exec_time_noadapt, exec_time_withadapt]
-##Add texts to our bars:
-#text = []
-#for y in Y:
-#    t=[]
-#    for yy in y:
-#        s = "X" if yy==0 else ""
-#        t.append(s)
-#    text.append(t)
-#sys_legends = ["Without BA", "With BA"]
-#plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Execution Time (sec.)", f"results/batchAdapt_exectime", text)
-##5b: GPU memory consumption on the server side (with and without batch adaptation)
-##5c: Percentage of times the client requested batch size was too mcuh
-##5d: the amount of reduction (to the batch size) the server has decided with different batch sizes
-#server_metrics = {"gpu_mem":get_gpu_mem_cons, "percent_mismatch_batch":get_percent_mismatch_bs,"reduction_bs":get_reduction_bs}
-#metrics_labels = {"gpu_mem": "GPU Memory (GBs)", "percent_mismatch_batch":"Batch Reduction Percentage (%)", "reduction_bs":"Average Batch Reduction(%)"}
-#for k,v in server_metrics.items():
-#    filenames = [os.path.join(logdir,"server_logs",f"server_noadaptation_b{bsz}") for bsz in batch_sizes]
-#    metric_noadapt = v(filenames)
-#    filenames = [os.path.join(logdir,"server_logs",f"server_withadaptation_b{bsz}_afterfix") for bsz in batch_sizes]
-#    metric_withadapt = v(filenames)
-#    print(f"{k}:{metric_withadapt}")
-#    Y=[metric_noadapt, metric_withadapt]
-#    if k=='gpu_mem':
-#        for i in range(len(Y)):
-#            Y[i] = list(np.array(Y[i])/1024)
-#    #Add texts to our bars:
-#    text = []
-#    for y in Y:
-#        t=[]
-#        for yy in y:
-#            s = "X" if yy==0 else ""
-#            t.append(s)
-#        text.append(t)
-#    sys_legends = ["Without BA", "With BA"]
-#    plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", metrics_labels[k], f"results/batchAdapt_{k}", text)
+filenames = [os.path.join(specific_dir,f"process_1_of_1_bs{bsz}") for bsz in batch_sizes]
+exec_time_withadapt=get_total_exec_time(filenames)
+Y=[exec_time_noadapt, exec_time_withadapt]
+#Add texts to our bars:
+text = []
+for y in Y:
+    t=[]
+    for yy in y:
+        s = "X" if yy==0 else ""
+        t.append(s)
+    text.append(t)
+sys_legends = ["Without BA", "With BA"]
+plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Execution Time (sec.)", f"results/batchAdapt_exectime", text)
+#5b: GPU memory consumption on the server side (with and without batch adaptation)
+#5c: Percentage of times the client requested batch size was too mcuh
+#5d: the amount of reduction (to the batch size) the server has decided with different batch sizes
+server_metrics = {"gpu_mem":get_gpu_mem_cons, "percent_mismatch_batch":get_percent_mismatch_bs,"reduction_bs":get_reduction_bs}
+metrics_labels = {"gpu_mem": "GPU Memory (GBs)", "percent_mismatch_batch":"Batch Reduction Percentage (%)", "reduction_bs":"Average Batch Reduction(%)"}
+for k,v in server_metrics.items():
+    filenames = [os.path.join(logdir,"server_batchAdatp_exp",f"noAdapt_process_1_of_1_bs{bsz}") for bsz in batch_sizes]
+    metric_noadapt = v(filenames)
+    filenames = [os.path.join(logdir,"server_batchAdatp_exp",f"process_1_of_1_bs{bsz}") for bsz in batch_sizes]
+    metric_withadapt = v(filenames)
+    print(f"{k}:{metric_withadapt}")
+    Y=[metric_noadapt, metric_withadapt]
+    print(Y)
+    if k=='gpu_mem':
+        for i in range(len(Y)):
+            Y[i] = list(np.array(Y[i])/1024)
+    #Add texts to our bars:
+    text = []
+    for y in Y:
+        t=[]
+        for yy in y:
+            s = "X" if yy==0 else ""
+            t.append(s)
+        text.append(t)
+    sys_legends = ["Without BA", "With BA"]
+    plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", metrics_labels[k], f"results/batchAdapt_{k}", text)
 #################################################################################################
 ##EXP 6: GPU memory consumption in Split (server+client) compared to vanilla
 ##In 6a) we set the server batch to 1000 to show that the server can utilize well its GPU

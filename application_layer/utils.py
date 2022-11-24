@@ -601,9 +601,11 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
         for i, s in enumerate(range(lstart, lend, post_step)):
             cur_end = s + post_step if s + post_step <= lend else lend
             cur_step = cur_end - s
+            #print(cur_step)
             opts = {"meta": {"Ml-Task:inference",
                              "dataset:" + dataset_name, "model:{}".format(model),
                              f"Batch-Size:{SERVER_BATCH}",  # {}".format(int(cur_step//5)),
+                             #f"Batch-Size:{cur_step}",  # {}".format(int(cur_step//5)),
                              "start:{}".format(s), "end:{}".format(cur_end),
                              #            "Batch-Size:{}".format(post_step),
                              #            "start:{}".format(lstart),"end:{}".format(lend),

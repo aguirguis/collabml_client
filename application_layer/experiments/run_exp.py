@@ -230,6 +230,28 @@ def _run_vanilla(process_idx, batch_size, num_processes,special_dir="", split_ch
     #os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size} --freeze --freeze_idx {freeze_idx} > {logdir}/{dir}_{split_choice}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}_transformed')
     os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size} --freeze --freeze_idx {freeze_idx} > {logdir}/{dir}_{split_choice}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
 
+def _run_split_BA(adapt, batch_size, special_dir="", bw=1024):
+    wondershaper_exec = os.path.join(homedir,"wondershaper","wondershaper")
+    os.system(f'{wondershaper_exec} -c -a eth0')
+    m_bw = bw * 1024
+    os.system(f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
+
+    num_processes = 1
+    process_idx = 0
+    models_dict={0:("myalexnet",17)}
+    #models_dict = {0:("myresnet18",11)}
+    model, freeze_idx = models_dict[0]
+    dir = 'multitenant_exp' if special_dir=="" else special_dir
+    if adapt:
+        os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
+                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/{dir}/process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
+    else:
+        os.system(f'python3 {execfile} --dataset imagenet --model {model} --num_epochs 1 --batch_size {batch_size}\
+                --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/{dir}/noAdapt_process_{process_idx+1}_of_{num_processes}_bs{batch_size}')
+
+    os.system(f'{wondershaper_exec} -c -a eth0')
+    os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
+
 def run_scalability_multitenants(max_tenants, batch_sizes, target="split", split_choice="automatic", bw=1024):
     #Test the scalability of our system (i.e., split) with multi-tenants and different batch sizes
     #Default parameters: (model, freeze_idx)=(multiple values), BW=1Gbps
@@ -436,3 +458,10 @@ if __name__ == '__main__':
 #    freeze_idxs=[11, 21, 17, 20]
 #    bsz = 2000         #This is the largest number I can get that fits in the client GPU
 #    run_swift_in_and_out(bsz, models, freeze_idxs)
+
+##############################EXP 6: WITH AND WITHOUT BA
+    batch_size = 8000
+    special_dir = 'batchAdatp_exp'
+    adapt = True
+    #adapt = False
+    _run_split_BA(adapt, batch_size, special_dir=special_dir)

@@ -69,7 +69,8 @@ def get_gpu_mem_cons_time(filenames):
             lines = f.readlines()
             mem_inst = []
             for line in lines:
-                if line.startswith("Memory occpied:"):
+                #if line.startswith("Memory occpied:"):
+                if line.startswith("Memory occupied:"):
                     a = line.split()
                     mem_inst.append(float(a[2][1:-1]) + float(a[3][:-1]))
             gpu_mems.append(mem_inst)
