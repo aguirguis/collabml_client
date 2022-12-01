@@ -25,6 +25,10 @@ steps = dataset_steps[dataset]
 total_images = dataset_total_images[dataset]
 extensions = [".JPEG", ".PTB"]
 
+dataset_path = os.path.join(home, 'dataset/', dataset)
+if not os.path.isdir(dataset_path+'/compressed'):
+    os.system(f"mkdir {dataset_path}/compressed")
+os.system(f"cp {dataset_path}/val/ILSVRC2012_validation_ground_truth.txt {dataset_path}/compressed/ILSVRC2012_validation_ground_truth.txt")
 for ext in extensions:
     for step in steps:
         for i in range(0,total_images,step):
@@ -34,7 +38,8 @@ for ext in extensions:
             objects = [idtostr(idx) for idx in range(start,end)]
             list_files = [os.path.join(home, "dataset/"+dataset,obj) for obj in objects]
             #   compress
-            path_compressed = f'vals{start}e{end}.'+ext+'.zip' if ext != ".JPEG" else f'vals{start}e{end}.zip'
-            with zipfile.ZipFile(os.path.join(home, "dataset/"+dataset+"/compressed", path_compressed), 'w') as zipf:
+            path_compressed = f'vals{start}e{end}'+ext+'.zip' if ext != ".JPEG" else f'vals{start}e{end}.zip'
+            with zipfile.ZipFile(os.path.join(dataset_path, 'compressed', path_compressed), 'w') as zipf:
                 for file in list_files:
                     zipf.write(file, compress_type=zipfile.ZIP_DEFLATED)
+

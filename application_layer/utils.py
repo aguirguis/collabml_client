@@ -53,12 +53,8 @@ ALL_IN_COS = False#True
 COMP_FILE_SIZE_DATASET = {
         'imagenet': 1000,
         'plantleave': 50,
-        'inaturalist: 250
+        'inaturalist': 250
 }
-#COMP_FILE_SIZE = 1000  # defines how many image per object (after compression)
-#COMP_FILE_SIZE = 250  # defines how many image per object (after compression)
-#COMP_FILE_SIZE = 50  # defines how many image per object (after compression)
-#COMP_FILE_SIZE = 128  # defines how many image per object (after compression)
 
 def get_model(model_str, dataset):
     """
