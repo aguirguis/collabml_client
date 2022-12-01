@@ -1,0 +1,456 @@
+Namespace(batch_size=200, cpuonly=False, dataset='plantleave', downloadall=False, end=10000, freeze=True, freeze_idx=36, model='myvgg19', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=True)
+==> Preparing data..
+==> Building model..
+IN SPLITTING ALGO
+Recorded bandwidth: 908.6560559246833 Mbps
+In _get_intermediate_outputs_and_time
+Done intermediate outputs and time
+Sizes  [1.2845056e+07 1.2845056e+07 1.2845056e+07 1.2845056e+07 3.2112640e+06
+ 6.4225280e+06 6.4225280e+06 6.4225280e+06 6.4225280e+06 1.6056320e+06
+ 3.2112640e+06 3.2112640e+06 3.2112640e+06 3.2112640e+06 3.2112640e+06
+ 3.2112640e+06 3.2112640e+06 3.2112640e+06 8.0281600e+05 1.6056320e+06
+ 1.6056320e+06 1.6056320e+06 1.6056320e+06 1.6056320e+06 1.6056320e+06
+ 1.6056320e+06 1.6056320e+06 4.0140800e+05 4.0140800e+05 4.0140800e+05
+ 4.0140800e+05 4.0140800e+05 4.0140800e+05 4.0140800e+05 4.0140800e+05
+ 4.0140800e+05 1.0035200e+05 1.0035200e+05 1.6384000e+04 1.6384000e+04
+ 1.6384000e+04 1.6384000e+04 1.6384000e+04 1.6384000e+04 8.8000000e+01]
+Input_size  0.57421875
+TESTING *****************************
+Input size, BW, MIN:
+350755662506666.6 119099366.56216009 119099366.56216009
+All candidates indexes:  (array([36, 37, 38, 39, 40, 41, 42, 43, 44]),)
+SPLIT IDX CHOICE, split idx manual, freeze_idx:  automatic 100 36
+Intermediate:  0.3828125
+24.5
+Total layers size  119.33992767333984
+Server, client, server+client, vanilla  1159.61865234375 876.5467529296875 2036.1654052734375 5814.8280029296875
+Fixed, scale_with_bsz  0 25.07421875
+Mem usage  1878.0 3.0
+Using split index: 28
+Freezing the lower layers of the model (myvgg19) till index 36
+The mode is:  split
+Start 0, end 200, post_step 50
+
+Memory occpied: (1878.0, 3.0)
+Memory occpied: (1878.0, 3.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.1162772178649902 seconds
+Streaming plantleave data took 2.1451833248138428 seconds
+The mode is:  split
+Start 200, end 400, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.37220048904418945
+Time for copying to cuda: 0.020880460739135742
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.0916593074798584 seconds
+Streaming plantleave data took 2.1207261085510254 seconds
+Time for forward pass: 3.395542860031128
+Time for backpropagation: 0.054186344146728516
+GPU memory for training: 4.186092376708984                          
+
+One training iteration takes: 3.964433193206787 seconds
+Index: 0
+Then, training+dataloading take 3.9646153450012207 seconds
+The mode is:  split
+Start 400, end 600, post_step 50
+
+
+Epoch: 0
+Memory occpied: (1878.0, 3406.0)
+Time of next(dataloader) is: 0.38103532791137695
+Time for copying to cuda: 0.020593881607055664
+Time for forward pass: 0.09387779235839844
+Time for backpropagation: 0.005369663238525391
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.5770633220672607 seconds
+Index: 1
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.985288381576538 seconds
+Streaming plantleave data took 2.0137107372283936 seconds
+Then, training+dataloading take 2.014374017715454 seconds
+The mode is:  split
+Start 600, end 800, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4226865768432617
+Time for copying to cuda: 0.02002406120300293
+Time for forward pass: 0.12679219245910645
+Time for backpropagation: 0.0045969486236572266
+GPU memory for training: 3.444727897644043                          
+
+Memory occpied: (3978.0, 3414.0)
+One training iteration takes: 0.6652214527130127 seconds
+Index: 2
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.035306453704834 seconds
+Streaming plantleave data took 2.064453601837158 seconds
+Then, training+dataloading take 2.065734624862671 seconds
+The mode is:  split
+Start 800, end 1000, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.38724493980407715
+Time for copying to cuda: 0.019866228103637695
+Time for forward pass: 0.125746488571167
+Time for backpropagation: 0.004094600677490234
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.625765323638916 seconds
+Index: 3
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.9681098461151123 seconds
+Streaming plantleave data took 1.99644136428833 seconds
+Then, training+dataloading take 1.9971520900726318 seconds
+The mode is:  split
+Start 1000, end 1200, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4335606098175049
+Time for copying to cuda: 0.01991868019104004
+Time for forward pass: 0.12568306922912598
+Time for backpropagation: 0.004077911376953125
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.7108986377716064 seconds
+Index: 4
+Memory occpied: (3978.0, 3414.0)
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.1169886589050293 seconds
+Streaming plantleave data took 2.145908832550049 seconds
+Then, training+dataloading take 2.1472527980804443 seconds
+The mode is:  split
+Start 1200, end 1400, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4125556945800781
+Time for copying to cuda: 0.020067214965820312
+Time for forward pass: 0.12568330764770508
+Time for backpropagation: 0.0040853023529052734
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.6545355319976807 seconds
+Index: 5
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.8180863857269287 seconds
+Streaming plantleave data took 1.8469693660736084 seconds
+Then, training+dataloading take 1.8477683067321777 seconds
+The mode is:  split
+Start 1400, end 1600, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4592454433441162
+Time for copying to cuda: 0.020031452178955078
+Time for forward pass: 0.1163480281829834
+Time for backpropagation: 0.004076957702636719
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.728703498840332 seconds
+Index: 6
+Memory occpied: (3978.0, 3414.0)
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.095898151397705 seconds
+Streaming plantleave data took 2.124629497528076 seconds
+Then, training+dataloading take 2.125431537628174 seconds
+The mode is:  split
+Start 1600, end 1800, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.40376925468444824
+Time for copying to cuda: 0.02000260353088379
+Time for forward pass: 0.12555956840515137
+Time for backpropagation: 0.004069328308105469
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.652937650680542 seconds
+Index: 7
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.9001805782318115 seconds
+Streaming plantleave data took 1.9294483661651611 seconds
+Then, training+dataloading take 1.930238962173462 seconds
+The mode is:  split
+Start 1800, end 2000, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4396181106567383
+Time for copying to cuda: 0.020102262496948242
+Time for forward pass: 0.12037539482116699
+Time for backpropagation: 0.004060268402099609
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.6983115673065186 seconds
+Index: 8
+Memory occpied: (3978.0, 3414.0)
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.9989268779754639 seconds
+Streaming plantleave data took 2.027308940887451 seconds
+Then, training+dataloading take 2.028141498565674 seconds
+The mode is:  split
+Start 2000, end 2200, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.3940253257751465
+Time for copying to cuda: 0.0202939510345459
+Time for forward pass: 0.1098177433013916
+Time for backpropagation: 0.004004240036010742
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.6206786632537842 seconds
+Index: 9
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.06534481048584 seconds
+Streaming plantleave data took 2.0945801734924316 seconds
+Then, training+dataloading take 2.0953710079193115 seconds
+The mode is:  split
+Start 2200, end 2400, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4818077087402344
+Time for copying to cuda: 0.020206212997436523
+Time for forward pass: 0.12567830085754395
+Time for backpropagation: 0.004108428955078125
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.7649528980255127 seconds
+Index: 10
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.8118135929107666 seconds
+Streaming plantleave data took 1.883908748626709 seconds
+Then, training+dataloading take 1.885394811630249 seconds
+The mode is:  split
+Start 2400, end 2600, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4635200500488281
+Time for copying to cuda: 0.020208120346069336
+Time for forward pass: 0.1254105567932129
+Time for backpropagation: 0.0040891170501708984
+GPU memory for training: 3.444727897644043                          
+
+Memory occpied: (3978.0, 3414.0)
+One training iteration takes: 0.7207705974578857 seconds
+Index: 11
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.201341152191162 seconds
+Streaming plantleave data took 2.2306318283081055 seconds
+Then, training+dataloading take 2.2316462993621826 seconds
+The mode is:  split
+Start 2600, end 2800, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.41222620010375977
+Time for copying to cuda: 0.020166635513305664
+Time for forward pass: 0.12571072578430176
+Time for backpropagation: 0.004014015197753906
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.656916618347168 seconds
+Index: 12
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.8548901081085205 seconds
+Streaming plantleave data took 1.8844287395477295 seconds
+Then, training+dataloading take 1.8852267265319824 seconds
+The mode is:  split
+Start 2800, end 3000, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.46292901039123535
+Time for copying to cuda: 0.020529747009277344
+Time for forward pass: 0.12546610832214355
+Time for backpropagation: 0.004114866256713867
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.7415614128112793 seconds
+Index: 13
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.0485711097717285 seconds
+Memory occpied: (3978.0, 3414.0)
+Streaming plantleave data took 2.078108072280884 seconds
+Then, training+dataloading take 2.078953981399536 seconds
+The mode is:  split
+Start 3000, end 3200, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4222381114959717
+Time for copying to cuda: 0.020223617553710938
+Time for forward pass: 0.12570548057556152
+Time for backpropagation: 0.004166603088378906
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.6529417037963867 seconds
+Index: 14
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.062941074371338 seconds
+Streaming plantleave data took 2.091745376586914 seconds
+Then, training+dataloading take 2.0925416946411133 seconds
+The mode is:  split
+Start 3200, end 3400, post_step 50
+
+
+Epoch: 0
+Memory occpied: (3978.0, 3414.0)
+Time of next(dataloader) is: 0.4923255443572998
+Time for copying to cuda: 0.02035069465637207
+Time for forward pass: 0.125748872756958
+Time for backpropagation: 0.004034996032714844
+GPU memory for training: 3.444727897644043                          
+
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.1346116065979004 seconds
+Streaming plantleave data took 2.163095474243164 seconds
+Memory occpied: (3978.0, 3414.0)
+Memory occpied: (3978.0, 3414.0)
+Memory occpied: (3978.0, 3414.0)
+One training iteration takes: 5.681156873703003 seconds
+Index: 15
+Then, training+dataloading take 5.6812744140625 seconds
+The mode is:  split
+Start 3400, end 3600, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.41371631622314453
+Time for copying to cuda: 0.02093362808227539
+Time for forward pass: 0.1257622241973877
+Time for backpropagation: 0.004228830337524414
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.6626241207122803 seconds
+Index: 16
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.8674769401550293 seconds
+Streaming plantleave data took 1.896362543106079 seconds
+Then, training+dataloading take 1.897603988647461 seconds
+The mode is:  split
+Start 3600, end 3800, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.48198938369750977
+Time for copying to cuda: 0.02003002166748047
+Time for forward pass: 0.1253812313079834
+Time for backpropagation: 0.004071474075317383
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.762575626373291 seconds
+Index: 17
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.9591703414916992 seconds
+Streaming plantleave data took 2.0316896438598633 seconds
+Then, training+dataloading take 2.0333330631256104 seconds
+The mode is:  split
+Start 3800, end 4000, post_step 50
+
+
+Epoch: 0
+Memory occpied: (3978.0, 3414.0)
+Memory occpied: (3978.0, 3414.0)
+Time of next(dataloader) is: 0.452789306640625
+Time for copying to cuda: 0.019923925399780273
+Time for forward pass: 0.12549972534179688
+Time for backpropagation: 0.004155158996582031
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.6975014209747314 seconds
+Index: 18
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.970787763595581 seconds
+Streaming plantleave data took 1.9993963241577148 seconds
+Then, training+dataloading take 2.000852346420288 seconds
+The mode is:  split
+Start 4000, end 4200, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.40735435485839844
+Time for copying to cuda: 0.020434856414794922
+Time for forward pass: 0.10486555099487305
+Time for backpropagation: 0.004532337188720703
+GPU memory for training: 3.444727897644043                          
+
+Memory occpied: (3978.0, 3414.0)
+One training iteration takes: 0.6445209980010986 seconds
+Index: 19
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 2.039158821105957 seconds
+Streaming plantleave data took 2.0682082176208496 seconds
+Then, training+dataloading take 2.0696306228637695 seconds
+The mode is:  split
+Start 4200, end 4400, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4075911045074463
+Time for copying to cuda: 0.01997089385986328
+Time for forward pass: 0.12553048133850098
+Time for backpropagation: 0.003999948501586914
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.653449535369873 seconds
+Index: 20
+Memory occpied: (3978.0, 3414.0)
+Read 76.57192611694336 MBs for this batch
+Executing all posts took 1.9232497215270996 seconds
+Streaming plantleave data took 1.9520764350891113 seconds
+Then, training+dataloading take 1.953444480895996 seconds
+The mode is:  split
+Start 4400, end 4502, post_step 50
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.45073938369750977
+Time for copying to cuda: 0.020123720169067383
+Time for forward pass: 0.12538981437683105
+Time for backpropagation: 0.004051685333251953
+GPU memory for training: 3.444727897644043                          
+
+One training iteration takes: 0.750819206237793 seconds
+Index: 21
+Memory occpied: (3978.0, 3414.0)
+Read 39.05179309844971 MBs for this batch
+Executing all posts took 1.0878896713256836 seconds
+Streaming plantleave data took 1.1030268669128418 seconds
+Then, training+dataloading take 1.1062710285186768 seconds
+
+Epoch: 0
+Time of next(dataloader) is: 0.3753190040588379
+Time for copying to cuda: 0.010657548904418945
+Time for forward pass: 0.2008378505706787
+Time for backpropagation: 0.009316682815551758
+GPU memory for training: 4.577632904052734                          
+
+The whole process took 59.954681634902954 seconds

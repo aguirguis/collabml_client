@@ -49,6 +49,17 @@ CACHED = True
 TRANSFORMED = True
 ALL_IN_COS = False#True
 
+
+COMP_FILE_SIZE_DATASET = {
+        'imagenet': 1000,
+        'plantleave': 50,
+        'inaturalist: 250
+}
+#COMP_FILE_SIZE = 1000  # defines how many image per object (after compression)
+#COMP_FILE_SIZE = 250  # defines how many image per object (after compression)
+#COMP_FILE_SIZE = 50  # defines how many image per object (after compression)
+#COMP_FILE_SIZE = 128  # defines how many image per object (after compression)
+
 def get_model(model_str, dataset):
     """
     Returns a model of choice from the library, adapted also to the passed dataset
@@ -240,9 +251,8 @@ def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, s
     print("Input size, BW, MIN:")
     _input_size = np.prod(np.array(torch.rand((1,3,224,224)).size()))*4/4.5	
     print(_input_size * (1024. ** 2) * SERVER_BATCH * 100, bw, min(_input_size * (1024. ** 2) * SERVER_BATCH * 100, bw))
-    pot_idxs = np.where(
-        (sizes * SERVER_BATCH * 100 < min(_input_size * SERVER_BATCH * 100, bw)) & (sizes > 0))
-    # pot_idxs = np.where((sizes*client_batch*100 < min(input_size*client_batch*100, bw)) & (sizes > 0))
+    #pot_idxs = np.where((sizes * SERVER_BATCH * 100 < min(_input_size * SERVER_BATCH * 100, bw)) & (sizes > 0))
+    pot_idxs = np.where((sizes*client_batch < min(_input_size*client_batch, bw)) & (sizes > 0))
     # Step 2: select an index whose memory utilition is less than that in vanilla cases
     print("All candidates indexes: ", pot_idxs)
     print("SPLIT IDX CHOICE, split idx manual, freeze_idx: ", split_choice, split_idx_manual, freeze_idx)
@@ -586,9 +596,8 @@ def send_request(request_dict):
 
 def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model,
                           mode='vanilla', split_idx=100, mem_cons=(0, 0), sequential=False, use_intermediate=False):
+    COMP_FILE_SIZE = COMP_FILE_SIZE_DATASET[dataset_name]
     stream_time = time.time()
-    COMP_FILE_SIZE = 1000  # defines how many image per object (after compression)
-    #COMP_FILE_SIZE = 128  # defines how many image per object (after compression)
     print("The mode is: ", mode)
     if mode == 'split':
         parallel_posts = int((lend - lstart) / COMP_FILE_SIZE)  # number of posts request to run in parallel

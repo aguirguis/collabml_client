@@ -132,88 +132,97 @@ SPLIT="HAPI"
 #output_sizes = [get_output_size(y) for y in Y]
 #plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes")
 ##################################################################################################
-###EXP1: models exp
-#exp_name="models_exp"
-##dataset = 'plantleave'
-##dataset= 'inaturalist'
-#dataset = 'imagenet'
-#specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
-##models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121', 'vit']
-##models=['resnet18', 'resnet50', 'vgg11','vgg19', 'densenet121', 'vit']
+##EXP1: models exp
+exp_name="models_exp"
+#dataset = 'plantleave'
+#dataset= 'inaturalist'
+dataset = 'imagenet'
+specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
 #models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121', 'vit']
-#bw = 1024*1024
-##bw = 50*1024
-#####models=['vit']
-####models=['alexnet']
-#####logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
-##devs=['gpu']
-##devs=['gpu','cpu']
-#for dev in devs:
-#    Y=[]
-#    bsz=512
-##    bsz=1000
-##    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
-##    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
-#    #bsz=2000
-#    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
-#    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}_transformed") for model in models])
-#    #Y.append([os.path.join(specific_dir,f"cached_test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
-#    #print([model.title() for model in models])
-#    Y.append([os.path.join(specific_dir,f"cached_test_split_{model}_bs{bsz}_bw{bw}_{dev}") if model.title() != 'Vgg19' else os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}_transformed") for model in models])
-#    Y = [get_total_exec_time(filenames) for filenames in Y]
-#    #Add texts to our bars:
-#    text = []
-#    for y in Y:
-#        t=[]
-#        for yy in y:
-#            s = "X" if yy==0 else ""
-#            t.append(s)
-#        text.append(t)
-#    #sys_legends = [f"{BASELINE}, B=4000",f"{SPLIT}, B=4000",f"{BASELINE}, B=2000",f"{SPLIT}, B=2000"]
-#    sys_legends = [f"{BASELINE}, B={bsz}",f"{BASELINE} TRANSFORMED, B={bsz}", f"{SPLIT}, B={bsz}"]#,f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
-#    #xtick_labels = [model.title() for model in models]
-#    xtick_labels = [model.title() if model.title() != 'Vit' else 'Transformer' for model in models]
-#    colors = ["blue", "deepskyblue", "orange"]#, "deepskyblue","darkorange"]
-#    #colors = ["blue", "orange", "deepskyblue","darkorange"]
-#    print(dev)
-##    for i in range(0,len(Y),2):
-##        speedup = []
-##        for y1,y2 in zip(Y[i],Y[i+1]):
-##            if y1 != 0:
-##                speedup.append(y1/y2)
-##        print(f"Average speedup: {sum(speedup)/len(speedup)}")
-##        print(f"All speedups: {speedup}")
-#    print("Raw values")
-#    for y in Y:
-#        print(y)
-#    plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}_{dataset}_{bw}_{bsz}", text=text,colors=colors, rotation=30)
+#models=['resnet18', 'resnet50', 'vgg11','vgg19', 'densenet121', 'vit']
+models=['resnet18', 'resnet50', 'vgg11','vgg19', 'alexnet', 'densenet121', 'vit']
+bw = 1024*1024
+#bw = 50*1024
+####models=['vit']
+###models=['alexnet']
+####logs are stored in {specific_dir}/{vanilla_or_split}_{model}_bs{batch_size}_{cpu_or_gpu}
+devs=['gpu']
+#devs=['gpu','cpu']
+bszs = [200]#256, 512, 2000, 8000]
+#bszs = [256, 512, 2000, 8000]
+for dev in devs:
+    for bsz in bszs:
+        Y=[]
+    #    bsz=8000
+    #    bsz=1000
+    #    Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
+    #    Y.append([os.path.join(specific_dir,f"test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
+        #bsz=2000
+        Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
+        Y.append([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}_transformed") for model in models])
+        #Y.append([os.path.join(specific_dir,f"cached_test_split_{model}_bs{bsz}_bw{bw}_{dev}") for model in models])
+        #print([model.title() for model in models])
+        Y.append([os.path.join(specific_dir,f"cached_test_split_{model}_bs{bsz}_bw{bw}_{dev}") if (model.title() != 'Vgg19' or bsz > 1000) else os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}_transformed") for model in models])
+        Y = [get_total_exec_time(filenames) for filenames in Y]
+        #Add texts to our bars:
+        text = []
+        for y in Y:
+            t=[]
+            for yy in y:
+                s = "X" if yy==0 else ""
+                t.append(s)
+            text.append(t)
+        #sys_legends = [f"{BASELINE}, B=4000",f"{SPLIT}, B=4000",f"{BASELINE}, B=2000",f"{SPLIT}, B=2000"]
+        sys_legends = [f"{BASELINE} images, B={bsz}",f"{BASELINE} tensors, B={bsz}", f"{SPLIT}, B={bsz}"]#,f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
+        #sys_legends = [f"{BASELINE}, B={bsz}", f"{SPLIT}, B={bsz}"]#,f"{BASELINE}, B=8000",f"{SPLIT}, B=8000"]
+        #xtick_labels = [model.title() for model in models]
+        xtick_labels = [model.title() if model.title() != 'Vit' else 'Transformer' for model in models]
+        colors = ["blue", "deepskyblue", "orange"]#, "deepskyblue","darkorange"]
+        #colors = ["blue", "orange"]#, "deepskyblue","darkorange"]
+        print(dev)
+        for i in range(1,len(Y),2):
+        #for i in range(0,len(Y),2):
+        #for i in range(0, len(Y)):
+            speedup = []
+            for y1,y2 in zip(Y[i],Y[i+1]):
+                if y1 != 0:
+                    speedup.append(y1/y2)
+            print(f"Average speedup: {sum(speedup)/len(speedup)}")
+            print(f"All speedups: {speedup}")
+        print("Raw values")
+        for y in Y:
+            print(y)
+        plot_bars(Y, sys_legends, xtick_labels, hatches, "Models", "Execution Time (sec.)", f"results/{exp_name}_{dev}_{dataset}_{bw}_{bsz}", text=text,colors=colors, rotation=30)
 ###################################################################################################
-##EXP2: BW exp
-#exp_name="bw_exp"
-#model = 'alexnet'
-##dataset = 'plantleave'
-#dataset = 'imagenet'
-#specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
-#BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024, 5*1024*1024, 10*1024*1024, 12*1024*1024]
+###EXP2: BW exp
+exp_name="bw_exp"
+model = 'alexnet'
+#dataset = 'plantleave'
+dataset = 'imagenet'
+specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
+BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024, 5*1024*1024, 10*1024*1024, 12*1024*1024]
 #bs = 8000
-##BW = [1024*1024, 12*1024*1024]
-#Y=[]
-#Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}_{bs}") for bw in BW])
-#Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}_{bs}_transformed") for bw in BW])
-##Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}_{bs}") for bw in BW])
-#Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}") for bw in BW])
-#exec_time = [get_total_exec_time(filenames) for filenames in Y]
-#print(f"Bandwidth speedup: {np.array(exec_time[0])/np.array(exec_time[1])}")
-#sys_legends = [f"{BASELINE}", f"{BASELINE} transformed", f"{SPLIT}"]
-#xtick_labels = [round(bw/(1024*1024),2) for bw in BW]
-##xtick_labels[:3] = [0.05,0.1,0.5]
-#plot_bars(exec_time, sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Execution Time (sec.)", f"results/{exp_name}_exectime_{dataset}")
-########Another thing we want to see is the split index in each case
-#split_idxs =[get_split_idx(Y[2])]
-#plot_bars(split_idxs, sys_legends[2:], xtick_labels, hatches, "Bandwidth (Gbps)", "Split Index", f"results/{exp_name}_splitidx_{dataset}")
-#########THe third thing to plot is the output size in each case
-#output_sizes = [get_output_size(y) for y in Y]
-#plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes_{dataset}")
+bs=200
+#BW = [1024*1024, 12*1024*1024]
+Y=[]
+Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}_{bs}") for bw in BW])
+Y.append([os.path.join(specific_dir,f"vanilla_{bw/1024}_{model}_{bs}_transformed") for bw in BW])
+#Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}_{bs}") for bw in BW])
+Y.append([os.path.join(specific_dir,f"split_{bw/1024}_{model}_{bs}") for bw in BW])
+exec_time = [get_total_exec_time(filenames) for filenames in Y]
+print(f"Bandwidth speedup: {np.array(exec_time[0])/np.array(exec_time[2])}")
+print(f"Bandwidth speedup: {np.array(exec_time[1])/np.array(exec_time[2])}")
+sys_legends = [f"{BASELINE} images", f"{BASELINE} tensors", f"{SPLIT}"]
+xtick_labels = [round(bw/(1024*1024),2) for bw in BW]
+colors = ["blue", "deepskyblue", "orange"]
+#xtick_labels[:3] = [0.05,0.1,0.5]
+plot_bars(exec_time, sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Execution Time (sec.)", f"results/{exp_name}_exectime_{dataset}", colors=colors)
+#######Another thing we want to see is the split index in each case
+split_idxs =[get_split_idx(Y[2])]
+plot_bars(split_idxs, sys_legends[2:], xtick_labels, hatches, "Bandwidth (Gbps)", "Split Index", f"results/{exp_name}_splitidx_{dataset}", colors=colors)
+########THe third thing to plot is the output size in each case
+output_sizes = [get_output_size(y) for y in Y]
+plot_bars(output_sizes,sys_legends, xtick_labels, hatches, "Bandwidth (Gbps)", "Transferred Data (MBs)",f"results/{exp_name}_outputsizes_{dataset}", colors=colors)
 #################################################################################################
 ###EXP3: Scalability with multiple tenants exp
 #exp_name="multitenant_exp"
@@ -336,56 +345,57 @@ SPLIT="HAPI"
 #Y.append(y_vanilla_transformed)
 #Y.append(y_split)
 #sys_legends = [f"{BASELINE}", f"{BASELINE} transformed", f"{SPLIT}"]
+#colors = ["blue", "deepskyblue", "orange"]
 #print(f"Data reduction: {np.array(Y[0])/np.array(Y[1])}")
-#plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Transferred Data (MBs)", f"results/batch_outputsizes")
+#plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Transferred Data (MBs)", f"results/batch_outputsizes", colors=colors)
 ##################################################################################################
 #EXP 5: Batch adaptation experiments
 #5a) compare exec time of with batch adaptation to no batch adaptation
 #batch_sizes = [1000,2000,3000,4000, 5000, 6000,7000,8000]
-batch_sizes = [1000,2000,4000, 6000, 8000]
-specific_dir = os.path.join(logdir, "batchAdatp_exp")	#no batch adaptation
-filenames = [os.path.join(specific_dir,f"noAdapt_process_1_of_1_bs{bsz}") for bsz in batch_sizes]
-exec_time_noadapt=get_total_exec_time(filenames)
-#specific_dir = os.path.join(logdir, "withbatchAdatp_exp")   #no batch adaptation
-filenames = [os.path.join(specific_dir,f"process_1_of_1_bs{bsz}") for bsz in batch_sizes]
-exec_time_withadapt=get_total_exec_time(filenames)
-Y=[exec_time_noadapt, exec_time_withadapt]
-#Add texts to our bars:
-text = []
-for y in Y:
-    t=[]
-    for yy in y:
-        s = "X" if yy==0 else ""
-        t.append(s)
-    text.append(t)
-sys_legends = ["Without BA", "With BA"]
-plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Execution Time (sec.)", f"results/batchAdapt_exectime", text)
-#5b: GPU memory consumption on the server side (with and without batch adaptation)
-#5c: Percentage of times the client requested batch size was too mcuh
-#5d: the amount of reduction (to the batch size) the server has decided with different batch sizes
-server_metrics = {"gpu_mem":get_gpu_mem_cons, "percent_mismatch_batch":get_percent_mismatch_bs,"reduction_bs":get_reduction_bs}
-metrics_labels = {"gpu_mem": "GPU Memory (GBs)", "percent_mismatch_batch":"Batch Reduction Percentage (%)", "reduction_bs":"Average Batch Reduction(%)"}
-for k,v in server_metrics.items():
-    filenames = [os.path.join(logdir,"server_batchAdatp_exp",f"noAdapt_process_1_of_1_bs{bsz}") for bsz in batch_sizes]
-    metric_noadapt = v(filenames)
-    filenames = [os.path.join(logdir,"server_batchAdatp_exp",f"process_1_of_1_bs{bsz}") for bsz in batch_sizes]
-    metric_withadapt = v(filenames)
-    print(f"{k}:{metric_withadapt}")
-    Y=[metric_noadapt, metric_withadapt]
-    print(Y)
-    if k=='gpu_mem':
-        for i in range(len(Y)):
-            Y[i] = list(np.array(Y[i])/1024)
-    #Add texts to our bars:
-    text = []
-    for y in Y:
-        t=[]
-        for yy in y:
-            s = "X" if yy==0 else ""
-            t.append(s)
-        text.append(t)
-    sys_legends = ["Without BA", "With BA"]
-    plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", metrics_labels[k], f"results/batchAdapt_{k}", text)
+#batch_sizes = [1000,2000,4000, 6000, 8000]
+#specific_dir = os.path.join(logdir, "batchAdatp_exp")	#no batch adaptation
+#filenames = [os.path.join(specific_dir,f"noAdapt_process_1_of_1_bs{bsz}") for bsz in batch_sizes]
+#exec_time_noadapt=get_total_exec_time(filenames)
+##specific_dir = os.path.join(logdir, "withbatchAdatp_exp")   #no batch adaptation
+#filenames = [os.path.join(specific_dir,f"process_1_of_1_bs{bsz}") for bsz in batch_sizes]
+#exec_time_withadapt=get_total_exec_time(filenames)
+#Y=[exec_time_noadapt, exec_time_withadapt]
+##Add texts to our bars:
+#text = []
+#for y in Y:
+#    t=[]
+#    for yy in y:
+#        s = "X" if yy==0 else ""
+#        t.append(s)
+#    text.append(t)
+#sys_legends = ["Without BA", "With BA"]
+#plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Execution Time (sec.)", f"results/batchAdapt_exectime", text)
+##5b: GPU memory consumption on the server side (with and without batch adaptation)
+##5c: Percentage of times the client requested batch size was too mcuh
+##5d: the amount of reduction (to the batch size) the server has decided with different batch sizes
+#server_metrics = {"gpu_mem":get_gpu_mem_cons, "percent_mismatch_batch":get_percent_mismatch_bs,"reduction_bs":get_reduction_bs}
+#metrics_labels = {"gpu_mem": "GPU Memory (GBs)", "percent_mismatch_batch":"Batch Reduction Percentage (%)", "reduction_bs":"Average Batch Reduction(%)"}
+#for k,v in server_metrics.items():
+#    filenames = [os.path.join(logdir,"server_batchAdatp_exp",f"noAdapt_process_1_of_1_bs{bsz}") for bsz in batch_sizes]
+#    metric_noadapt = v(filenames)
+#    filenames = [os.path.join(logdir,"server_batchAdatp_exp",f"process_1_of_1_bs{bsz}") for bsz in batch_sizes]
+#    metric_withadapt = v(filenames)
+#    print(f"{k}:{metric_withadapt}")
+#    Y=[metric_noadapt, metric_withadapt]
+#    print(Y)
+#    if k=='gpu_mem':
+#        for i in range(len(Y)):
+#            Y[i] = list(np.array(Y[i])/1024)
+#    #Add texts to our bars:
+#    text = []
+#    for y in Y:
+#        t=[]
+#        for yy in y:
+#            s = "X" if yy==0 else ""
+#            t.append(s)
+#        text.append(t)
+#    sys_legends = ["Without BA", "With BA"]
+#    plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", metrics_labels[k], f"results/batchAdapt_{k}", text)
 #################################################################################################
 ##EXP 6: GPU memory consumption in Split (server+client) compared to vanilla
 ##In 6a) we set the server batch to 1000 to show that the server can utilize well its GPU

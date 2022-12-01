@@ -11,10 +11,18 @@ import torchvision.transforms as transforms
 import torch
 
 home=expanduser("~")
+
+dataset = 'imagenet'
+
+dataset_len = {'imagenet': 24320, #50000,
+        'plantleave': 4502,
+        'inaturalist': 24426
+        }
+
 #prepare files
-for i in range(0,24320):
+for i in range(0, dataset_len[dataset]):
     idtostr = lambda idx: "val/ILSVRC2012_val_000"+((5-len(str(idx+1)))*"0")+str(idx+1)+".JPEG"
-    file_image = os.path.join(home, "dataset/imagenet", idtostr(i))
+    file_image = os.path.join(home, "dataset/"+dataset, idtostr(i))
     convert = lambda file: Image.open(io.BytesIO(file.read())).convert('RGB')
     with open(file_image, "rb") as fi:
             image = convert(fi)

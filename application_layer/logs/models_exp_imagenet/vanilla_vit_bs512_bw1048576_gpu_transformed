@@ -7,35 +7,40 @@ The mode is:  vanilla
 Start 0, end 512, post_step 128
 
 Memory occpied: (1630.0, 3.0)
+Decompress data took 0.012018680572509766 seconds
+Total decompress data took 0.3330545425415039 seconds
+Decompress data took 0.011614799499511719 seconds
 Memory occpied: (1630.0, 3.0)
-Decompress data took 0.011941671371459961 seconds
-Total decompress data took 0.3461759090423584 seconds
-Decompress data took 0.011390924453735352 seconds
-Memory occpied: (1630.0, 3.0)
-Total decompress data took 0.3875713348388672 seconds
-Decompress data took 0.011586904525756836 seconds
-Total decompress data took 0.3329043388366699 seconds
-Decompress data took 0.011121511459350586 seconds
-Total decompress data took 0.3271186351776123 seconds
+Total decompress data took 0.39968156814575195 seconds
+Decompress data took 0.01152491569519043 seconds
+Total decompress data took 0.3348512649536133 seconds
+Decompress data took 0.011253595352172852 seconds
+Total decompress data took 0.32776570320129395 seconds
 Read 78.09912967681885 MBs for this batch
-Streaming imagenet data took 3.2484285831451416 seconds
+Streaming imagenet data took 2.2801220417022705 seconds
 The mode is:  vanilla
 Start 512, end 1024, post_step 128
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.4955000877380371
-Time for copying to cuda: 0.09070968627929688
-Decompress data took 0.02780008316040039 seconds
-Total decompress data took 0.3626883029937744 seconds
-Decompress data took 0.011940479278564453 seconds
-Total decompress data took 0.3213653564453125 seconds
-Decompress data took 0.01150059700012207 seconds
-Total decompress data took 0.3244919776916504 seconds
-Decompress data took 0.011842489242553711 seconds
-Total decompress data took 0.32669734954833984 seconds
+Memory occpied: (1630.0, 3.0)
+Time of next(dataloader) is: 0.5626697540283203
+Time for copying to cuda: 0.08194899559020996
+Decompress data took 0.027114391326904297 seconds
+Total decompress data took 0.36524415016174316 seconds
+Decompress data took 0.011782169342041016 seconds
+Memory occpied: (1924.0, 490.0)
+Total decompress data took 0.43674468994140625 seconds
+Decompress data took 0.011704683303833008 seconds
+Total decompress data took 0.3384695053100586 seconds
+Decompress data took 0.010120153427124023 seconds
+Total decompress data took 0.3363490104675293 seconds
 Read 79.72594451904297 MBs for this batch
-Streaming imagenet data took 2.4074227809906006 seconds
+Streaming imagenet data took 2.652280330657959 seconds
+Memory occpied: (1924.0, 922.0)
+Memory occpied: (1924.0, 1370.0)
+Memory occpied: (13464.0, 2050.0)
+Memory occpied: (14798.0, 14922.0)
 Exception: Caught RuntimeError in replica 0 on device 0.
 Original Traceback (most recent call last):
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
@@ -60,5 +65,4 @@ Original Traceback (most recent call last):
     attn = (q @ k.transpose(-2, -1)) * self.scale
 RuntimeError: CUDA out of memory. Tried to allocate 456.00 MiB (GPU 0; 14.76 GiB total capacity; 12.54 GiB already allocated; 311.75 MiB free; 13.21 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 
-Memory occpied: (1630.0, 15058.0)
-The whole process took 16.339402675628662 seconds
+The whole process took 15.47955870628357 seconds

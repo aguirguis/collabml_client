@@ -12,7 +12,7 @@ execfile = os.path.join(projectdir,"main.py")
 logdir = os.path.join(projectdir,"logs")
 
 def empty_gpu():
-    time.sleep(10)
+    #time.sleep(10)
     #print("HERE")
     torch.cuda.empty_cache()
     os.system(f"pkill -f 'python3 {execfile}'")
@@ -112,12 +112,12 @@ def run_models_exp(batch_size, models, freeze_idxs, CPU=False, bw=1024, dataset=
     for model, freeze_idx in zip(models, freeze_idxs):
         empty_gpu()
 #        #run vanilla
-#        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
-#		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
-#		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}_transformed')
         os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
 		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
-		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}_transformed')
+#        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
+#		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
+#		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
 #        empty_gpu()
 #        empty_gpu()
         #run split
@@ -198,12 +198,12 @@ def run_bw_exp(BW, model, freeze_idx, batch_size=8000, dataset='imagenet'):
         #run vanilla
 #        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
 #                 --freeze --freeze_idx {freeze_idx} > {logdir}/bw_exp_{dataset}/vanilla_{bw/1024}_{model}_{batch_size}')
-#        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
-#                 --freeze --freeze_idx {freeze_idx} > {logdir}/bw_exp_{dataset}/vanilla_{bw/1024}_{model}_{batch_size}_transformed')
+        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
+                 --freeze --freeze_idx {freeze_idx} > {logdir}/bw_exp_{dataset}/vanilla_{bw/1024}_{model}_{batch_size}_transformed')
 #        empty_gpu()
 #        #run split
-        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
-                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/bw_exp_{dataset}/split_{bw/1024}_{model}_{batch_size}')
+#        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
+#                 --freeze --freeze_idx {freeze_idx} --use_intermediate > {logdir}/bw_exp_{dataset}/split_{bw/1024}_{model}_{batch_size}')
     #Back to the default BW (1Gbps)
     os.system(f'{wondershaper_exec} -c -a eth0')
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
@@ -355,20 +355,34 @@ if __name__ == '__main__':
 #    #freeze_idxs=[17]
 #
 #
-##    # FROM HERE
-##    models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
-##    freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
-###
-#    bsz = 512
-##    bsz = 256
+#    # FROM HERE
+    models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
+    freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
+    #models=['vgg11']
+    #freeze_idxs=[25]
+##
+    #bsz = 256
+    #bw = 1024
+    #dataset = 'imagenet'
+    #run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
+    #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw, dataset=dataset)   #GPU on the client side
+
+    bsz = 200
+    bw = 1024
+    dataset = 'plantleave'
+    run_models_exp(bsz, models, freeze_idxs, bw=bw, CPU=True, dataset=dataset)   #GPU on the client side
+    #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw, dataset=dataset)   #GPU on the client side
+
+#    bsz = 1000
 #    bw = 1024
-#    dataset = 'imagenet'
+#    dataset = 'inaturalist'
 #    run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
-#
-#    #bw = 50
-#    #run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
-#    #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=50, dataset=dataset)
-#    # TO HERE
+#    run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw, dataset=dataset)   #GPU on the client side
+
+    #bw = 50
+    #run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
+    #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=50, dataset=dataset)
+    # TO HERE
 
     #dataset = 'plantleave'
     
@@ -423,8 +437,10 @@ if __name__ == '__main__':
 #################################EXP 2: BW EXP#################################################
 #    bsz=8000
 #    dataset='imagenet'
+#    bsz=200
+#    dataset='plantleave'
 #    BW = [50*1024, 100*1024, 500*1024, 1024*1024, 2*1024*1024, 3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
-#    BW = [3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
+#    #BW = [3*1024*1024,5*1024*1024, 10*1024*1024, 12*1024*1024]
 ##    #BW = [50*1024]
 ##    BW = [1024*1024, 12*1024*1024]
 ###    run_bw_exp(BW, "vit", 17)
@@ -460,8 +476,8 @@ if __name__ == '__main__':
 #    run_swift_in_and_out(bsz, models, freeze_idxs)
 
 ##############################EXP 6: WITH AND WITHOUT BA
-    batch_size = 8000
-    special_dir = 'batchAdatp_exp'
-    adapt = True
-    #adapt = False
-    _run_split_BA(adapt, batch_size, special_dir=special_dir)
+#    batch_size = 8000
+#    special_dir = 'batchAdatp_exp'
+#    adapt = True
+#    #adapt = False
+#    _run_split_BA(adapt, batch_size, special_dir=special_dir)
