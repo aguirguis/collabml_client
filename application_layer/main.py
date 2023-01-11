@@ -1,4 +1,6 @@
 '''Train CIFAR10 with PyTorch.'''
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -8,7 +10,6 @@ import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
 
-import os
 import argparse
 import sys
 from utils import *
@@ -88,7 +89,11 @@ print(args)
 parent_dir = "compressed" # if mode == 'split' else "val"
 
 start_time = time.time()
+
+print("Nb GPUS ", torch.cuda.device_count())
+
 device = 'cuda' if torch.cuda.is_available() and not args.cpuonly else 'cpu'
+
 
 # Data
 print('==> Preparing data..')

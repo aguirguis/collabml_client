@@ -202,7 +202,8 @@ def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, s
     client = iperf3.Client()
     client.duration = 1
     # client.server_hostname = "192.168.0.242"
-    client.server_hostname = "192.168.0.246"
+    #client.server_hostname = "192.168.0.246"
+    client.server_hostname = "192.168.0.189"
     while True:
         try:
             res = client.run()
@@ -567,7 +568,8 @@ def recvall(sock, n):
 def send_request(request_dict):
     # This function sends a request to the intermediate server through its socket and wait for the result
     # request_dict is the dict object that should be sent to the server
-    HOST = '192.168.0.246'  # The server's hostname or IP address		#TODO: store this somewhere general later
+    #HOST = '192.168.0.246'  # The server's hostname or IP address		#TODO: store this somewhere general later
+    HOST = '192.168.0.189'  # The server's hostname or IP address		#TODO: store this somewhere general later
     # HOST = '192.168.0.242'  # The server's hostname or IP address		#TODO: store this somewhere general later
     PORT = 65432  # The port used by the server
     # process request_dict
