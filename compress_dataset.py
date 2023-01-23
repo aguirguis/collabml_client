@@ -15,7 +15,7 @@ dataset_steps = {
 }
 
 dataset_total_images = {
-        'imagenet': 24320, #50000,
+        'imagenet': 32000, #24320, #50000,
         'plantleave': 4502,
         'inaturalist': 24426
 }

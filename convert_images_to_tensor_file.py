@@ -14,7 +14,7 @@ home=expanduser("~")
 
 dataset = 'imagenet'
 
-dataset_len = {'imagenet': 24320, #50000,
+dataset_len = {'imagenet': 32000, #24320, #50000,
         'plantleave': 4502,
         'inaturalist': 24426
         }

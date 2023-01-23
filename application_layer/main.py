@@ -67,7 +67,7 @@ if not args.downloadall and (dataset_name == 'mnist' or dataset_name == 'cifar10
 
 stream_datasets = ['imagenet', 'plantleave', 'inaturalist']
 
-stream_dataset_len = {'imagenet': 24320, #50000,
+stream_dataset_len = {'imagenet': 32000, #24320, #50000,
             'plantleave': 4502,
             'inaturalist': 24426
         }
