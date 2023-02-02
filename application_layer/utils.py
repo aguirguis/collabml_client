@@ -43,7 +43,7 @@ except:
     from dataset_utils import *
     from mnist_utils import *
 
-SERVER_BATCH = 25
+SERVER_BATCH = 32#128#256#128#25
 
 CACHED = True
 TRANSFORMED = True
@@ -51,7 +51,8 @@ ALL_IN_COS = False#True
 
 
 COMP_FILE_SIZE_DATASET = {
-        'imagenet': 1000,
+        #'imagenet': 1000,
+        'imagenet': 128,
         'plantleave': 50,
         'inaturalist': 250
 }

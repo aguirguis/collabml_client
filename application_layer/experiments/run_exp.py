@@ -100,7 +100,7 @@ def run_models_exp_freeze_split(batch_size, models, freeze_idxs, CPU=False, bw=1
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
 
 
-def run_models_exp(batch_size, models, freeze_idxs, CPU=False, bw=1024, dataset='imagenet'):
+def run_models_exp(batch_size, models, freeze_idxs, CPU=False, bw=1024, dataset='imagenet', vanilla=False, transformed=True):
     #Compare the performance of Vanilla and Split with different models on both GPU and CPU on the client side
     #The default BW here is 1Gbps
     wondershaper_exec = os.path.join(homedir,"wondershaper","wondershaper")
@@ -111,20 +111,24 @@ def run_models_exp(batch_size, models, freeze_idxs, CPU=False, bw=1024, dataset=
     assert len(models) == len(freeze_idxs)
     for model, freeze_idx in zip(models, freeze_idxs):
         empty_gpu()
-#        #run vanilla
-        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
-		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
-		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}_transformed')
-#        os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
-#		 --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
-#		 > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+        if vanilla:
+            if transformed:
+                #run vanilla
+                os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
+                         --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
+                         > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}_transformed')
+            else:
+                os.system(f'python3 {execfile} --dataset {dataset} --model {model} --num_epochs 1 --batch_size {batch_size}\
+                         --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU else ""}\
+                         > {logdir}/models_exp_{dataset}/vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+        else:
 #        empty_gpu()
 #        empty_gpu()
-        #run split
-        #TWO IMPORTANT NOTES HERE: (1) we use the intermediate server for this experiment, (2) we set server batch size to 200 always
-#        os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
-#                 --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
-#		> {logdir}/models_exp_{dataset}/cached_test_split_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
+            #run split
+            #TWO IMPORTANT NOTES HERE: (1) we use the intermediate server for this experiment, (2) we set server batch size to 200 always
+            os.system(f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
+                     --freeze --freeze_idx {freeze_idx} --use_intermediate {"--cpuonly" if CPU else ""}\
+                    > {logdir}/models_exp_{dataset}/cached_test_split_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU else "gpu"}')
 
     os.system(f'{wondershaper_exec} -c -a eth0')
     os.system(f'{wondershaper_exec} -a eth0 -d {1024*1024} -u {1024*1024}')
@@ -367,11 +371,50 @@ if __name__ == '__main__':
     #run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
     #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw, dataset=dataset)   #GPU on the client side
 
-    bsz = 200
+    #bsz = 200
+    #bw = 1024
+    #CPUs = [False, True]
+    CPUs = [False]
+    #BSZs = [2000, 8000]
+    BSZs = [256, 512]
+    #bsz = 8000
     bw = 1024
-    dataset = 'plantleave'
-    run_models_exp(bsz, models, freeze_idxs, bw=bw, CPU=True, dataset=dataset)   #GPU on the client side
-    #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw, dataset=dataset)   #GPU on the client side
+    #dataset = 'plantleave'
+    dataset = 'imagenet'
+
+    #CPU_ = False#True
+    vanilla = True
+    transformed = True
+
+    for bsz in BSZs:
+        for CPU_ in CPUs:
+            if vanilla:
+                os.system(f'python3 {execfile} --dataset {dataset} --model alexnet --num_epochs 1 --batch_size {bsz}\
+                                     --freeze --freeze_idx 17 {"--cpuonly" if CPU_ else ""}')
+            else:
+                os.system(f'python3 {execfile} --dataset {dataset} --model myalexnet --num_epochs 1 --batch_size {bsz}\
+                                     --freeze --freeze_idx 17 --use_intermediate {"--cpuonly" if CPU_ else ""}')
+        
+            run_models_exp(bsz, models, freeze_idxs, CPU=CPU_, bw=bw, dataset=dataset, vanilla=vanilla, transformed=transformed)
+    
+#    bsz = 8000
+#    bw = 1024
+#    #dataset = 'plantleave'
+#    dataset = 'imagenet'
+#
+#    CPU_ = False#True
+#    vanilla = False#True
+#    transformed = True
+#    if vanilla:
+#        os.system(f'python3 {execfile} --dataset {dataset} --model alexnet --num_epochs 1 --batch_size {bsz}\
+#                             --freeze --freeze_idx 17 {"--cpuonly" if CPU_ else ""}')
+#    else:
+#        os.system(f'python3 {execfile} --dataset {dataset} --model myalexnet --num_epochs 1 --batch_size {bsz}\
+#                                 --freeze --freeze_idx 17 --use_intermediate {"--cpuonly" if CPU_ else ""}')
+#    
+#    #run_models_exp(bsz, models, freeze_idxs, bw=bw, CPU=True, dataset=dataset)   #GPU on the client side
+#    run_models_exp(bsz, models, freeze_idxs, CPU=CPU_, bw=bw, dataset=dataset, vanilla=vanilla, transformed=transformed)
+#    #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw, dataset=dataset)   #GPU on the client side
 
 #    bsz = 1000
 #    bw = 1024

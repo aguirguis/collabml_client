@@ -1,4 +1,5 @@
 Namespace(batch_size=2000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=36, model='vgg19', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+Nb GPUS  2
 ==> Preparing data..
 ==> Building model..
 Using split index: 100
@@ -9,25 +10,29 @@ Start 0, end 2000, post_step 1000
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Decompress data took 0.10741662979125977 seconds
+Memory occpied: (1822.0, 3.0)
+Memory occpied: (1822.0, 3.0)
+Total decompress data took 2.786328077316284 seconds
+Decompress data took 0.10447311401367188 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
-Memory occpied: (1822.0, 3.0)
-Memory occpied: (1822.0, 3.0)
+Total decompress data took 2.872931480407715 seconds
 Read 308.89431381225586 MBs for this batch
-Memory occpied: (1822.0, 3.0)
-Streaming imagenet data took 9.63040041923523 seconds
+Streaming imagenet data took 9.038248538970947 seconds
 The mode is:  vanilla
 Start 2000, end 4000, post_step 1000
 
 
 Epoch: 0
 Memory occpied: (1822.0, 3.0)
-Time of next(dataloader) is: 0.8724780082702637
-Time for copying to cuda: 0.30279541015625
-Memory occpied: (2972.0, 932.0)
-Memory occpied: (2972.0, 1358.0)
-Memory occpied: (2972.0, 1792.0)
+Time of next(dataloader) is: 0.9171087741851807
+Time for copying to cuda: 0.3002040386199951
+Memory occpied: (2972.0, 814.0)
+Decompress data took 0.11188077926635742 seconds
+Memory occpied: (2972.0, 1236.0)
+Memory occpied: (2972.0, 1672.0)
 Exception: Caught RuntimeError in replica 0 on device 0.
 Original Traceback (most recent call last):
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
@@ -48,6 +53,10 @@ Original Traceback (most recent call last):
     return F.conv2d(input, weight, bias, self.stride,
 RuntimeError: CUDA out of memory. Tried to allocate 11.96 GiB (GPU 0; 14.76 GiB total capacity; 1.66 GiB already allocated; 11.85 GiB free; 1.68 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 
-The whole process took 21.55252742767334 seconds
+Memory occpied: (2972.0, 14646.0)
+Total decompress data took 2.9323906898498535 seconds
+Decompress data took 0.10749220848083496 seconds
+The whole process took 22.165801525115967 seconds
+Total decompress data took 2.614198684692383 seconds
 Read 306.5873851776123 MBs for this batch
-Streaming imagenet data took 8.61511516571045 seconds
+Streaming imagenet data took 8.789548635482788 seconds

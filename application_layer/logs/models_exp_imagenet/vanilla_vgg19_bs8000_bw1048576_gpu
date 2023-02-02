@@ -1,4 +1,5 @@
 Namespace(batch_size=8000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=36, model='vgg19', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+Nb GPUS  2
 ==> Preparing data..
 ==> Building model..
 Using split index: 100
@@ -14,31 +15,47 @@ Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Decompress data took 0.0899043083190918 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.6273651123046875 seconds
+Decompress data took 0.08379769325256348 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.6196887493133545 seconds
+Decompress data took 0.08606767654418945 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.719900131225586 seconds
+Decompress data took 0.0814211368560791 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.4622480869293213 seconds
+Decompress data took 0.08411383628845215 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.6679904460906982 seconds
+Decompress data took 0.08144664764404297 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.6494786739349365 seconds
+Decompress data took 0.08280372619628906 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.745406150817871 seconds
+Decompress data took 0.08254408836364746 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.4931817054748535 seconds
 Read 988.8015155792236 MBs for this batch
-Streaming imagenet data took 37.290594816207886 seconds
+Streaming imagenet data took 37.886072397232056 seconds
 The mode is:  vanilla
 Start 8000, end 16000, post_step 1000
 
@@ -53,22 +70,34 @@ Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Decompress data took 0.08336138725280762 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.7327141761779785 seconds
+Decompress data took 0.08724498748779297 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
+Total decompress data took 3.9429125785827637 seconds
+Decompress data took 0.08733916282653809 seconds
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
 Memory occpied: (1822.0, 3.0)
-Time of next(dataloader) is: 24.840276956558228
+Total decompress data took 3.990093231201172 seconds
+Decompress data took 0.08572101593017578 seconds
+Memory occpied: (1822.0, 3.0)
+Memory occpied: (1822.0, 3.0)
+Time of next(dataloader) is: 24.992045402526855
+Total decompress data took 3.692551374435425 seconds
+Decompress data took 0.09066510200500488 seconds
 Memory occpied: (6416.0, 3.0)
-Time for copying to cuda: 1.3092765808105469
-Memory occpied: (6416.0, 2436.0)
-Memory occpied: (6416.0, 2838.0)
-Memory occpied: (6416.0, 3248.0)
-Memory occpied: (6416.0, 4106.0)
+Time for copying to cuda: 1.317399263381958
+Memory occpied: (6416.0, 2568.0)
+Memory occpied: (6416.0, 2984.0)
+Total decompress data took 4.583966493606567 seconds
+Decompress data took 0.09928297996520996 seconds
+Memory occpied: (6416.0, 3406.0)
 Exception: Caught RuntimeError in replica 0 on device 0.
 Original Traceback (most recent call last):
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
@@ -89,6 +118,12 @@ Original Traceback (most recent call last):
     return F.conv2d(input, weight, bias, self.stride,
 RuntimeError: CUDA out of memory. Tried to allocate 47.85 GiB (GPU 0; 14.76 GiB total capacity; 5.02 GiB already allocated; 8.49 GiB free; 5.05 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 
-The whole process took 76.03150415420532 seconds
+Memory occpied: (6416.0, 4106.0)
+The whole process took 77.19122219085693 seconds
+Total decompress data took 4.320516347885132 seconds
+Decompress data took 0.09127640724182129 seconds
+Total decompress data took 3.5837783813476562 seconds
+Decompress data took 0.08561372756958008 seconds
+Total decompress data took 3.3363921642303467 seconds
 Read 1024.4528188705444 MBs for this batch
-Streaming imagenet data took 40.20041036605835 seconds
+Streaming imagenet data took 41.075905561447144 seconds

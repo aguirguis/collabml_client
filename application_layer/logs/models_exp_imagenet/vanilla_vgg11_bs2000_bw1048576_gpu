@@ -1,4 +1,5 @@
 Namespace(batch_size=2000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=25, model='vgg11', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+Nb GPUS  2
 ==> Preparing data..
 ==> Building model..
 Using split index: 100
@@ -9,23 +10,40 @@ Start 0, end 2000, post_step 1000
 Memory occpied: (1762.0, 3.0)
 Memory occpied: (1762.0, 3.0)
 Memory occpied: (1762.0, 3.0)
+Decompress data took 0.08999252319335938 seconds
 Memory occpied: (1762.0, 3.0)
 Memory occpied: (1762.0, 3.0)
 Memory occpied: (1762.0, 3.0)
+Total decompress data took 3.5775156021118164 seconds
+Decompress data took 0.08447504043579102 seconds
 Memory occpied: (1762.0, 3.0)
 Memory occpied: (1762.0, 3.0)
+Memory occpied: (1762.0, 3.0)
+Total decompress data took 3.545464038848877 seconds
 Read 252.732816696167 MBs for this batch
-Streaming imagenet data took 9.379164457321167 seconds
+Streaming imagenet data took 9.562225103378296 seconds
 The mode is:  vanilla
 Start 2000, end 4000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 6.50022292137146
-Time for copying to cuda: 0.29237794876098633
-Read 244.98475742340088 MBs for this batch
-Streaming imagenet data took 9.31180477142334 seconds
 Memory occpied: (1762.0, 3.0)
+Decompress data took 0.0844573974609375 seconds
+Memory occpied: (1762.0, 3.0)
+Memory occpied: (1762.0, 3.0)
+Memory occpied: (1762.0, 3.0)
+Memory occpied: (1762.0, 3.0)
+Total decompress data took 3.7590627670288086 seconds
+Decompress data took 0.08426046371459961 seconds
+Time of next(dataloader) is: 6.418032646179199
+Time for copying to cuda: 0.291003942489624
+Memory occpied: (2912.0, 702.0)
+Memory occpied: (2912.0, 1126.0)
+Total decompress data took 3.42189884185791 seconds
+Read 244.98475742340088 MBs for this batch
+Streaming imagenet data took 9.213281631469727 seconds
+Memory occpied: (2912.0, 1540.0)
+Memory occpied: (2912.0, 15032.0)
 Exception: Caught RuntimeError in replica 0 on device 0.
 Original Traceback (most recent call last):
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
@@ -46,4 +64,4 @@ Original Traceback (most recent call last):
     return F.conv2d(input, weight, bias, self.stride,
 RuntimeError: CUDA out of memory. Tried to allocate 11.96 GiB (GPU 0; 14.76 GiB total capacity; 1.62 GiB already allocated; 11.91 GiB free; 1.62 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 
-The whole process took 27.37194275856018 seconds
+The whole process took 27.6199951171875 seconds

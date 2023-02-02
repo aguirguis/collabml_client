@@ -1,0 +1,93 @@
+Namespace(batch_size=8000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=20, model='densenet121', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+==> Preparing data..
+==> Building model..
+Using split index: 100
+Freezing the lower layers of the model (densenet121) till index 20
+The mode is:  vanilla
+Start 0, end 8000, post_step 1000
+
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Read 988.8015155792236 MBs for this batch
+Streaming imagenet data took 36.34434986114502 seconds
+The mode is:  vanilla
+Start 8000, end 16000, post_step 1000
+
+
+Epoch: 0
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Time of next(dataloader) is: 24.660861253738403
+Memory occpied: (5888.0, 3.0)
+Time for copying to cuda: 1.3274033069610596
+Memory occpied: (5888.0, 2514.0)
+Memory occpied: (5888.0, 2896.0)
+Memory occpied: (5888.0, 3356.0)
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torchvision/models/densenet.py", line 215, in forward
+    features = self.features(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/container.py", line 141, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 447, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/conv.py", line 443, in _conv_forward
+    return F.conv2d(input, weight, bias, self.stride,
+RuntimeError: CUDA out of memory. Tried to allocate 11.96 GiB (GPU 0; 14.76 GiB total capacity; 4.52 GiB already allocated; 9.01 GiB free; 4.53 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+Memory occpied: (5888.0, 3584.0)
+The whole process took 73.32808828353882 seconds
+Read 1024.4528188705444 MBs for this batch
+Streaming imagenet data took 39.31081676483154 seconds
