@@ -1,4 +1,4 @@
-Namespace(batch_size=2000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=11, model='resnet18', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+Namespace(all_in_cos=False, batch_size=2000, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=11, model='resnet18', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, transformed=False, use_intermediate=False)
 Nb GPUS  2
 ==> Preparing data..
 ==> Building model..
@@ -9,18 +9,20 @@ Start 0, end 2000, post_step 1000
 
 Memory occpied: (1312.0, 3.0)
 Memory occpied: (1312.0, 3.0)
-Decompress data took 0.08307814598083496 seconds
+Memory occpied: (1312.0, 3.0)
+Memory occpied: (1312.0, 3.0)
+Decompress data took 0.08282470703125 seconds
 Memory occpied: (1312.0, 3.0)
 Memory occpied: (1312.0, 3.0)
 Memory occpied: (1312.0, 3.0)
-Total decompress data took 3.6181259155273438 seconds
-Decompress data took 0.08380365371704102 seconds
+Total decompress data took 3.6557705402374268 seconds
+Decompress data took 0.08489513397216797 seconds
 Memory occpied: (1312.0, 3.0)
 Memory occpied: (1312.0, 3.0)
 Memory occpied: (1312.0, 3.0)
-Total decompress data took 3.5413854122161865 seconds
+Total decompress data took 3.558645725250244 seconds
 Read 252.732816696167 MBs for this batch
-Streaming imagenet data took 8.874739408493042 seconds
+Streaming imagenet data took 11.06521725654602 seconds
 The mode is:  vanilla
 Start 2000, end 4000, post_step 1000
 
@@ -28,388 +30,421 @@ Start 2000, end 4000, post_step 1000
 Epoch: 0
 Memory occpied: (1312.0, 3.0)
 Memory occpied: (1312.0, 3.0)
-Decompress data took 0.08385109901428223 seconds
+Decompress data took 0.08318781852722168 seconds
 Memory occpied: (1312.0, 3.0)
 Memory occpied: (1312.0, 3.0)
 Memory occpied: (1312.0, 3.0)
-Total decompress data took 3.7223761081695557 seconds
-Decompress data took 0.08212089538574219 seconds
-Memory occpied: (1312.0, 3.0)
-Time of next(dataloader) is: 6.484707832336426
-Time for copying to cuda: 0.29030275344848633
-Memory occpied: (2462.0, 932.0)
-Memory occpied: (2462.0, 1344.0)
-Total decompress data took 3.4907636642456055 seconds
+Total decompress data took 3.784627676010132 seconds
+Decompress data took 0.08399009704589844 seconds
+Time of next(dataloader) is: 6.5681471824646
+Time for copying to cuda: 0.29311132431030273
+Memory occpied: (2462.0, 756.0)
+Memory occpied: (2462.0, 1154.0)
+Memory occpied: (2462.0, 1602.0)
+Total decompress data took 3.6674561500549316 seconds
 Read 244.98475742340088 MBs for this batch
-Streaming imagenet data took 9.382302045822144 seconds
-Memory occpied: (2462.0, 1788.0)
+Streaming imagenet data took 9.994774580001831 seconds
 Memory occpied: (12608.0, 12004.0)
-Memory occpied: (12574.0, 4968.0)
-Memory occpied: (6738.0, 6168.0)
-Memory occpied: (12744.0, 8442.0)
-Time for forward pass: 8.699712753295898
-Memory occpied: (9626.0, 8450.0)
-Time for backpropagation: 1.6125428676605225
+Memory occpied: (12574.0, 11860.0)
+Memory occpied: (6738.0, 4968.0)
+Memory occpied: (9012.0, 14038.0)
+Time for forward pass: 8.842587232589722
+Memory occpied: (9020.0, 10314.0)
+Time for backpropagation: 1.7805814743041992
 GPU memory for training: 21.49008321762085                          
 
-One training iteration takes: 17.308801412582397 seconds
+One training iteration takes: 17.667396783828735 seconds
 Index: 0
-Then, training+dataloading take 17.311657667160034 seconds
+Then, training+dataloading take 17.67233967781067 seconds
 The mode is:  vanilla
 Start 4000, end 6000, post_step 1000
 
 
 Epoch: 0
-Decompress data took 0.09197831153869629 seconds
-Total decompress data took 3.411677360534668 seconds
-Decompress data took 0.08267855644226074 seconds
-Time of next(dataloader) is: 6.713862180709839
-Time for copying to cuda: 0.2969334125518799
-Time for forward pass: 0.04727768898010254
-Time for backpropagation: 0.005296468734741211
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (9024.0, 4348.0)
+Memory occpied: (9024.0, 4348.0)
+Decompress data took 0.08374381065368652 seconds
+Memory occpied: (9024.0, 4348.0)
+Memory occpied: (9024.0, 4348.0)
+Memory occpied: (9024.0, 4348.0)
+Total decompress data took 3.677424669265747 seconds
+Decompress data took 0.08590555191040039 seconds
+Time of next(dataloader) is: 6.791764259338379
+Memory occpied: (9024.0, 4348.0)
+Time for copying to cuda: 0.3009963035583496
+Time for forward pass: 0.041656494140625
+Time for backpropagation: 0.005053520202636719
+GPU memory for training: 13.771409511566162                          
 
-One training iteration takes: 7.242853164672852 seconds
+One training iteration takes: 7.423354864120483 seconds
 Index: 1
-Memory occpied: (9628.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 3.5787460803985596 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 3.8915770053863525 seconds
 Read 248.08854579925537 MBs for this batch
-Streaming imagenet data took 9.476799964904785 seconds
-Then, training+dataloading take 9.491408348083496 seconds
+Streaming imagenet data took 10.369539737701416 seconds
+Then, training+dataloading take 10.3853120803833 seconds
 The mode is:  vanilla
 Start 6000, end 8000, post_step 1000
 
 
 Epoch: 0
-Decompress data took 0.08810210227966309 seconds
-Total decompress data took 3.3871939182281494 seconds
-Decompress data took 0.08069705963134766 seconds
-Time of next(dataloader) is: 6.759946823120117
-Time for copying to cuda: 0.288311243057251
-Time for forward pass: 0.0306243896484375
-Time for backpropagation: 0.007483720779418945
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.08312058448791504 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.129295349121094 seconds
+Decompress data took 0.08239388465881348 seconds
+Time of next(dataloader) is: 7.026705026626587
+Memory occpied: (12104.0, 10492.0)
+Time for copying to cuda: 0.4441840648651123
+Time for forward pass: 0.029357433319091797
+Time for backpropagation: 0.0068242549896240234
+GPU memory for training: 13.771409511566162                          
 
-One training iteration takes: 7.302355051040649 seconds
+One training iteration takes: 7.826434135437012 seconds
 Index: 2
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 3.4861388206481934 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 3.881272077560425 seconds
 Read 242.9953956604004 MBs for this batch
-Streaming imagenet data took 9.405361413955688 seconds
-Then, training+dataloading take 9.420117616653442 seconds
+Streaming imagenet data took 10.824888467788696 seconds
+Then, training+dataloading take 10.840827941894531 seconds
 The mode is:  vanilla
 Start 8000, end 10000, post_step 1000
 
 
 Epoch: 0
-Decompress data took 0.0903925895690918 seconds
-Total decompress data took 3.5605108737945557 seconds
-Decompress data took 0.09450054168701172 seconds
-Time of next(dataloader) is: 6.779057025909424
-Time for copying to cuda: 0.2993128299713135
-Time for forward pass: 0.03410696983337402
-Time for backpropagation: 0.008768320083618164
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.08959603309631348 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Time of next(dataloader) is: 6.885861158370972
+Total decompress data took 4.041375637054443 seconds
+Decompress data took 0.09423089027404785 seconds
+Time for copying to cuda: 0.3009796142578125
+Time for forward pass: 0.03033280372619629
+Time for backpropagation: 0.0053784847259521484
+GPU memory for training: 13.771409511566162                          
 
-One training iteration takes: 7.371174335479736 seconds
+One training iteration takes: 7.4467363357543945 seconds
 Index: 3
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 3.9740583896636963 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.0948920249938965 seconds
 Read 252.47015571594238 MBs for this batch
-Streaming imagenet data took 10.203177452087402 seconds
-Then, training+dataloading take 10.220130205154419 seconds
+Streaming imagenet data took 11.098571062088013 seconds
+Then, training+dataloading take 11.115252494812012 seconds
 The mode is:  vanilla
 Start 10000, end 12000, post_step 1000
 
 
 Epoch: 0
-Memory occpied: (12708.0, 8628.0)
-Decompress data took 0.08664488792419434 seconds
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 4.167543888092041 seconds
-Decompress data took 0.08751153945922852 seconds
-Memory occpied: (12708.0, 8628.0)
-Time of next(dataloader) is: 6.800976753234863
-Time for copying to cuda: 0.3034512996673584
-Time for forward pass: 0.03194999694824219
-Time for backpropagation: 0.0064470767974853516
-GPU memory for training: 14.172714710235596                          
+Decompress data took 0.09130001068115234 seconds
+Total decompress data took 3.516261100769043 seconds
+Decompress data took 0.08427095413208008 seconds
+Time of next(dataloader) is: 7.128934383392334
+Time for copying to cuda: 0.2928428649902344
+Time for forward pass: 0.029951095581054688
+Time for backpropagation: 0.0052738189697265625
+GPU memory for training: 13.771409511566162                          
 
-One training iteration takes: 7.41863489151001 seconds
+One training iteration takes: 7.702259302139282 seconds
 Index: 4
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 4.042033672332764 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 3.6590735912323 seconds
 Read 251.06946277618408 MBs for this batch
-Streaming imagenet data took 10.402671098709106 seconds
-Then, training+dataloading take 10.419039726257324 seconds
+Streaming imagenet data took 9.903855562210083 seconds
+Then, training+dataloading take 9.921288967132568 seconds
 The mode is:  vanilla
 Start 12000, end 14000, post_step 1000
 
 
 Epoch: 0
-Decompress data took 0.09459948539733887 seconds
-Total decompress data took 3.960167646408081 seconds
-Decompress data took 0.08829569816589355 seconds
-Time of next(dataloader) is: 6.860540151596069
-Time for copying to cuda: 0.3018333911895752
-Time for forward pass: 0.030473709106445312
-Time for backpropagation: 0.0058383941650390625
-GPU memory for training: 14.172714710235596                          
+Decompress data took 0.09943938255310059 seconds
+Total decompress data took 3.9813244342803955 seconds
+Decompress data took 0.09050559997558594 seconds
+Time of next(dataloader) is: 7.140021085739136
+Time for copying to cuda: 0.2951169013977051
+Time for forward pass: 0.02995586395263672
+Time for backpropagation: 0.005787372589111328
+GPU memory for training: 13.771409511566162                          
 
-Memory occpied: (12708.0, 8628.0)
-One training iteration takes: 7.468127250671387 seconds
+One training iteration takes: 7.732300043106079 seconds
 Index: 5
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 4.167400360107422 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.137692213058472 seconds
 Read 260.5531940460205 MBs for this batch
-Streaming imagenet data took 10.863382816314697 seconds
-Then, training+dataloading take 10.880529165267944 seconds
+Streaming imagenet data took 10.929790258407593 seconds
+Then, training+dataloading take 10.947638511657715 seconds
 The mode is:  vanilla
 Start 14000, end 16000, post_step 1000
 
 
 Epoch: 0
-Decompress data took 0.08924365043640137 seconds
-Total decompress data took 3.7754039764404297 seconds
-Decompress data took 0.09418535232543945 seconds
-Time of next(dataloader) is: 7.159728288650513
-Time for copying to cuda: 0.2965517044067383
-Time for forward pass: 0.03261709213256836
-Time for backpropagation: 0.006559610366821289
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.0913689136505127 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Time of next(dataloader) is: 7.324083089828491
+Time for copying to cuda: 0.3086585998535156
+Time for forward pass: 0.02890610694885254
+Time for backpropagation: 0.00540924072265625
+GPU memory for training: 13.771409511566162                          
 
-Memory occpied: (12708.0, 8628.0)
-One training iteration takes: 7.8229734897613525 seconds
+Total decompress data took 4.566279649734497 seconds
+Decompress data took 0.09208154678344727 seconds
+One training iteration takes: 7.969244480133057 seconds
 Index: 6
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 3.894956350326538 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.134442567825317 seconds
 Read 260.36000633239746 MBs for this batch
-Streaming imagenet data took 10.520234107971191 seconds
-Then, training+dataloading take 10.542059183120728 seconds
+Streaming imagenet data took 11.888891696929932 seconds
+Then, training+dataloading take 11.909016132354736 seconds
 The mode is:  vanilla
 Start 16000, end 18000, post_step 1000
 
 
 Epoch: 0
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Decompress data took 0.09349298477172852 seconds
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Time of next(dataloader) is: 6.981820344924927
-Total decompress data took 4.293521881103516 seconds
-Time for copying to cuda: 0.3503601551055908
-Decompress data took 0.09228968620300293 seconds
-Time for forward pass: 0.029792308807373047
-Time for backpropagation: 0.005620718002319336
-GPU memory for training: 14.172714710235596                          
+Decompress data took 0.08796954154968262 seconds
+Total decompress data took 3.7373156547546387 seconds
+Decompress data took 0.09255504608154297 seconds
+Time of next(dataloader) is: 7.304832458496094
+Time for copying to cuda: 0.30519771575927734
+Time for forward pass: 0.0290377140045166
+Time for backpropagation: 0.00511622428894043
+GPU memory for training: 13.771409511566162                          
 
-One training iteration takes: 7.6191723346710205 seconds
+One training iteration takes: 7.963792324066162 seconds
 Index: 7
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 4.497591495513916 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.371709823608398 seconds
 Read 261.12704849243164 MBs for this batch
-Streaming imagenet data took 11.739774703979492 seconds
-Then, training+dataloading take 11.759049892425537 seconds
+Streaming imagenet data took 11.033262252807617 seconds
+Then, training+dataloading take 11.052308559417725 seconds
 The mode is:  vanilla
 Start 18000, end 20000, post_step 1000
 
 
 Epoch: 0
-Decompress data took 0.09332156181335449 seconds
-Total decompress data took 3.8086740970611572 seconds
-Decompress data took 0.08983421325683594 seconds
-Time of next(dataloader) is: 7.252851247787476
-Time for copying to cuda: 0.30234575271606445
-Time for forward pass: 0.03881692886352539
-Time for backpropagation: 0.005021810531616211
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.08701705932617188 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Time of next(dataloader) is: 7.311563491821289
+Total decompress data took 4.476789712905884 seconds
+Time for copying to cuda: 0.38223814964294434
+Decompress data took 0.08783698081970215 seconds
+Time for forward pass: 0.030780792236328125
+Time for backpropagation: 0.00541234016418457
+GPU memory for training: 13.771409511566162                          
 
-Memory occpied: (12708.0, 8628.0)
-One training iteration takes: 7.896840572357178 seconds
+One training iteration takes: 8.043663501739502 seconds
 Index: 8
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 4.0321526527404785 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.341682434082031 seconds
 Read 260.28413105010986 MBs for this batch
-Streaming imagenet data took 10.620277404785156 seconds
-Then, training+dataloading take 10.641972541809082 seconds
+Streaming imagenet data took 11.949158430099487 seconds
+Then, training+dataloading take 11.96746826171875 seconds
 The mode is:  vanilla
 Start 20000, end 22000, post_step 1000
 
 
 Epoch: 0
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Decompress data took 0.09184789657592773 seconds
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Time of next(dataloader) is: 6.988839149475098
-Total decompress data took 4.150571584701538 seconds
-Decompress data took 0.08731698989868164 seconds
-Time for copying to cuda: 0.3016054630279541
-Time for forward pass: 0.03238272666931152
-Time for backpropagation: 0.006312131881713867
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.09124135971069336 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.309746980667114 seconds
+Decompress data took 0.08495759963989258 seconds
+Time of next(dataloader) is: 7.4695117473602295
+Time for copying to cuda: 0.39049530029296875
+Time for forward pass: 0.03585219383239746
+Time for backpropagation: 0.006979465484619141
+GPU memory for training: 13.771409511566162                          
 
-One training iteration takes: 7.6209352016448975 seconds
+One training iteration takes: 8.166109085083008 seconds
 Index: 9
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 4.1428632736206055 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.041938781738281 seconds
 Read 248.79518508911133 MBs for this batch
-Streaming imagenet data took 11.157490015029907 seconds
-Then, training+dataloading take 11.175204515457153 seconds
+Streaming imagenet data took 11.426146030426025 seconds
+Then, training+dataloading take 11.444336891174316 seconds
 The mode is:  vanilla
 Start 22000, end 24000, post_step 1000
 
 
 Epoch: 0
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Decompress data took 0.08668923377990723 seconds
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Time of next(dataloader) is: 6.862196683883667
-Time for copying to cuda: 0.3003814220428467
-Time for forward pass: 0.03075242042541504
-Time for backpropagation: 0.005627632141113281
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.10316348075866699 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Time of next(dataloader) is: 7.115077257156372
+Time for copying to cuda: 0.3057272434234619
+Time for forward pass: 0.030602693557739258
+Time for backpropagation: 0.005432605743408203
+GPU memory for training: 13.771409511566162                          
 
-Total decompress data took 4.282835960388184 seconds
-Decompress data took 0.09342598915100098 seconds
-One training iteration takes: 7.524639129638672 seconds
+Total decompress data took 4.49730372428894 seconds
+Decompress data took 0.09243535995483398 seconds
+One training iteration takes: 7.854635953903198 seconds
 Index: 10
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 3.9831113815307617 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.13326096534729 seconds
 Read 257.3747863769531 MBs for this batch
-Streaming imagenet data took 11.244789123535156 seconds
-Then, training+dataloading take 11.26601791381836 seconds
+Streaming imagenet data took 11.776864528656006 seconds
+Then, training+dataloading take 11.798041343688965 seconds
 The mode is:  vanilla
 Start 24000, end 26000, post_step 1000
 
 
 Epoch: 0
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Decompress data took 0.09585356712341309 seconds
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Time of next(dataloader) is: 7.039438247680664
-Total decompress data took 4.39195704460144 seconds
-Decompress data took 0.09559106826782227 seconds
-Time for copying to cuda: 0.37158942222595215
-Time for forward pass: 0.033075571060180664
-Time for backpropagation: 0.0061380863189697266
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.08706283569335938 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Time of next(dataloader) is: 7.263926982879639
+Total decompress data took 4.442636489868164 seconds
+Decompress data took 0.09423375129699707 seconds
+Time for copying to cuda: 0.30225682258605957
+Time for forward pass: 0.030871868133544922
+Time for backpropagation: 0.005647897720336914
+GPU memory for training: 13.771409511566162                          
 
-Memory occpied: (12708.0, 8628.0)
-One training iteration takes: 7.776748418807983 seconds
+One training iteration takes: 7.920401573181152 seconds
 Index: 11
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 4.283605575561523 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.1649696826934814 seconds
 Read 252.83970260620117 MBs for this batch
-Streaming imagenet data took 11.333078384399414 seconds
-Then, training+dataloading take 11.351134300231934 seconds
+Streaming imagenet data took 11.459295749664307 seconds
+Then, training+dataloading take 11.477972984313965 seconds
 The mode is:  vanilla
 Start 26000, end 28000, post_step 1000
 
 
 Epoch: 0
-Decompress data took 0.09712004661560059 seconds
-Total decompress data took 3.6214888095855713 seconds
-Decompress data took 0.08602643013000488 seconds
-Time of next(dataloader) is: 6.992798805236816
-Time for copying to cuda: 0.30875372886657715
-Time for forward pass: 0.03200340270996094
-Time for backpropagation: 0.0053288936614990234
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.08859848976135254 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Time of next(dataloader) is: 7.116111755371094
+Total decompress data took 4.325918674468994 seconds
+Time for copying to cuda: 0.37007713317871094
+Decompress data took 0.0849146842956543 seconds
+Time for forward pass: 0.0312349796295166
+Time for backpropagation: 0.0058901309967041016
+GPU memory for training: 13.771409511566162                          
 
-One training iteration takes: 7.577406406402588 seconds
+One training iteration takes: 7.836400985717773 seconds
 Index: 12
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 3.900303602218628 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.174799919128418 seconds
 Read 249.70881175994873 MBs for this batch
-Streaming imagenet data took 10.269338846206665 seconds
-Then, training+dataloading take 10.288870573043823 seconds
+Streaming imagenet data took 11.577893018722534 seconds
+Then, training+dataloading take 11.595995903015137 seconds
 The mode is:  vanilla
 Start 28000, end 30000, post_step 1000
 
 
 Epoch: 0
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Decompress data took 0.0921480655670166 seconds
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Time of next(dataloader) is: 7.095020532608032
-Memory occpied: (12708.0, 8628.0)
-Time for copying to cuda: 0.30391907691955566
-Time for forward pass: 0.038442373275756836
-Time for backpropagation: 0.004979372024536133
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.09116697311401367 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Time of next(dataloader) is: 7.22289514541626
+Time for copying to cuda: 0.30208539962768555
+Time for forward pass: 0.03034496307373047
+Time for backpropagation: 0.005666971206665039
+GPU memory for training: 13.771409511566162                          
 
-One training iteration takes: 7.7403340339660645 seconds
+One training iteration takes: 7.877074480056763 seconds
 Index: 13
-Total decompress data took 4.887554168701172 seconds
-Decompress data took 0.09282517433166504 seconds
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 4.099621534347534 seconds
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 5.179654121398926 seconds
+Decompress data took 0.09367871284484863 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.031350612640381 seconds
 Read 261.96021938323975 MBs for this batch
-Streaming imagenet data took 12.073190450668335 seconds
-Then, training+dataloading take 12.094909906387329 seconds
+Streaming imagenet data took 12.424800634384155 seconds
+Then, training+dataloading take 12.44676923751831 seconds
 The mode is:  vanilla
 Start 30000, end 32000, post_step 1000
 
 
 Epoch: 0
-Decompress data took 0.09096503257751465 seconds
-Total decompress data took 3.7941248416900635 seconds
-Decompress data took 0.08258342742919922 seconds
-Time of next(dataloader) is: 7.227219104766846
-Time for copying to cuda: 0.3030095100402832
-Time for forward pass: 0.03256535530090332
-Time for backpropagation: 0.005570650100708008
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Decompress data took 0.10179686546325684 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Time of next(dataloader) is: 7.345356464385986
+Memory occpied: (12104.0, 10492.0)
+Time for copying to cuda: 0.30036282539367676
+Total decompress data took 4.6196160316467285 seconds
+Decompress data took 0.08338451385498047 seconds
+Time for forward pass: 0.11420893669128418
+Time for backpropagation: 0.006800413131713867
+GPU memory for training: 13.771409511566162                          
 
-One training iteration takes: 7.841565370559692 seconds
+One training iteration takes: 8.172947883605957 seconds
 Index: 14
-Memory occpied: (12708.0, 8628.0)
-Memory occpied: (12708.0, 8628.0)
-Total decompress data took 3.6614582538604736 seconds
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Total decompress data took 4.119778394699097 seconds
 Read 245.20663356781006 MBs for this batch
-Streaming imagenet data took 10.135495662689209 seconds
-Then, training+dataloading take 10.152791261672974 seconds
+Streaming imagenet data took 11.796472311019897 seconds
+Then, training+dataloading take 11.897270679473877 seconds
 
 Epoch: 0
-Time of next(dataloader) is: 7.090616703033447
-Time for copying to cuda: 0.2903869152069092
-Time for forward pass: 0.027664661407470703
-Time for backpropagation: 0.004900455474853516
-GPU memory for training: 14.172714710235596                          
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Memory occpied: (12104.0, 10492.0)
+Time of next(dataloader) is: 7.136197805404663
+Time for copying to cuda: 0.2896995544433594
+Time for forward pass: 0.026201963424682617
+Time for backpropagation: 0.004374504089355469
+GPU memory for training: 13.771409511566162                          
 
-Memory occpied: (12708.0, 8628.0)
-The whole process took 189.3989222049713 seconds
+The whole process took 200.24530291557312 seconds

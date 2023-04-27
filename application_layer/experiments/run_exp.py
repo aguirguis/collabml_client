@@ -359,44 +359,44 @@ if __name__ == '__main__':
 #    #freeze_idxs=[17]
 #
 #
-#    # FROM HERE
-    models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
-    freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
-    #models=['vgg11']
-    #freeze_idxs=[25]
-##
-    #bsz = 256
-    #bw = 1024
-    #dataset = 'imagenet'
-    #run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
-    #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw, dataset=dataset)   #GPU on the client side
-
-    #bsz = 200
-    #bw = 1024
-    #CPUs = [False, True]
-    CPUs = [False]
-    #BSZs = [2000, 8000]
-    BSZs = [256, 512]
-    #bsz = 8000
-    bw = 1024
-    #dataset = 'plantleave'
-    dataset = 'imagenet'
-
-    #CPU_ = False#True
-    vanilla = True
-    transformed = True
-
-    for bsz in BSZs:
-        for CPU_ in CPUs:
-            if vanilla:
-                os.system(f'python3 {execfile} --dataset {dataset} --model alexnet --num_epochs 1 --batch_size {bsz}\
-                                     --freeze --freeze_idx 17 {"--cpuonly" if CPU_ else ""}')
-            else:
-                os.system(f'python3 {execfile} --dataset {dataset} --model myalexnet --num_epochs 1 --batch_size {bsz}\
-                                     --freeze --freeze_idx 17 --use_intermediate {"--cpuonly" if CPU_ else ""}')
-        
-            run_models_exp(bsz, models, freeze_idxs, CPU=CPU_, bw=bw, dataset=dataset, vanilla=vanilla, transformed=transformed)
-    
+##    # FROM HERE
+#    models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
+#    freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
+#    #models=['vgg11']
+#    #freeze_idxs=[25]
+###
+#    #bsz = 256
+#    #bw = 1024
+#    #dataset = 'imagenet'
+#    #run_models_exp(bsz, models, freeze_idxs, bw=bw, dataset=dataset)   #GPU on the client side
+#    #run_models_exp(bsz, models, freeze_idxs, CPU=True, bw=bw, dataset=dataset)   #GPU on the client side
+#
+#    #bsz = 200
+#    #bw = 1024
+#    #CPUs = [False, True]
+#    CPUs = [False]
+#    #BSZs = [2000, 8000]
+#    BSZs = [256, 512]
+#    #bsz = 8000
+#    bw = 1024
+#    #dataset = 'plantleave'
+#    dataset = 'imagenet'
+#
+#    #CPU_ = False#True
+#    vanilla = True
+#    transformed = True
+#
+#    for bsz in BSZs:
+#        for CPU_ in CPUs:
+#            if vanilla:
+#                os.system(f'python3 {execfile} --dataset {dataset} --model alexnet --num_epochs 1 --batch_size {bsz}\
+#                                     --freeze --freeze_idx 17 {"--cpuonly" if CPU_ else ""}')
+#            else:
+#                os.system(f'python3 {execfile} --dataset {dataset} --model myalexnet --num_epochs 1 --batch_size {bsz}\
+#                                     --freeze --freeze_idx 17 --use_intermediate {"--cpuonly" if CPU_ else ""}')
+#        
+#            run_models_exp(bsz, models, freeze_idxs, CPU=CPU_, bw=bw, dataset=dataset, vanilla=vanilla, transformed=transformed)
+#    
 #    bsz = 8000
 #    bw = 1024
 #    #dataset = 'plantleave'
@@ -519,8 +519,12 @@ if __name__ == '__main__':
 #    run_swift_in_and_out(bsz, models, freeze_idxs)
 
 ##############################EXP 6: WITH AND WITHOUT BA
-#    batch_size = 8000
-#    special_dir = 'batchAdatp_exp'
-#    adapt = True
-#    #adapt = False
-#    _run_split_BA(adapt, batch_size, special_dir=special_dir)
+    batch_size = 1000
+    special_dir = 'batchAdatp_exp'
+    adapt = True
+    #adapt = False
+    dataset = 'imagenet'
+    CPU_ = False
+    os.system(f'python3 {execfile} --dataset {dataset} --model myalexnet --num_epochs 1 --batch_size 1000\
+                    --freeze --freeze_idx 17 --use_intermediate {"--cpuonly" if CPU_ else ""}')
+    _run_split_BA(adapt, batch_size, special_dir=special_dir)

@@ -20,6 +20,7 @@ from threading import Thread
 from swiftclient.service import SwiftService, SwiftError
 from swiftclient.exceptions import ClientException
 
+
 torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.deterministic = True
 
@@ -58,6 +59,14 @@ parser.add_argument('--cpuonly', action='store_true', help='do not use GPUs')
 parser.add_argument('--use_intermediate', action='store_true', help='If set, we use intermediate compute server between Swift server and client. Otherwise, ML computation (i.e., feature extraction) will happen inside Swift')
 #parser.add_argument('--splitindex_to_freezeindex', action='store_true', help='If set, we use the freezing index as split point')
 parser.add_argument('--split_choice', default='automatic', type=str, help='How to choose split_idx (manual, automatic, to_freeze, to_min, to_max)')
+
+
+parser.add_argument('--cached', action='store_true', help='')
+parser.add_argument('--transformed', action='store_true', help='')
+parser.add_argument('--all_in_cos', action='store_true', help='')
+parser.add_argument('--no_adaptation', action='store_true', help='')
+
+
 args = parser.parse_args()
 
 dataset_name = args.dataset
@@ -80,6 +89,21 @@ end = args.end
 split_idx = args.split_idx
 freeze_idx = args.freeze_idx
 split_choice = args.split_choice
+
+
+
+CACHED = args.cached
+TRANSFORMED = args.transformed
+ALL_IN_COS = args.all_in_cos
+NO_ADAPT = args.no_adaptation
+
+print("Cached ", CACHED)
+print("Transformed ", TRANSFORMED)
+print("All in COS ", ALL_IN_COS)
+print("No adaptation ", NO_ADAPT)
+
+
+
 if args.freeze and freeze_idx == 0:
   print("Freeze flag is set, but no freeze_idx was given! Will use the value of split_idx ({}) as a freeze_idx too!".format(split_idx))
   freeze_idx = split_idx
@@ -226,7 +250,7 @@ def start_now(lstart, lend, transform):
   # TODO run splitting algo at each iteration
   #split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, split_choice, split_idx)
 
-  next_dataloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode, split_idx, mem_cons,  args.sequential, args.use_intermediate)
+  next_dataloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode, split_idx, mem_cons,  args.sequential, args.use_intermediate, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
 
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
@@ -236,7 +260,7 @@ try:
     if not args.downloadall and dataset_name in stream_datasets:
       gstart, gend = start, end
       lstart, lend = gstart, gstart+step if gstart+step < gend else gend
-      testloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate)
+      testloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
       res = []
       idx = 0
       for s in range(gstart+step, gend, step):
@@ -261,7 +285,7 @@ try:
     for epoch in range(num_epochs):
       if not args.downloadall and dataset_name in stream_datasets:
         lstart, lend = 0, step
-        trainloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate)
+        trainloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
         idx=0
         for s in range(step, stream_dataset_len[dataset_name], step):
         #for s in range(step, 24320, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only

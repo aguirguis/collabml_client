@@ -1,4 +1,4 @@
-Namespace(batch_size=2000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=21, model='resnet50', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+Namespace(all_in_cos=False, batch_size=2000, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=21, model='resnet50', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, transformed=False, use_intermediate=False)
 Nb GPUS  2
 ==> Preparing data..
 ==> Building model..
@@ -10,50 +10,50 @@ Start 0, end 2000, post_step 1000
 Memory occpied: (1366.0, 3.0)
 Memory occpied: (1366.0, 3.0)
 Memory occpied: (1366.0, 3.0)
-Decompress data took 0.08280014991760254 seconds
+Decompress data took 0.08322358131408691 seconds
 Memory occpied: (1366.0, 3.0)
 Memory occpied: (1366.0, 3.0)
 Memory occpied: (1366.0, 3.0)
-Total decompress data took 3.6303441524505615 seconds
-Decompress data took 0.08619403839111328 seconds
+Total decompress data took 3.6717045307159424 seconds
+Decompress data took 0.08673620223999023 seconds
 Memory occpied: (1366.0, 3.0)
 Memory occpied: (1366.0, 3.0)
 Memory occpied: (1366.0, 3.0)
-Total decompress data took 3.546957015991211 seconds
+Total decompress data took 3.612344980239868 seconds
 Read 252.732816696167 MBs for this batch
-Streaming imagenet data took 9.60122799873352 seconds
+Streaming imagenet data took 10.41260290145874 seconds
 The mode is:  vanilla
 Start 2000, end 4000, post_step 1000
 
 
 Epoch: 0
 Memory occpied: (1366.0, 3.0)
-Decompress data took 0.09127664566040039 seconds
+Memory occpied: (1366.0, 3.0)
+Decompress data took 0.08367109298706055 seconds
 Memory occpied: (1366.0, 3.0)
 Memory occpied: (1366.0, 3.0)
 Memory occpied: (1366.0, 3.0)
-Memory occpied: (1366.0, 3.0)
-Total decompress data took 3.7201788425445557 seconds
-Decompress data took 0.0840139389038086 seconds
-Time of next(dataloader) is: 6.4213197231292725
-Time for copying to cuda: 0.2950129508972168
-Memory occpied: (2516.0, 694.0)
-Memory occpied: (2516.0, 1094.0)
-Total decompress data took 3.586942195892334 seconds
+Total decompress data took 3.7522013187408447 seconds
+Decompress data took 0.08376336097717285 seconds
+Time of next(dataloader) is: 6.531577110290527
+Memory occpied: (2516.0, 3.0)
+Time for copying to cuda: 0.3947300910949707
+Memory occpied: (2516.0, 1042.0)
+Memory occpied: (2516.0, 1476.0)
+Total decompress data took 3.6366865634918213 seconds
 Read 244.98475742340088 MBs for this batch
-Streaming imagenet data took 9.424512386322021 seconds
-Memory occpied: (2516.0, 1530.0)
+Streaming imagenet data took 9.756051778793335 seconds
 Memory occpied: (12654.0, 12042.0)
 Memory occpied: (12628.0, 12042.0)
 Memory occpied: (2528.0, 15106.0)
 Memory occpied: (2528.0, 12042.0)
-Memory occpied: (2528.0, 14758.0)
+Memory occpied: (2528.0, 12424.0)
 Memory occpied: (2528.0, 12424.0)
 Memory occpied: (2528.0, 8982.0)
 Memory occpied: (2528.0, 8216.0)
-Memory occpied: (2528.0, 13554.0)
+Memory occpied: (2528.0, 10108.0)
 Memory occpied: (2528.0, 11578.0)
-Memory occpied: (2528.0, 11578.0)
+Memory occpied: (2528.0, 11586.0)
 Exception: Caught RuntimeError in replica 0 on device 0.
 Original Traceback (most recent call last):
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
@@ -84,4 +84,4 @@ Original Traceback (most recent call last):
     return torch.batch_norm(
 RuntimeError: CUDA out of memory. Tried to allocate 2.99 GiB (GPU 0; 14.76 GiB total capacity; 7.95 GiB already allocated; 2.42 GiB free; 11.10 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 
-The whole process took 38.86453104019165 seconds
+The whole process took 40.1034836769104 seconds

@@ -1,4 +1,4 @@
-Namespace(batch_size=8000, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=20, model='densenet121', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+Namespace(all_in_cos=False, batch_size=8000, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=20, model='densenet121', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, transformed=True, use_intermediate=False)
 Nb GPUS  2
 ==> Preparing data..
 ==> Building model..
@@ -17,51 +17,52 @@ Memory occpied: (1294.0, 3.0)
 Memory occpied: (1294.0, 3.0)
 Memory occpied: (1294.0, 3.0)
 Memory occpied: (1294.0, 3.0)
-Decompress data took 0.10146117210388184 seconds
+Memory occpied: (1294.0, 3.0)
+Decompress data took 0.11069512367248535 seconds
 Memory occpied: (1294.0, 3.0)
 Memory occpied: (1294.0, 3.0)
-Total decompress data took 2.8288490772247314 seconds
-Decompress data took 0.10259485244750977 seconds
+Total decompress data took 2.8548617362976074 seconds
+Decompress data took 0.10297679901123047 seconds
 Memory occpied: (1294.0, 3.0)
 Memory occpied: (1294.0, 3.0)
-Total decompress data took 2.895007371902466 seconds
-Decompress data took 0.10410261154174805 seconds
-Memory occpied: (1294.0, 3.0)
-Memory occpied: (1294.0, 3.0)
-Memory occpied: (1294.0, 3.0)
-Total decompress data took 2.8999199867248535 seconds
-Decompress data took 0.10139608383178711 seconds
-Memory occpied: (1294.0, 3.0)
-Memory occpied: (1294.0, 3.0)
-Total decompress data took 2.8658859729766846 seconds
-Decompress data took 0.10456156730651855 seconds
-Memory occpied: (1294.0, 3.0)
-Memory occpied: (1294.0, 3.0)
-Total decompress data took 2.8827710151672363 seconds
-Decompress data took 0.10183954238891602 seconds
-Memory occpied: (1294.0, 3.0)
-Memory occpied: (1294.0, 3.0)
-Total decompress data took 2.998938798904419 seconds
-Decompress data took 0.10384988784790039 seconds
+Total decompress data took 2.8446714878082275 seconds
+Decompress data took 0.10415339469909668 seconds
 Memory occpied: (1294.0, 3.0)
 Memory occpied: (1294.0, 3.0)
 Memory occpied: (1294.0, 3.0)
-Total decompress data took 2.9665310382843018 seconds
-Decompress data took 0.10115933418273926 seconds
+Total decompress data took 2.954599380493164 seconds
+Decompress data took 0.10156559944152832 seconds
 Memory occpied: (1294.0, 3.0)
 Memory occpied: (1294.0, 3.0)
-Total decompress data took 2.909893035888672 seconds
+Total decompress data took 2.863553047180176 seconds
+Decompress data took 0.1044759750366211 seconds
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Total decompress data took 2.885511636734009 seconds
+Decompress data took 0.10187816619873047 seconds
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Total decompress data took 2.9384758472442627 seconds
+Decompress data took 0.10448169708251953 seconds
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Total decompress data took 3.0515830516815186 seconds
+Decompress data took 0.10260200500488281 seconds
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Memory occpied: (1294.0, 3.0)
+Total decompress data took 2.92475962638855 seconds
 Read 1231.3178148269653 MBs for this batch
 Memory occpied: (1294.0, 3.0)
-Streaming imagenet data took 36.422903060913086 seconds
+Streaming imagenet data took 37.553147077560425 seconds
 The mode is:  vanilla
 Start 8000, end 16000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 3.194304943084717
-Time for copying to cuda: 1.2748351097106934
-Memory occpied: (1294.0, 3.0)
+Time of next(dataloader) is: 3.115100860595703
+Time for copying to cuda: 1.275705337524414
+Memory occpied: (1294.0, 3584.0)
 Exception: Caught RuntimeError in replica 0 on device 0.
 Original Traceback (most recent call last):
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
@@ -82,22 +83,22 @@ Original Traceback (most recent call last):
     return F.conv2d(input, weight, bias, self.stride,
 RuntimeError: CUDA out of memory. Tried to allocate 11.96 GiB (GPU 0; 14.76 GiB total capacity; 4.52 GiB already allocated; 9.01 GiB free; 4.53 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 
-The whole process took 50.21365427970886 seconds
-Decompress data took 0.09885001182556152 seconds
-Total decompress data took 2.606598138809204 seconds
-Decompress data took 0.10401511192321777 seconds
-Total decompress data took 2.5967295169830322 seconds
-Decompress data took 0.10278463363647461 seconds
-Total decompress data took 2.6371777057647705 seconds
-Decompress data took 0.10174775123596191 seconds
-Total decompress data took 2.6222033500671387 seconds
-Decompress data took 0.1021733283996582 seconds
-Total decompress data took 2.6248371601104736 seconds
-Decompress data took 0.10146427154541016 seconds
-Total decompress data took 2.6146159172058105 seconds
-Decompress data took 0.10255551338195801 seconds
-Total decompress data took 2.623837947845459 seconds
-Decompress data took 0.10165190696716309 seconds
-Total decompress data took 2.6075501441955566 seconds
+The whole process took 51.86757493019104 seconds
+Decompress data took 0.10089445114135742 seconds
+Total decompress data took 2.639146566390991 seconds
+Decompress data took 0.1026604175567627 seconds
+Total decompress data took 2.613154172897339 seconds
+Decompress data took 0.10366225242614746 seconds
+Total decompress data took 2.657465696334839 seconds
+Decompress data took 0.10484170913696289 seconds
+Total decompress data took 2.6435458660125732 seconds
+Decompress data took 0.10388803482055664 seconds
+Total decompress data took 2.6472277641296387 seconds
+Decompress data took 0.10251688957214355 seconds
+Total decompress data took 2.6305110454559326 seconds
+Decompress data took 0.10329556465148926 seconds
+Total decompress data took 2.6364200115203857 seconds
+Decompress data took 0.10254478454589844 seconds
+Total decompress data took 2.6239335536956787 seconds
 Read 1233.9197416305542 MBs for this batch
-Streaming imagenet data took 33.82087278366089 seconds
+Streaming imagenet data took 33.85653257369995 seconds

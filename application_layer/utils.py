@@ -45,14 +45,15 @@ except:
 
 SERVER_BATCH = 32#128#256#128#25
 
-CACHED = True
-TRANSFORMED = True
-ALL_IN_COS = False#True
+
+#CACHED = True
+#TRANSFORMED = True
+#ALL_IN_COS = False#True
 
 
 COMP_FILE_SIZE_DATASET = {
-        #'imagenet': 1000,
-        'imagenet': 128,
+        'imagenet': 1000,
+        #'imagenet': 128,
         'plantleave': 50,
         'inaturalist': 250
 }
@@ -594,7 +595,7 @@ def send_request(request_dict):
 
 
 def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model,
-                          mode='vanilla', split_idx=100, mem_cons=(0, 0), sequential=False, use_intermediate=False):
+                          mode='vanilla', split_idx=100, mem_cons=(0, 0), sequential=False, use_intermediate=False, CACHED=True, TRANSFORMED=True, ALL_IN_COS=False, NO_ADAPT=False):
     COMP_FILE_SIZE = COMP_FILE_SIZE_DATASET[dataset_name]
     stream_time = time.time()
     print("The mode is: ", mode)
@@ -610,9 +611,13 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
             cur_end = s + post_step if s + post_step <= lend else lend
             cur_step = cur_end - s
             #print(cur_step)
+            if NO_ADAPT:
+                bs_server = cur_step
+            else:
+                bs_server = SERVER_BATCH
             opts = {"meta": {"Ml-Task:inference",
                              "dataset:" + dataset_name, "model:{}".format(model),
-                             f"Batch-Size:{SERVER_BATCH}",  # {}".format(int(cur_step//5)),
+                             f"Batch-Size:{bs_server}",  # {}".format(int(cur_step//5)),
                              #f"Batch-Size:{cur_step}",  # {}".format(int(cur_step//5)),
                              "start:{}".format(s), "end:{}".format(cur_end),
                              #            "Batch-Size:{}".format(post_step),

@@ -1,4 +1,4 @@
-Namespace(batch_size=512, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=17, model='vit', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, use_intermediate=False)
+Namespace(all_in_cos=False, batch_size=512, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=17, model='vit', num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, transformed=True, use_intermediate=False)
 Nb GPUS  2
 ==> Preparing data..
 ==> Building model..
@@ -8,34 +8,35 @@ The mode is:  vanilla
 Start 0, end 512, post_step 128
 
 Memory occpied: (1630.0, 3.0)
-Decompress data took 0.011864185333251953 seconds
-Total decompress data took 0.33257293701171875 seconds
-Decompress data took 0.011457204818725586 seconds
 Memory occpied: (1630.0, 3.0)
-Total decompress data took 0.3905763626098633 seconds
-Decompress data took 0.011362075805664062 seconds
-Total decompress data took 0.33318495750427246 seconds
-Decompress data took 0.011068105697631836 seconds
-Total decompress data took 0.3271181583404541 seconds
+Decompress data took 0.012171745300292969 seconds
+Total decompress data took 0.3604733943939209 seconds
+Decompress data took 0.011678695678710938 seconds
+Memory occpied: (1630.0, 3.0)
+Total decompress data took 0.39789557456970215 seconds
+Decompress data took 0.011561870574951172 seconds
+Total decompress data took 0.333904504776001 seconds
+Decompress data took 0.011029481887817383 seconds
+Total decompress data took 0.32721686363220215 seconds
 Read 78.09912967681885 MBs for this batch
-Streaming imagenet data took 2.235867738723755 seconds
+Streaming imagenet data took 3.3196380138397217 seconds
 The mode is:  vanilla
 Start 512, end 1024, post_step 128
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.5210838317871094
-Time for copying to cuda: 0.08197879791259766
-Decompress data took 0.027655839920043945 seconds
-Total decompress data took 0.3583028316497803 seconds
-Decompress data took 0.011265754699707031 seconds
-Total decompress data took 0.3219265937805176 seconds
-Decompress data took 0.010840892791748047 seconds
-Total decompress data took 0.3260657787322998 seconds
-Decompress data took 0.012011051177978516 seconds
-Total decompress data took 0.33222317695617676 seconds
+Time of next(dataloader) is: 0.5842125415802002
+Time for copying to cuda: 0.08204388618469238
+Decompress data took 0.028501510620117188 seconds
+Total decompress data took 0.3822646141052246 seconds
+Decompress data took 0.011861085891723633 seconds
+Total decompress data took 0.332775354385376 seconds
+Decompress data took 0.011331319808959961 seconds
+Total decompress data took 0.33278465270996094 seconds
+Decompress data took 0.01195836067199707 seconds
+Total decompress data took 0.3358931541442871 seconds
 Read 79.72594451904297 MBs for this batch
-Streaming imagenet data took 2.3738951683044434 seconds
+Streaming imagenet data took 2.4770867824554443 seconds
 Exception: Caught RuntimeError in replica 0 on device 0.
 Original Traceback (most recent call last):
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
@@ -56,13 +57,13 @@ Original Traceback (most recent call last):
     x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
     return forward_call(*input, **kwargs)
-  File "/usr/local/lib/python3.8/dist-packages/timm/models/layers/mlp.py", line 27, in forward
-    x = self.act(x)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/layers/mlp.py", line 26, in forward
+    x = self.fc1(x)
   File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
     return forward_call(*input, **kwargs)
-  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/activation.py", line 670, in forward
-    return F.gelu(input)
-RuntimeError: CUDA out of memory. Tried to allocate 592.00 MiB (GPU 0; 14.76 GiB total capacity; 12.97 GiB already allocated; 15.75 MiB free; 13.50 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/linear.py", line 103, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: CUDA out of memory. Tried to allocate 592.00 MiB (GPU 0; 14.76 GiB total capacity; 12.39 GiB already allocated; 459.75 MiB free; 13.07 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 
 Memory occpied: (1630.0, 15058.0)
-The whole process took 15.144266843795776 seconds
+The whole process took 15.746041297912598 seconds
