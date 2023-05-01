@@ -564,6 +564,8 @@ def recvall(sock, n):
     while len(data) < n:
         packet = sock.recv(n - len(data))
         data.extend(packet)
+        if data == bytearray(b'ERR'):
+            raise Exception
     return data
 
 
