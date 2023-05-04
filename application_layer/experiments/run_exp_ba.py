@@ -22,8 +22,41 @@ def empty_gpu():
     subprocess.Popen(shlex.split(client + f"pkill -f 'python3 {execfile}'"))
     time.sleep(10)
 
+def start_server(vanilla, transformed, dataset, model, bsz, m_bw, CPU_, ba): 
+    print("STARTING SERVER")
+    if vanilla:
+        if transformed:
+            subprocess.Popen(shlex.split(server + f'"cd /root/swift/swift/proxy/mllib;\
+                                     ST_AUTH_VERSION=1.0 ST_AUTH=http://192.168.0.246:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
+                                     python3 server.py --cached --vanilla --transformed > test/ba_exp_{dataset}/server_{ba}vanilla_{model}_bs{bsz}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}_transformed" \
+                                                     &'))
+        else:
+            subprocess.Popen(shlex.split(server + f'"cd /root/swift/swift/proxy/mllib;\
+                                                                 ST_AUTH_VERSION=1.0 ST_AUTH=http://192.168.0.246:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
+                                                                 python3 server.py --cached --vanilla > test/ba_exp_{dataset}/server_{ba}vanilla_{model}_bs{bsz}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}" \
+                                                                                 &'))
+    else:
+        subprocess.Popen(shlex.split(server + f'"cd /root/swift/swift/proxy/mllib;\
+                                                             ST_AUTH_VERSION=1.0 ST_AUTH=http://192.168.0.246:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
+                                                             python3 server.py --cached --transformed > test/ba_exp_{dataset}/server_{ba}{model}_bs{bsz}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}" \
+                                                                             &'))
+    
+    time.sleep(120)
 
-def run_model_exp_ba(batch_size, model, freeze_idx, ba, CPU_=False, dataset='imagenet', vanilla=False, transformed=True):
+def kill_server():
+    print("KILLING SERVER")
+    while True:
+        subprocess.Popen(shlex.split(server + f'"kill -15 $(ps -A | grep python | awk \'{{print $1}}\')" \&'))
+        p = subprocess.Popen(shlex.split(server + f'"ps -A | grep python "'), stdout=subprocess.PIPE)
+        
+        if 'python' not in p.communicate()[0].decode("utf-8"):
+            break
+        else:
+            time.sleep(10)
+
+
+
+def run_model_exp_ba(batch_size, model, freeze_idx, ba, bw, CPU_=False, dataset='imagenet', vanilla=False, transformed=True):
     os.system(client + f'python3 {emptycachefile}')
     
     if ba == 'no_adaptation_':
@@ -41,8 +74,14 @@ def run_model_exp_ba(batch_size, model, freeze_idx, ba, CPU_=False, dataset='ima
                                                              --freeze --freeze_idx {freeze_idx} {"--cpuonly" if CPU_ else ""} --cached {opt_adapt}\
                                                               > {logdir}/ba_exp_{dataset}/{ba}vanilla_{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}')
     else:
-        os.system(client + f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
+        err_code = os.system(client + f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
                                                          --freeze --freeze_idx {freeze_idx}  --use_intermediate {"--cpuonly" if CPU_ else ""} --cached --transformed {opt_adapt}')
+
+
+        if err_code != 0:
+            kill_server()
+            start_server(vanilla, transformed, dataset, model, batch_size, bw, CPU_, ba)
+
 
         os.system(client + f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
                                              --freeze --freeze_idx {freeze_idx}  --use_intermediate {"--cpuonly" if CPU_ else ""} --cached --transformed {opt_adapt}\
@@ -52,12 +91,19 @@ def run_model_exp_ba(batch_size, model, freeze_idx, ba, CPU_=False, dataset='ima
 #models=['alexnet']
 #freeze_idxs=[17]
 dataset ='imagenet'
+
+
 models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
 freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
 
+#models=['resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
+#freeze_idxs=[21, 25, 36, 17, 20, 17]
+
+
 CPUs = [False]
 
-BSZs = [1000,2000,3000,4000,5000,6000,7000,8000]
+#BSZs = [1000,2000,3000,4000,5000,6000,7000,8000]
+BSZs = [2000,3000,4000,5000,6000,7000,8000]
 bw = 1024
 
 cached = True
@@ -85,33 +131,13 @@ for bsz in BSZs:
             for transformed in transformed_b:
                 for model, freeze_idx in zip(models, freeze_idxs):
                     for ba in BAs:
-                        if vanilla:
-                            if transformed:
-                                subprocess.Popen(shlex.split(server + f'"cd /root/swift/swift/proxy/mllib;\
-                                                         ST_AUTH_VERSION=1.0 ST_AUTH=http://192.168.0.246:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
-                                                         python3 server.py --cached --vanilla --transformed > test/ba_exp_{dataset}/server_{ba}vanilla_{model}_bs{bsz}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}_transformed" \
-                                                                         &'))
-                            else:
-                                subprocess.Popen(shlex.split(server + f'"cd /root/swift/swift/proxy/mllib;\
-                                                                                     ST_AUTH_VERSION=1.0 ST_AUTH=http://192.168.0.246:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
-                                                                                     python3 server.py --cached --vanilla > test/ba_exp_{dataset}/server_{ba}vanilla_{model}_bs{bsz}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}" \
-                                                                                                     &'))
-                        else:
-                            subprocess.Popen(shlex.split(server + f'"cd /root/swift/swift/proxy/mllib;\
-                                                                                 ST_AUTH_VERSION=1.0 ST_AUTH=http://192.168.0.246:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
-                                                                                 python3 server.py --cached --transformed > test/ba_exp_{dataset}/server_{ba}{model}_bs{bsz}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}" \
-                                                                                                 &'))
-                        time.sleep(120)
+                        start_server(vanilla, transformed, dataset, model, bsz, m_bw, CPU_, ba)
+                        print("STARTED SERVER ", model, str(bsz), ba)
 
-                        run_model_exp_ba(bsz, model, freeze_idx, ba, CPU_=CPU_, dataset=dataset, vanilla=vanilla,
+                        print("START MODEL EXP")
+                        run_model_exp_ba(bsz, model, freeze_idx, ba, m_bw, CPU_=CPU_, dataset=dataset, vanilla=vanilla,
                                        transformed=transformed)
+                        print("FINISHED MODEL EXP")
 
-                        while True:
-                            subprocess.Popen(shlex.split(server + f'"kill -15 $(ps -A | grep python | awk \'{{print $1}}\')" \&'))
-                            p = subprocess.Popen(shlex.split(server + f'"ps -A | grep python "'), stdout=subprocess.PIPE)
-                            
-                            if 'python' not in p.communicate()[0].decode("utf-8"):
-                                break
-                            else:
-                                time.sleep(10)
-
+                        kill_server()
+                        print("KILLED SERVER")

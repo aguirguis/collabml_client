@@ -100,7 +100,7 @@ batch_sizes = [1000,2000,3000,4000, 5000, 6000, 7000, 8000]
 Y=[]
 Y.append(get_output_size([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]))
 Y.append(get_output_size([os.path.join(specific_dir,f"vanilla_{model}_bs{bsz}_bw{bw}_{dev}_transformed") for bsz in batch_sizes]))
-Y.append(get_output_size([os.path.join(specific_dir,f"cached_test_split_{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes])
+Y.append(get_output_size([os.path.join(specific_dir,f"cached_test_split_{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]))
 sys_legends = [f"{BASELINE}", f"{BASELINE} tensors", f"{SPLIT}"]
 colors = ["blue", "deepskyblue", "orange"]
 print(f"Data reduction: {np.array(Y[0])/np.array(Y[1])}")
@@ -108,57 +108,57 @@ plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Transferred Data 
 ##################################################################################################
 ##EXP 5: Batch adaptation experiments
 ##5a) compare exec time of with batch adaptation to no batch adaptation
-#exp_name="ba_exp"
-#model = 'alexnet'
-#dataset = 'imagenet'
-#specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
-#bw = 1024*1024
-#dev = 'gpu'
-#
-#batch_sizes = [1000,2000,3000,4000, 5000, 6000, 7000, 8000]
-#
-#filenames = [os.path.join(specific_dir,f"no_adaptation_{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]
-#exec_time_noadapt=get_total_exec_time(filenames)
-#filenames = [os.path.join(specific_dir,f"{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]
-#exec_time_withadapt=get_total_exec_time(filenames)
-#Y=[exec_time_noadapt, exec_time_withadapt]
-##Add texts to our bars:
-#text = []
-#for y in Y:
-#    t=[]
-#    for yy in y:
-#        s = "X" if yy==0 else ""
-#        t.append(s)
-#    text.append(t)
-#sys_legends = ["Without BA", "With BA"]
-#plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Execution Time (sec.)", f"results/batchAdapt_exectime", text)
-##5b: GPU memory consumption on the server side (with and without batch adaptation)
-##5c: Percentage of times the client requested batch size was too mcuh
-##5d: the amount of reduction (to the batch size) the server has decided with different batch sizes
-#server_metrics = {"gpu_mem":get_gpu_mem_cons, "percent_mismatch_batch":get_percent_mismatch_bs,"reduction_bs":get_reduction_bs}
-#metrics_labels = {"gpu_mem": "GPU Memory (GBs)", "percent_mismatch_batch":"Batch Reduction Percentage (%)", "reduction_bs":"Average Batch Reduction(%)"}
-#for k,v in server_metrics.items():
-#    filenames = [os.path.join(specific_dir, f"server_no_adaptation_{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]
-#    metric_noadapt = v(filenames)
-#    filenames = [os.path.join(specific_dir ,f"server_{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]
-#    metric_withadapt = v(filenames)
-#    print(f"{k}:{metric_withadapt}")
-#    Y=[metric_noadapt, metric_withadapt]
-#    print(Y)
-#    if k=='gpu_mem':
-#        for i in range(len(Y)):
-#            Y[i] = list(np.array(Y[i])/1024)
-#    #Add texts to our bars:
-#    text = []
-#    for y in Y:
-#        t=[]
-#        for yy in y:
-#            s = "X" if yy==0 else ""
-#            t.append(s)
-#        text.append(t)
-#    sys_legends = ["Without BA", "With BA"]
-#    colors=['indianred', 'orange']
-#    plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", metrics_labels[k], f"results/batchAdapt_{k}", text, colors=colors)
+exp_name="ba_exp"
+model = 'alexnet'
+dataset = 'imagenet'
+specific_dir = os.path.join(logdir, exp_name+'_'+dataset)
+bw = 1024*1024
+dev = 'gpu'
+
+batch_sizes = [1000,2000,3000,4000, 5000, 6000, 7000, 8000]
+
+filenames = [os.path.join(specific_dir,f"no_adaptation_{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]
+exec_time_noadapt=get_total_exec_time(filenames)
+filenames = [os.path.join(specific_dir,f"{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]
+exec_time_withadapt=get_total_exec_time(filenames)
+Y=[exec_time_noadapt, exec_time_withadapt]
+#Add texts to our bars:
+text = []
+for y in Y:
+    t=[]
+    for yy in y:
+        s = "X" if yy==0 else ""
+        t.append(s)
+    text.append(t)
+sys_legends = ["Without BA", "With BA"]
+plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", "Execution Time (sec.)", f"results/batchAdapt_exectime", text)
+#5b: GPU memory consumption on the server side (with and without batch adaptation)
+#5c: Percentage of times the client requested batch size was too mcuh
+#5d: the amount of reduction (to the batch size) the server has decided with different batch sizes
+server_metrics = {"gpu_mem":get_gpu_mem_cons, "percent_mismatch_batch":get_percent_mismatch_bs,"reduction_bs":get_reduction_bs}
+metrics_labels = {"gpu_mem": "GPU Memory (GBs)", "percent_mismatch_batch":"Batch Reduction Percentage (%)", "reduction_bs":"Average Batch Reduction(%)"}
+for k,v in server_metrics.items():
+    filenames = [os.path.join(specific_dir, f"server/server_no_adaptation_{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]
+    metric_noadapt = v(filenames)
+    filenames = [os.path.join(specific_dir ,f"server/server_{model}_bs{bsz}_bw{bw}_{dev}") for bsz in batch_sizes]
+    metric_withadapt = v(filenames)
+    print(f"{k}:{metric_withadapt}")
+    Y=[metric_noadapt, metric_withadapt]
+    print(Y)
+    if k=='gpu_mem':
+        for i in range(len(Y)):
+            Y[i] = list(np.array(Y[i])/1024)
+    #Add texts to our bars:
+    text = []
+    for y in Y:
+        t=[]
+        for yy in y:
+            s = "X" if yy==0 else ""
+            t.append(s)
+        text.append(t)
+    sys_legends = ["Without BA", "With BA"]
+    colors=['indianred', 'orange']
+    plot_bars(Y, sys_legends, batch_sizes, hatches, "Batch Size", metrics_labels[k], f"results/batchAdapt_{k}", text, colors=colors)
 ##################################################################################################
 ###EXP3: Scalability with multiple tenants exp
 #exp_name="multitenant_exp"

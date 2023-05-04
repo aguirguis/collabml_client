@@ -313,6 +313,10 @@ except Exception as e:
   import traceback
   traceback.print_exc()
   print(f"Exception: {e}")
+  #for c in psutil.Process(os.getpid()).children(recursive=True):
+  #    c.kill()
+
+
 #Stop GPU thread
 stop_thread = True
 gpu_th.join()
