@@ -8,10 +8,16 @@ home=expanduser("~")
 
 dataset = 'imagenet'
 
+#dataset_steps = {
+#        'imagenet': [128, 1000],
+#        'plantleave': [50],
+#        'inaturalist': [250]
+#}
+
 dataset_steps = {
         'imagenet': [128, 1000],
-        'plantleave': [50],
-        'inaturalist': [250]
+        'plantleave': [64],
+        'inaturalist': [128]
 }
 
 dataset_total_images = {

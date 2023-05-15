@@ -54,8 +54,8 @@ SERVER_BATCH = 32#128#256#128#25
 COMP_FILE_SIZE_DATASET = {
         'imagenet': 1000,
         #'imagenet': 128,
-        'plantleave': 50,
-        'inaturalist': 250
+        'plantleave': 64,
+        'inaturalist': 128
 }
 
 def get_model(model_str, dataset):
