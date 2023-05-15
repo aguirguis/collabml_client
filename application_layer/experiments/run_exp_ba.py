@@ -56,7 +56,7 @@ def kill_server():
 
 
 
-def run_model_exp_ba(batch_size, model, freeze_idx, ba, bw, CPU_=False, dataset='imagenet', vanilla=False, transformed=True):
+def run_model_exp_ba(batch_size, model, freeze_idx, ba, m_bw, CPU_=False, dataset='imagenet', vanilla=False, transformed=True):
     os.system(client + f'python3 {emptycachefile}')
     
     if ba == 'no_adaptation_':
@@ -80,7 +80,7 @@ def run_model_exp_ba(batch_size, model, freeze_idx, ba, bw, CPU_=False, dataset=
 
         if err_code != 0:
             kill_server()
-            start_server(vanilla, transformed, dataset, model, batch_size, bw, CPU_, ba)
+            start_server(vanilla, transformed, dataset, model, batch_size, m_bw, CPU_, ba)
 
 
         os.system(client + f'python3 {execfile} --dataset {dataset} --model my{model} --num_epochs 1 --batch_size {batch_size}\
