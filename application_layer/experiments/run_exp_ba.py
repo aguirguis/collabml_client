@@ -88,13 +88,13 @@ def run_model_exp_ba(batch_size, model, freeze_idx, ba, m_bw, CPU_=False, datase
                                               > {logdir}/ba_exp_{dataset}/{ba}{model}_bs{batch_size}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}')
 
 
-#models=['alexnet']
-#freeze_idxs=[17]
+models=['vgg11']
+freeze_idxs=[25]
 dataset ='imagenet'
 
 
-models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
-freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
+#models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
+#freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
 
 #models=['resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']
 #freeze_idxs=[21, 25, 36, 17, 20, 17]
@@ -103,7 +103,7 @@ freeze_idxs=[11, 21, 25, 36, 17, 20, 17]
 CPUs = [False]
 
 #BSZs = [1000,2000,3000,4000,5000,6000,7000,8000]
-BSZs = [2000,3000,4000,5000,6000,7000,8000]
+BSZs = [1000,2000,4000,6000,8000]
 bw = 1024
 
 cached = True
@@ -112,7 +112,8 @@ vanilla_b = [False]
 
 
 #ba = 'no_adaptation_'
-BAs = ['no_adaptation_', '']
+#BAs = ['no_adaptation_', '']
+BAs = ['']
 
 for bsz in BSZs:
     for CPU_ in CPUs:

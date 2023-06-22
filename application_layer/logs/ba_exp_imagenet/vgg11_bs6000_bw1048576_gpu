@@ -7,7 +7,7 @@ Nb GPUS  2
 ==> Preparing data..
 ==> Building model..
 IN SPLITTING ALGO
-Recorded bandwidth: 907.268822137784 Mbps
+Recorded bandwidth: 908.2791695374373 Mbps
 In _get_intermediate_outputs_and_time
 Done intermediate outputs and time
 Sizes  [1.2845056e+07 1.2845056e+07 3.2112640e+06 6.4225280e+06 6.4225280e+06
@@ -19,15 +19,15 @@ Sizes  [1.2845056e+07 1.2845056e+07 3.2112640e+06 6.4225280e+06 6.4225280e+06
 Input_size  0.57421875
 TESTING *****************************
 Input size, BW, MIN:
-448967248008533.3 118917539.05524363 118917539.05524363
+224483624004266.66 119049967.30961098 119049967.30961098
 All candidates indexes:  (array([22, 23, 24, 25, 26, 27, 28]),)
 SPLIT IDX CHOICE, split idx manual, freeze_idx:  automatic 100 25
 Intermediate:  0.015625
 24.5
 Total layers size  62.687408447265625
-Server, client, server+client, vanilla  1309.583984375 1396.7353515625 2706.3193359375 151748.2978515625
+Server, client, server+client, vanilla  908.396484375 1396.7353515625 2305.1318359375 151748.2978515625
 Candidate split  23
-Server, client, server+client, vanilla  1309.583984375 1396.7353515625 2706.3193359375 151748.2978515625
+Server, client, server+client, vanilla  908.396484375 1396.7353515625 2305.1318359375 151748.2978515625
 Model size  507.208984375
 Fixed, scale_with_bsz  507.208984375 25.07421875
 Mem usage  1840.0 3.0
@@ -50,34 +50,23 @@ Memory occpied: (1840.0, 3.0)
 Memory occpied: (1840.0, 3.0)
 Memory occpied: (1840.0, 3.0)
 Memory occpied: (1840.0, 3.0)
-Memory occpied: (1840.0, 3.0)
-Memory occpied: (1840.0, 3.0)
-Memory occpied: (1840.0, 3.0)
-Memory occpied: (1840.0, 3.0)
 Read 93.95806503295898 MBs for this batch
-Executing all posts took 20.4474995136261 seconds
-Streaming imagenet data took 20.48489284515381 seconds
+Executing all posts took 15.985749244689941 seconds
+Streaming imagenet data took 16.02282166481018 seconds
 The mode is:  split
 Start 6000, end 12000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.4146597385406494
-Time for copying to cuda: 0.02539849281311035
-Memory occpied: (1840.0, 15.0)
-Memory occpied: (1934.0, 592.0)
-Memory occpied: (1934.0, 1018.0)
-Time for forward pass: 3.1902596950531006
-Time for backpropagation: 0.06061053276062012
+Time of next(dataloader) is: 0.37895703315734863
+Time for copying to cuda: 0.024979352951049805
+Time for forward pass: 2.975715398788452
+Time for backpropagation: 0.06056809425354004
 GPU memory for training: 2.3042850494384766                          
 
-One training iteration takes: 3.774242639541626 seconds
+One training iteration takes: 3.5346882343292236 seconds
 Index: 0
-Memory occpied: (3120.0, 1990.0)
-Memory occpied: (3120.0, 1990.0)
-Memory occpied: (3120.0, 1990.0)
-Memory occpied: (3120.0, 1990.0)
-Memory occpied: (3120.0, 1990.0)
+Memory occpied: (1840.0, 1990.0)
 Memory occpied: (3120.0, 1990.0)
 Memory occpied: (3120.0, 1990.0)
 Memory occpied: (3120.0, 1990.0)
@@ -89,25 +78,21 @@ Memory occpied: (3120.0, 1990.0)
 Memory occpied: (3120.0, 1990.0)
 Memory occpied: (3120.0, 1990.0)
 Read 93.95806503295898 MBs for this batch
-Executing all posts took 21.11913228034973 seconds
-Streaming imagenet data took 21.156383752822876 seconds
-Then, training+dataloading take 21.158865928649902 seconds
+Executing all posts took 16.07542133331299 seconds
+Streaming imagenet data took 16.112566709518433 seconds
+Then, training+dataloading take 16.11497950553894 seconds
 The mode is:  split
 Start 12000, end 18000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.39579081535339355
-Time for copying to cuda: 0.02445840835571289
-Time for forward pass: 0.09952330589294434
-Time for backpropagation: 0.003490924835205078
+Time of next(dataloader) is: 0.3970937728881836
+Time for copying to cuda: 0.024419069290161133
+Time for forward pass: 0.10053515434265137
+Time for backpropagation: 0.003693819046020508
 GPU memory for training: 2.4591121673583984                          
 
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-One training iteration takes: 5.564295291900635 seconds
+One training iteration takes: 0.6183831691741943 seconds
 Index: 1
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
@@ -122,22 +107,23 @@ Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
+Memory occpied: (3522.0, 1998.0)
 Read 93.95806503295898 MBs for this batch
-Executing all posts took 20.537778615951538 seconds
-Streaming imagenet data took 20.575855016708374 seconds
-Then, training+dataloading take 20.57905077934265 seconds
+Executing all posts took 16.325480937957764 seconds
+Streaming imagenet data took 16.36312460899353 seconds
+Then, training+dataloading take 16.367027282714844 seconds
 The mode is:  split
 Start 18000, end 24000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.40891337394714355
-Time for copying to cuda: 0.024747848510742188
-Time for forward pass: 0.13417744636535645
-Time for backpropagation: 0.003641843795776367
+Time of next(dataloader) is: 0.4031643867492676
+Time for copying to cuda: 0.02473616600036621
+Time for forward pass: 0.09955167770385742
+Time for backpropagation: 0.003166675567626953
 GPU memory for training: 2.4591121673583984                          
 
-One training iteration takes: 0.6774630546569824 seconds
+One training iteration takes: 0.6265013217926025 seconds
 Index: 2
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
@@ -152,27 +138,27 @@ Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
 Read 93.95806503295898 MBs for this batch
-Executing all posts took 20.98100757598877 seconds
-Streaming imagenet data took 21.057887077331543 seconds
-Then, training+dataloading take 21.075923442840576 seconds
+Executing all posts took 16.180837631225586 seconds
+Streaming imagenet data took 16.218501329421997 seconds
+Then, training+dataloading take 16.22095799446106 seconds
 The mode is:  split
 Start 24000, end 30000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.44008493423461914
-Time for copying to cuda: 0.024740934371948242
-Time for forward pass: 0.09951162338256836
-Time for backpropagation: 0.003132343292236328
+Time of next(dataloader) is: 0.3866283893585205
+Time for copying to cuda: 0.07308721542358398
+Memory occpied: (3522.0, 1998.0)
+Time for forward pass: 0.09982442855834961
+Time for backpropagation: 0.003195047378540039
 GPU memory for training: 2.4591121673583984                          
 
 Memory occpied: (3522.0, 1998.0)
-One training iteration takes: 0.6505122184753418 seconds
+Memory occpied: (3522.0, 1998.0)
+Memory occpied: (3522.0, 1998.0)
+Memory occpied: (3522.0, 1998.0)
+One training iteration takes: 5.584023714065552 seconds
 Index: 3
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
@@ -183,50 +169,38 @@ Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
 Read 93.95806503295898 MBs for this batch
-Executing all posts took 20.926462173461914 seconds
-Streaming imagenet data took 20.96504521369934 seconds
-Then, training+dataloading take 20.978119373321533 seconds
+Executing all posts took 16.319997310638428 seconds
+Streaming imagenet data took 16.35805892944336 seconds
+Then, training+dataloading take 16.360520362854004 seconds
 The mode is:  split
 Start 30000, end 32000, post_step 1000
 
 
 Epoch: 0
-Memory occpied: (3522.0, 1998.0)
-Time of next(dataloader) is: 0.4472668170928955
-Time for copying to cuda: 0.024588584899902344
-Time for forward pass: 0.09952402114868164
-Time for backpropagation: 0.0031757354736328125
+Time of next(dataloader) is: 0.3854334354400635
+Time for copying to cuda: 0.024610042572021484
+Time for forward pass: 0.09961342811584473
+Time for backpropagation: 0.0032138824462890625
 GPU memory for training: 2.4591121673583984                          
 
-One training iteration takes: 0.6617162227630615 seconds
+One training iteration takes: 0.6020634174346924 seconds
 Index: 4
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
 Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
-Memory occpied: (3522.0, 1998.0)
 Read 31.319355010986328 MBs for this batch
-Executing all posts took 11.296590328216553 seconds
-Streaming imagenet data took 11.309309482574463 seconds
-Then, training+dataloading take 11.312090635299683 seconds
+Executing all posts took 6.170530080795288 seconds
+Streaming imagenet data took 6.185206651687622 seconds
+Then, training+dataloading take 6.18646502494812 seconds
 
 Epoch: 0
-Time of next(dataloader) is: 0.34203553199768066
-Time for copying to cuda: 0.008343935012817383
-Time for forward pass: 0.06426811218261719
-Time for backpropagation: 0.003116607666015625
+Time of next(dataloader) is: 0.3360762596130371
+Time for copying to cuda: 0.008493185043334961
+Time for forward pass: 0.06421256065368652
+Time for backpropagation: 0.0031049251556396484
 GPU memory for training: 2.2451939582824707                          
 
-The whole process took 124.1920850276947 seconds
+The whole process took 95.66474175453186 seconds

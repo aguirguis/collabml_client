@@ -43,7 +43,7 @@ except:
     from dataset_utils import *
     from mnist_utils import *
 
-SERVER_BATCH = 32#128#256#128#25
+SERVER_BATCH = 16#128#256#128#25
 
 
 #CACHED = True
@@ -593,7 +593,8 @@ def send_request(request_dict):
         #    print("Raw message len: ", raw_msglen)
         msglen = struct.unpack('>I', raw_msglen)[0]
         data = recvall(s, msglen)
-        #    print(f"Length of received data: {len(data)}")
+
+        print(f"Length of received data: {len(data)}")
         return data
 
 

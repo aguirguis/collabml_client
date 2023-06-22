@@ -1,0 +1,111 @@
+Cached  True
+Transformed  True
+All in COS  False
+No adaptation  True
+Namespace(all_in_cos=False, batch_size=8000, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=17, model='myalexnet', no_adaptation=True, num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, transformed=True, use_intermediate=True)
+Nb GPUS  2
+==> Preparing data..
+==> Building model..
+IN SPLITTING ALGO
+Recorded bandwidth: 908.069161367781 Mbps
+In _get_intermediate_outputs_and_time
+Done intermediate outputs and time
+Sizes  [774400. 774400. 186624. 559872. 559872. 129792. 259584. 259584. 173056.
+ 173056. 173056. 173056.  36864.  36864.  36864.  16384.  16384.  16384.
+  16384.  16384.   4000.]
+Input_size  0.57421875
+TESTING *****************************
+Input size, BW, MIN:
+448967248008533.3 119022441.1187978 119022441.1187978
+All candidates indexes:  (array([20]),)
+SPLIT IDX CHOICE, split idx manual, freeze_idx:  automatic 100 17
+Intermediate:  0.015625
+1.47705078125
+Total layers size  4.189361572265625
+Server, client, server+client, vanilla  299.09765625 1419.4921875 1718.58984375 17704.6484375
+Fixed, scale_with_bsz  0 2.05126953125
+Mem usage  1514.0 3.0
+Using split index: 16
+Freezing the lower layers of the model (myalexnet) till index 17
+The mode is:  split
+Start 0, end 8000, post_step 1000
+
+Memory occpied: (1514.0, 3.0)
+Memory occpied: (1514.0, 3.0)
+Memory occpied: (1514.0, 3.0)
+Memory occpied: (1514.0, 3.0)
+Read 125.27742004394531 MBs for this batch
+Executing all posts took 3.978219747543335 seconds
+Streaming imagenet data took 4.027059316635132 seconds
+The mode is:  split
+Start 8000, end 16000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4050760269165039
+Time for copying to cuda: 0.03275752067565918
+Memory occpied: (1640.0, 240.0)
+Memory occpied: (1640.0, 688.0)
+Memory occpied: (1640.0, 1128.0)
+Read 125.27742004394531 MBs for this batch
+Executing all posts took 3.824218511581421 seconds
+Streaming imagenet data took 3.8758187294006348 seconds
+Time for forward pass: 3.475402593612671
+Time for backpropagation: 0.07740283012390137
+GPU memory for training: 1.263702392578125                          
+
+One training iteration takes: 4.072379112243652 seconds
+Index: 0
+Then, training+dataloading take 4.07278847694397 seconds
+The mode is:  split
+Start 16000, end 24000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4678032398223877
+Time for copying to cuda: 0.03242850303649902
+Time for forward pass: 0.06670737266540527
+Time for backpropagation: 0.0027086734771728516
+GPU memory for training: 1.4203567504882812                          
+
+One training iteration takes: 0.6965532302856445 seconds
+Index: 1
+Memory occpied: (2346.0, 1712.0)
+Memory occpied: (2354.0, 1712.0)
+Memory occpied: (2354.0, 1712.0)
+Read 125.27742004394531 MBs for this batch
+Executing all posts took 3.5534682273864746 seconds
+Streaming imagenet data took 3.6033992767333984 seconds
+Then, training+dataloading take 3.60636568069458 seconds
+The mode is:  split
+Start 24000, end 32000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.44328856468200684
+Time for copying to cuda: 0.03168058395385742
+Time for forward pass: 0.09121084213256836
+Time for backpropagation: 0.002710103988647461
+GPU memory for training: 1.4203567504882812                          
+
+Memory occpied: (2354.0, 1712.0)
+Memory occpied: (2354.0, 1712.0)
+Memory occpied: (2354.0, 1712.0)
+Read 125.27742004394531 MBs for this batch
+Executing all posts took 3.4937994480133057 seconds
+Streaming imagenet data took 3.5428738594055176 seconds
+Memory occpied: (2354.0, 1712.0)
+One training iteration takes: 5.617493152618408 seconds
+Index: 2
+Then, training+dataloading take 5.61779522895813 seconds
+
+Epoch: 0
+Memory occpied: (2354.0, 1712.0)
+Memory occpied: (2354.0, 1712.0)
+Time of next(dataloader) is: 0.42424893379211426
+Time for copying to cuda: 0.03304028511047363
+Time for forward pass: 0.0913538932800293
+Time for backpropagation: 0.002712726593017578
+GPU memory for training: 1.4203567504882812                          
+
+The whole process took 24.84105896949768 seconds

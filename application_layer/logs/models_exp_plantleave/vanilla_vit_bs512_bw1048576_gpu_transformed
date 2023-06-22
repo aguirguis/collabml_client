@@ -1,0 +1,93 @@
+Cached  True
+Transformed  True
+All in COS  False
+No adaptation  False
+Namespace(all_in_cos=False, batch_size=512, cached=True, cpuonly=False, dataset='plantleave', downloadall=False, end=10000, freeze=True, freeze_idx=17, model='vit', no_adaptation=False, num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, transformed=True, use_intermediate=False)
+Nb GPUS  2
+==> Preparing data..
+==> Building model..
+Using split index: 100
+Freezing the lower layers of the model (vit) till index 17
+The mode is:  vanilla
+Start 0, end 512, post_step 64
+
+Memory occpied: (1630.0, 3.0)
+Memory occpied: (1630.0, 3.0)
+Decompress data took 0.004213571548461914 seconds
+Total decompress data took 0.1650099754333496 seconds
+Decompress data took 0.003966808319091797 seconds
+Total decompress data took 0.15291905403137207 seconds
+Decompress data took 0.0038330554962158203 seconds
+Total decompress data took 0.14092588424682617 seconds
+Decompress data took 0.0037751197814941406 seconds
+Total decompress data took 0.1400909423828125 seconds
+Decompress data took 0.0038406848907470703 seconds
+Total decompress data took 0.14181280136108398 seconds
+Decompress data took 0.0038781166076660156 seconds
+Total decompress data took 0.140913724899292 seconds
+Decompress data took 0.003844738006591797 seconds
+Memory occpied: (1630.0, 3.0)
+Total decompress data took 0.20622730255126953 seconds
+Decompress data took 0.003893136978149414 seconds
+Total decompress data took 0.1442549228668213 seconds
+Read 51.14279651641846 MBs for this batch
+Streaming plantleave data took 2.7472124099731445 seconds
+The mode is:  vanilla
+Start 512, end 1024, post_step 64
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.4828770160675049
+Decompress data took 0.009738683700561523 seconds
+Time for copying to cuda: 0.0870358943939209
+Total decompress data took 0.2329254150390625 seconds
+Decompress data took 0.004893302917480469 seconds
+Memory occpied: (1924.0, 284.0)
+Total decompress data took 0.1893141269683838 seconds
+Decompress data took 0.003980159759521484 seconds
+Total decompress data took 0.14527177810668945 seconds
+Decompress data took 0.003921031951904297 seconds
+Total decompress data took 0.14446473121643066 seconds
+Decompress data took 0.004014253616333008 seconds
+Total decompress data took 0.14371943473815918 seconds
+Decompress data took 0.00397944450378418 seconds
+Total decompress data took 0.14487981796264648 seconds
+Decompress data took 0.004074573516845703 seconds
+Total decompress data took 0.1419687271118164 seconds
+Decompress data took 0.0039577484130859375 seconds
+Total decompress data took 0.14299440383911133 seconds
+Read 50.77952575683594 MBs for this batch
+Streaming plantleave data took 1.9323348999023438 seconds
+Memory occpied: (1924.0, 696.0)
+Memory occpied: (1924.0, 1176.0)
+Memory occpied: (15106.0, 13882.0)
+Memory occpied: (14650.0, 14930.0)
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 433, in forward
+    x = self.forward_features(x)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 421, in forward_features
+    x = self.blocks(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/container.py", line 141, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 239, in forward
+    x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/layers/mlp.py", line 26, in forward
+    x = self.fc1(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/linear.py", line 103, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: CUDA out of memory. Tried to allocate 592.00 MiB (GPU 0; 14.76 GiB total capacity; 12.39 GiB already allocated; 459.75 MiB free; 13.07 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+The whole process took 15.018231630325317 seconds

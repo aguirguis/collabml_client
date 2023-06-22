@@ -1,0 +1,66 @@
+Cached  True
+Transformed  True
+All in COS  False
+No adaptation  True
+Namespace(all_in_cos=False, batch_size=5000, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=17, model='myalexnet', no_adaptation=True, num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, transformed=True, use_intermediate=True)
+Nb GPUS  2
+==> Preparing data..
+==> Building model..
+IN SPLITTING ALGO
+Recorded bandwidth: 907.4835403874874 Mbps
+In _get_intermediate_outputs_and_time
+Done intermediate outputs and time
+Sizes  [774400. 774400. 186624. 559872. 559872. 129792. 259584. 259584. 173056.
+ 173056. 173056. 173056.  36864.  36864.  36864.  16384.  16384.  16384.
+  16384.  16384.   4000.]
+Input_size  0.57421875
+TESTING *****************************
+Input size, BW, MIN:
+448967248008533.3 118945682.60566875 118945682.60566875
+All candidates indexes:  (array([15, 16, 17, 18, 19, 20]),)
+SPLIT IDX CHOICE, split idx manual, freeze_idx:  automatic 100 17
+Intermediate:  0.015625
+1.47705078125
+Total layers size  4.189361572265625
+Server, client, server+client, vanilla  299.09765625 974.72900390625 1273.82666015625 11152.95166015625
+Candidate split  16
+Server, client, server+client, vanilla  299.09765625 974.72900390625 1273.82666015625 11152.95166015625
+Model size  233.45703125
+Fixed, scale_with_bsz  233.45703125 2.05126953125
+Mem usage  1514.0 3.0
+Using split index: 16
+Freezing the lower layers of the model (myalexnet) till index 17
+The mode is:  split
+Start 0, end 5000, post_step 1000
+
+Memory occpied: (1514.0, 3.0)
+Memory occpied: (1514.0, 3.0)
+Memory occpied: (1514.0, 3.0)
+Read 78.29838752746582 MBs for this batch
+Executing all posts took 2.7781331539154053 seconds
+Streaming imagenet data took 2.8087449073791504 seconds
+The mode is:  split
+Start 5000, end 10000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.34288883209228516
+Time for copying to cuda: 0.020759105682373047
+Memory occpied: (1594.0, 290.0)
+Memory occpied: (1594.0, 740.0)
+Read 78.29838752746582 MBs for this batch
+Executing all posts took 2.8392910957336426 seconds
+Streaming imagenet data took 2.8706274032592773 seconds
+Memory occpied: (1594.0, 1148.0)
+Time for forward pass: 3.269749164581299
+Time for backpropagation: 0.0547788143157959
+GPU memory for training: 1.1339058876037598                          
+
+One training iteration takes: 3.7636375427246094 seconds
+Index: 0
+Then, training+dataloading take 3.7639124393463135 seconds
+The mode is:  split
+Start 10000, end 15000, post_step 1000
+
+
+Epoch: 0

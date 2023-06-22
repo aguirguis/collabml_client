@@ -80,7 +80,8 @@ def run_model_exp(batch_size, model, freeze_idx, m_bw, CPU_=False, dataset='imag
 
 
 #dataset = 'imagenet'
-dataset = 'plantleave'
+#dataset = 'plantleave'
+dataset = 'inaturalist'
 
 
 models=['resnet18', 'resnet50', 'vgg11', 'vgg19', 'alexnet', 'densenet121', 'vit']

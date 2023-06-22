@@ -44,7 +44,7 @@ def plot_lines(X, Y, sys_legends, linestyles, xlabel, ylabel, output_file, marke
     plt.savefig(f'{output_file}.pdf', bbox_inches = "tight")
     plt.gcf().clear()
 
-def plot_bars(Y, sys_legends, xtick_labels, hatches, xlabel, ylabel, output_file, text=None, stack=None, colors=None, rotation=None):
+def plot_bars(Y, sys_legends, xtick_labels, hatches, xlabel, ylabel, output_file, text=None, stack=None, colors=None, rotation=None, grid=False):
     #This function plots bars defined in Y (which is list of lists) for multiple systems (i.e., competitors)
     #sys_legends define the systems' names and xtick_labels define the labels on the x-axis
     #stack (if not None) specifies which bars should be stacked on one another; it should be a list which tells if this bar should be stacked on another one
@@ -86,5 +86,7 @@ def plot_bars(Y, sys_legends, xtick_labels, hatches, xlabel, ylabel, output_file
     plt.yticks(fontsize=fontsize)
     plt.legend(ps, sys_legends, fontsize=30)
     plt.tight_layout()
+    if grid:
+        plt.grid()
     figr.savefig(f'{output_file}.pdf', bbox_inches = "tight")
     plt.gcf().clear()

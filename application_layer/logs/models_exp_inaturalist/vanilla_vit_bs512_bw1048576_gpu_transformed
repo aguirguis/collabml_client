@@ -1,0 +1,73 @@
+Cached  True
+Transformed  True
+All in COS  False
+No adaptation  False
+Namespace(all_in_cos=False, batch_size=512, cached=True, cpuonly=False, dataset='inaturalist', downloadall=False, end=10000, freeze=True, freeze_idx=17, model='vit', no_adaptation=False, num_epochs=1, sequential=False, split_choice='automatic', split_idx=100, start=0, testonly=False, transformed=True, use_intermediate=False)
+Nb GPUS  2
+==> Preparing data..
+==> Building model..
+Using split index: 100
+Freezing the lower layers of the model (vit) till index 17
+The mode is:  vanilla
+Start 0, end 512, post_step 128
+
+Memory occpied: (1654.0, 3.0)
+Memory occpied: (1654.0, 3.0)
+Decompress data took 0.012789011001586914 seconds
+Total decompress data took 0.3532845973968506 seconds
+Decompress data took 0.011934041976928711 seconds
+Total decompress data took 0.3305342197418213 seconds
+Decompress data took 0.01180720329284668 seconds
+Memory occpied: (1654.0, 3.0)
+Total decompress data took 0.39514589309692383 seconds
+Decompress data took 0.011585712432861328 seconds
+Total decompress data took 0.33460497856140137 seconds
+Read 82.3675765991211 MBs for this batch
+Streaming inaturalist data took 3.0523905754089355 seconds
+The mode is:  vanilla
+Start 512, end 1024, post_step 128
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.5161514282226562
+Memory occpied: (1654.0, 3.0)
+Time for copying to cuda: 0.08069109916687012
+Decompress data took 0.02784562110900879 seconds
+Total decompress data took 0.36542558670043945 seconds
+Decompress data took 0.011744499206542969 seconds
+Memory occpied: (1948.0, 658.0)
+Total decompress data took 0.41539812088012695 seconds
+Decompress data took 0.012050390243530273 seconds
+Total decompress data took 0.32938456535339355 seconds
+Decompress data took 0.012202024459838867 seconds
+Total decompress data took 0.3261699676513672 seconds
+Read 81.71587657928467 MBs for this batch
+Streaming inaturalist data took 2.533203601837158 seconds
+Memory occpied: (1948.0, 1040.0)
+Memory occpied: (9750.0, 14944.0)
+Memory occpied: (14674.0, 14944.0)
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 433, in forward
+    x = self.forward_features(x)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 421, in forward_features
+    x = self.blocks(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/container.py", line 141, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 238, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 199, in forward
+    attn = (q @ k.transpose(-2, -1)) * self.scale
+RuntimeError: CUDA out of memory. Tried to allocate 456.00 MiB (GPU 0; 14.76 GiB total capacity; 12.56 GiB already allocated; 435.75 MiB free; 13.09 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+The whole process took 15.115657567977905 seconds
