@@ -558,9 +558,11 @@ def get_train_test_split(dataset_name, datadir, transform_train, transform_test)
     return trainset, testset
 
 
-def recvall(sock, n):
+def recvall(sock, n, rest=None):
     # Helper function to receive data from the server
     data = bytearray()
+    if rest != None:
+        data.extend(rest)
     while len(data) < n:
         packet = sock.recv(n - len(data))
         data.extend(packet)
@@ -589,10 +591,16 @@ def send_request(request_dict):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT))
         s.sendall(json.dumps(request_dict).encode('utf-8'))
-        raw_msglen = recvall(s, 4)
+        raw_msglen = recvall(s, 8)
         #    print("Raw message len: ", raw_msglen)
-        msglen = struct.unpack('>I', raw_msglen)[0]
-        data = recvall(s, msglen)
+        try:
+            msglen = struct.unpack('>Q', raw_msglen)[0]
+            data = recvall(s, msglen)
+        except:
+            # send I size 4
+            msglen = struct.unpack('>I', raw_msglen[:4])[0]
+            rest = raw_msglen[4:]
+            data = recvall(s, msglen, rest)
 
         print(f"Length of received data: {len(data)}")
         return data
