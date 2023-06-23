@@ -101,8 +101,11 @@ dataset ='imagenet'
 #models = ['densenet121']#, 'resnet18']
 #freeze_idxs = [20]#, 11]
 
-models=['densenet121', 'resnet18', 'alexnet', 'resnet50', 'vgg11', 'vgg19', 'vit']
-freeze_idxs=[20, 11, 17, 21, 25, 36, 17]
+#models=['densenet121', 'resnet18', 'alexnet', 'resnet50', 'vgg11', 'vgg19', 'vit']
+#freeze_idxs=[20, 11, 17, 21, 25, 36, 17]
+
+models=['vgg11']
+freeze_idxs=[25]
 
 CPUs = [False]
 
@@ -136,7 +139,7 @@ for bsz in BSZs:
                     #for idx in range(freeze_idx, 0, -1):
                     #for idx in range(freeze_idx-5, freeze_idx+1):#freeze_idx):
                     #for idx in range(freeze_idx-5, freeze_idx-3):#freeze_idx):
-                    for idx in range(freeze_idx, 0, -1):
+                    for idx in range(3, 0, -1):
                         start_server(vanilla, transformed, dataset, model, bsz, m_bw, CPU_, idx)
                         print("STARTED SERVER ", model, str(bsz), idx)
 
