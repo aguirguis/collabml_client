@@ -104,49 +104,47 @@ dataset ='imagenet'
 #models=['densenet121', 'resnet18', 'alexnet', 'resnet50', 'vgg11', 'vgg19', 'vit']
 #freeze_idxs=[20, 11, 17, 21, 25, 36, 17]
 
-models=['vgg11']
-freeze_idxs=[25]
+models=['vgg19', 'vit', 'densenet121', 'resnet18', 'alexnet', 'resnet50', 'vgg11']
+freeze_idxs=[36, 17, 20, 11, 17, 21, 25]
+
 
 CPUs = [False]
 
 #BSZs = [1000,2000,3000,4000,5000,6000,7000,8000]
 #BSZs = [1000,2000,4000,6000,8000]
 BSZs = [1000]
-bw = 12*1024
+BWs = [12*1024, 1024]
 
 cached = True
 vanilla_b = [False]
 #transformed_b = [True, False]
 
 
+for bw in BWs:
+    for bsz in BSZs:
+        for CPU_ in CPUs:
+            assert len(models) == len(freeze_idxs)
+            wondershaper_exec = os.path.join(homedir, "wondershaper", "wondershaper")
+            os.system(client + f'{wondershaper_exec} -c -a eth0')
+            m_bw = bw * 1024
+            os.system(client + f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
 
-for bsz in BSZs:
-    for CPU_ in CPUs:
-        assert len(models) == len(freeze_idxs)
-        wondershaper_exec = os.path.join(homedir, "wondershaper", "wondershaper")
-        os.system(client + f'{wondershaper_exec} -c -a eth0')
-        m_bw = bw * 1024
-        os.system(client + f'{wondershaper_exec} -a eth0 -d {m_bw} -u {m_bw}')
+            for vanilla in vanilla_b:
+                if vanilla:
+                    transformed_b = [True, False]
+                else:
+                    transformed_b = [True]
 
-        for vanilla in vanilla_b:
-            if vanilla:
-                transformed_b = [True, False]
-            else:
-                transformed_b = [True]
+                for transformed in transformed_b:
+                    for model, freeze_idx in zip(models, freeze_idxs):
+                        for idx in range(freeze_idx, 0, -1):
+                            start_server(vanilla, transformed, dataset, model, bsz, m_bw, CPU_, idx)
+                            print("STARTED SERVER ", model, str(bsz), idx)
 
-            for transformed in transformed_b:
-                for model, freeze_idx in zip(models, freeze_idxs):
-                    #for idx in range(freeze_idx, 0, -1):
-                    #for idx in range(freeze_idx-5, freeze_idx+1):#freeze_idx):
-                    #for idx in range(freeze_idx-5, freeze_idx-3):#freeze_idx):
-                    for idx in range(3, 0, -1):
-                        start_server(vanilla, transformed, dataset, model, bsz, m_bw, CPU_, idx)
-                        print("STARTED SERVER ", model, str(bsz), idx)
+                            print("START MODEL EXP")
+                            run_model_exp(bsz, model, freeze_idx, idx, m_bw, CPU_=CPU_, dataset=dataset, vanilla=vanilla,
+                                           transformed=transformed)
+                            print("FINISHED MODEL EXP")
 
-                        print("START MODEL EXP")
-                        run_model_exp(bsz, model, freeze_idx, idx, m_bw, CPU_=CPU_, dataset=dataset, vanilla=vanilla,
-                                       transformed=transformed)
-                        print("FINISHED MODEL EXP")
-
-                        kill_server()
-                        print("KILLED SERVER")
+                            kill_server()
+                            print("KILLED SERVER")

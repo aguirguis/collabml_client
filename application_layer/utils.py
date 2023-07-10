@@ -44,6 +44,7 @@ except:
     from mnist_utils import *
 
 SERVER_BATCH = 16#128#256#128#25
+NB_GPU = 2
 
 
 #CACHED = True
@@ -311,6 +312,32 @@ import subprocess
 import shutil
 import threading
 
+def _get_gpu_stats_other(gpu_id):
+    """
+    Run nvidia-smi to get the gpu stats
+    """
+    gpu_query = 'uuid,utilization.gpu,utilization.memory'
+    format = 'csv,nounits,noheader'
+    
+    result = subprocess.run(
+        #[shutil.which('nvidia-smi'), f'--query-gpu={gpu_query}', f'--format={format}', f'--id={gpu_id}', '-l 1'],
+        [shutil.which('nvidia-smi'), f'--query-gpu={gpu_query}', f'--format={format}', f'--id={gpu_id}'],
+        encoding="utf-8",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,  # for backward compatibility with python version 3.6
+        check=True,
+        timeout=5
+    )
+
+    def _to_float(x: str) -> float:
+        try:
+            return float(x)
+        except ValueError:
+            return 0.
+
+    stats = result.stdout.strip().split(os.linesep)
+    #stats = [[_to_float(x) for x in s.split(', ')] for s in stats]
+    return stats
 
 def _get_gpu_stats(gpu_id):
     """Run nvidia-smi to get the gpu stats"""
@@ -336,14 +363,23 @@ def _get_gpu_stats(gpu_id):
 
 
 def get_periodic_stat(stop):
+    start_t = time.time()
     while True:
         if stop():
             break
-        res0, res1 = _get_gpu_stats(0)[0], _get_gpu_stats(1)[0]
-        mem_free = (res0[2] - res0[1], res1[2] - res1[1])
-        mem_used = (res0[1], res1[1])
-        print(f"Memory occpied: {mem_used}")
-        sleep(1)
+        try:
+            mem_free = []
+            mem_used = []
+            for i in range(NB_GPU):
+                print('GPU ID: ', i, ' uuid,utilization.gpu,utilization.memory: ', _get_gpu_stats_other(i))
+
+                res_i = _get_gpu_stats(i)[0]
+                mem_free.append(res_i[2] - res_i[1])
+                mem_used.append(res_i[1])
+            print(f"Memory occupied: {mem_used} Time: {time.time() - start_t}", flush=True)
+            time.sleep(1)
+        except subprocess.TimeoutExpired:
+            print("Timeout to get memory occupied")
 
 
 def get_mean_and_std(dataset):
