@@ -43,7 +43,7 @@ except:
     from dataset_utils import *
     from mnist_utils import *
 
-SERVER_BATCH = 16#128#256#128#25
+SERVER_BATCH = 16 #250#16#128#256#128#25
 NB_GPU = 2
 
 
@@ -601,6 +601,9 @@ def recvall(sock, n, rest=None):
         data.extend(rest)
     while len(data) < n:
         packet = sock.recv(n - len(data))
+        if packet == bytearray(b'ERR'):
+            os.kill(os.getpid(), 9)
+            #raise Exception
         data.extend(packet)
         if data == bytearray(b'ERR'):
             os.kill(os.getpid(), 9)
@@ -689,8 +692,11 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
                 futures = [executor.submit(send_request, post_obj.options) for post_obj in post_objects]
                 for fut in futures:
                     res = fut.result()
+                    print("Future took {} seconds".format(time.time() - stream_time))
+                    pickle_time = time.time()
                     read_bytes += int(len(res))
                     images.extend(pickle.loads(res))
+                    print("Pickle took {} seconds".format(time.time() - pickle_time))
         else:
             for post_res in swift.post(container=dataset_name, objects=post_objects):
                 if 'error' in post_res.keys():
@@ -827,9 +833,12 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
     # use only labels corresponding to the required images
     labels = labels[lstart:lend]
     assert len(images) == len(labels)
+    dataloader_time = time.time()
     imgs = np.array(images)
     dataset = InMemoryDataset(imgs, labels=labels, transform=transform, mode=mode, transformed=TRANSFORMED)
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8)
+    #dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, num_workers=8)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
+    print("Dataloader took {} seconds".format(time.time() - dataloader_time))
     print("Streaming {} data took {} seconds".format(dataset_name, time.time() - stream_time))
     #  decompress_time += (time.time()-decompt)
     #  print("Time taken for post processing the received compressed file: {} seconds".format(decompress_time))

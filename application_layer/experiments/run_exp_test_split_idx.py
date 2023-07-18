@@ -107,6 +107,9 @@ dataset ='imagenet'
 models=['vgg19', 'vit', 'densenet121', 'resnet18', 'alexnet', 'resnet50', 'vgg11']
 freeze_idxs=[36, 17, 20, 11, 17, 21, 25]
 
+#models=['vgg19']
+#freeze_idxs=[36]
+
 
 CPUs = [False]
 
@@ -114,6 +117,7 @@ CPUs = [False]
 #BSZs = [1000,2000,4000,6000,8000]
 BSZs = [1000]
 BWs = [12*1024, 1024]
+#BWs = [12*1024]
 
 cached = True
 vanilla_b = [False]
@@ -138,6 +142,7 @@ for bw in BWs:
                 for transformed in transformed_b:
                     for model, freeze_idx in zip(models, freeze_idxs):
                         for idx in range(freeze_idx, 0, -1):
+                        #for idx in [8]:
                             start_server(vanilla, transformed, dataset, model, bsz, m_bw, CPU_, idx)
                             print("STARTED SERVER ", model, str(bsz), idx)
 

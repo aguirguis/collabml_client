@@ -67,6 +67,9 @@ parser.add_argument('--all_in_cos', action='store_true', help='')
 parser.add_argument('--no_adaptation', action='store_true', help='')
 
 
+start_time = time.time()
+
+
 args = parser.parse_args()
 
 dataset_name = args.dataset
@@ -112,7 +115,6 @@ print(args)
 
 parent_dir = "compressed" # if mode == 'split' else "val"
 
-start_time = time.time()
 
 print("Nb GPUS ", torch.cuda.device_count())
 
@@ -134,8 +136,12 @@ if args.downloadall:
     print("Got an exeption while downloading the dataset ", e)
   print('data downloaded...time elapsed: {}'.format(time.time()-start_download_t))
 
+print("Initialize time: {}".format(time.time()-start_time))
+
+prepare_transforms_time = time.time()
 #prepare transformation
 transform_train, transform_test = prepare_transforms(dataset_name)
+print("Time to prepare transforms: {}".format(time.time()-prepare_transforms_time))
 
 if args.downloadall:
   trainset, testset = get_train_test_split(dataset_name, datadir, transform_train, transform_test)
@@ -144,6 +150,7 @@ if args.downloadall:
   testloader = torch.utils.data.DataLoader(
       testset, batch_size=batch_size, shuffle=False, num_workers=2)
 
+download_labels_time = time.time()
 if not args.downloadall and dataset_name in stream_datasets:
   #We can download the labels file once and for all (it's small enough)
   opts = {'out_file':'-'}	#so that we can have it directly in memory
@@ -155,7 +162,9 @@ if not args.downloadall and dataset_name in stream_datasets:
   if dataset_name == 'imagenet':
     assert len(labels) == 150000		#remove this after making sure the code works
     labels = [int(l)-1 for l in labels]
+print("Time to download labels: {}".format(time.time()-download_labels_time))
 
+model_prep_split = time.time()
 # Model
 print('==> Building model..')
 net = get_model(model, dataset_name)
@@ -163,14 +172,19 @@ mem_cons = [10,10]
 if mode == 'split':
     split_idx, mem_cons = choose_split_idx(model, net, freeze_idx, batch_size, split_choice, split_idx, device)
 
+print("Time for splitting algorithm: {}".format(time.time()-model_prep_split))
+
 print(f"Using split index: {split_idx}")
+freeze_model_time = time.time()
 if mode == 'split' or args.freeze:
     if freeze_idx < split_idx and mode == 'split':
       print("WARNING! freeze_idx should be >= split_idx; setting freeze_idx to {}".format(split_idx))
       freeze_idx = split_idx
     print("Freezing the lower layers of the model ({}) till index {}".format(model, freeze_idx))
     freeze_lower_layers(net, freeze_idx)		#for transfer learning -- no need for backpropagation for upper layers (idx < split_idx)
+print("Time to freeze model: {}".format(time.time()-freeze_model_time))
 
+prepare_model_time = time.time()
 net = net.to(device)
 if device == 'cuda':
 #    torch.distributed.init_process_group(backend='nccl')
@@ -182,6 +196,9 @@ optimizer = optim.SGD(filter(lambda p: p.requires_grad, net.parameters()), lr=0.
                       momentum=0.9, weight_decay=5e-4)					#passing only parameters that require grad...the rest are frozen
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
 
+print("Time for model prep: {}".format(time.time()-prepare_model_time))
+
+print("Time for model and splitting algorithm: {}".format(time.time()-model_prep_split))
 
 # Training
 def train(epoch):
@@ -255,6 +272,7 @@ def start_now(lstart, lend, transform):
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
 step = batch_size #max(2000, batch_size)		#using a value less than 1000 is really waste of bandwidth (after some experimentation)
+training_streaming_start_time = time.time()
 try:
   if args.testonly:
     if not args.downloadall and dataset_name in stream_datasets:
@@ -285,7 +303,9 @@ try:
     for epoch in range(num_epochs):
       if not args.downloadall and dataset_name in stream_datasets:
         lstart, lend = 0, step
+        first_stream = time.time()
         trainloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
+        print("First stream takes: {} seconds".format(time.time()-first_stream))
         idx=0
         for s in range(step, stream_dataset_len[dataset_name], step):
         #for s in range(step, 24320, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
@@ -305,7 +325,9 @@ try:
           trainloader = next_dataloader
           dataloader = None
           print("Then, training+dataloading take {} seconds".format(time.time()-localtime))
+        last_train = time.time()
         train(epoch)
+        print("Last train takes: {} seconds".format(time.time()-last_train))
       else:
         train(epoch)
       scheduler.step()
@@ -317,8 +339,14 @@ except Exception as e:
   #    c.kill()
 
 
+print("Total time for streaming and training: {}".format(time.time()-training_streaming_start_time))
+
+gpu_periodic_stat_finish_time = time.time()
 #Stop GPU thread
 stop_thread = True
 gpu_th.join()
+
+print("Finish gpu thread time: {}".format(time.time()-gpu_periodic_stat_finish_time))
+
 print("The whole process took {} seconds".format(time.time()-start_time))
 sys.stdout.flush()
