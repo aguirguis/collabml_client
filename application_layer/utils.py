@@ -202,6 +202,7 @@ def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, s
     # a=torch.cuda.FloatTensor(1)
     # print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
     # First of all, get the bandwidth
+    bw_iperf_time = time.time()
     client = iperf3.Client()
     client.duration = 1
     # client.server_hostname = "192.168.0.242"
@@ -223,6 +224,7 @@ def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, s
             bw = 908.2855256674147 * 1024 * 1024 / 8
             break
     print(f"Recorded bandwidth: {bw * 8 / (1024 * 1024)} Mbps")
+    print("Get bandwitdh took {}".format(time.time() - bw_iperf_time))
     # This function chooses the split index based on the intermediate output sizes and memory consumption
     input = torch.rand((1, 3, 224, 224)).to(device)
     # Step 1: select the layers whose outputs size is < input size && whose output < bw
