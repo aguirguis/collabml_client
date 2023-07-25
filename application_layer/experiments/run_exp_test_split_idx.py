@@ -14,7 +14,10 @@ logdir = os.path.join(projectdir,"logs")
 #server = f'ssh -i {os.path.expanduser("~/.ssh/KeyPair-485c.pem")} root@121.37.173.24 -p 22 '
 #client = f'ssh -i {os.path.expanduser("~/.ssh/KeyPair-485c.pem")} root@124.71.204.82 -p 22 '
 
-server = 'ssh root@192.168.0.246 ' #f'ssh -i {os.path.expanduser("~/.ssh/KeyPair-485c.pem")} root@121.37.173.24 -p 22 '
+server_adr = '192.168.0.239'
+
+server = f'ssh root@{server_adr} ' #f'ssh -i {os.path.expanduser("~/.ssh/KeyPair-485c.pem")} root@121.37.173.24 -p 22 '
+#server = 'ssh root@192.168.0.246 ' #f'ssh -i {os.path.expanduser("~/.ssh/KeyPair-485c.pem")} root@121.37.173.24 -p 22 '
 client = '' #f'ssh -i {os.path.expanduser("~/.ssh/KeyPair-485c.pem")} root@124.71.204.82 -p 22 '
 
 def empty_gpu():
@@ -27,17 +30,17 @@ def start_server(vanilla, transformed, dataset, model, bsz, m_bw, CPU_, idx):
     if vanilla:
         if transformed:
             subprocess.Popen(shlex.split(server + f'"cd /root/swift/swift/proxy/mllib;\
-                                     ST_AUTH_VERSION=1.0 ST_AUTH=http://192.168.0.246:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
+                                     ST_AUTH_VERSION=1.0 ST_AUTH=http://{server_adr}:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
                                      python3 server.py --cached --vanilla --transformed > test/idx_{dataset}/{idx}_server_vanilla_{model}_bs{bsz}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}_transformed" \
                                                      &'))
         else:
             subprocess.Popen(shlex.split(server + f'"cd /root/swift/swift/proxy/mllib;\
-                                                                 ST_AUTH_VERSION=1.0 ST_AUTH=http://192.168.0.246:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
+                                                                 ST_AUTH_VERSION=1.0 ST_AUTH=http://{server_adr}:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
                                                                  python3 server.py --cached --vanilla > test/idx_{dataset}/{idx}_server_vanilla_{model}_bs{bsz}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}" \
                                                                                  &'))
     else:
         subprocess.Popen(shlex.split(server + f'"cd /root/swift/swift/proxy/mllib;\
-                                                             ST_AUTH_VERSION=1.0 ST_AUTH=http://192.168.0.246:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
+                                                             ST_AUTH_VERSION=1.0 ST_AUTH=http://{server_adr}:8080/auth/v1.0     ST_USER=test:tester ST_KEY=testing \
                                                              python3 server.py --cached --transformed > test/idx_{dataset}/{idx}_server_{model}_bs{bsz}_bw{m_bw}_{"cpu" if CPU_ else "gpu"}" \
                                                                              &'))
     
@@ -116,7 +119,8 @@ CPUs = [False]
 #BSZs = [1000,2000,3000,4000,5000,6000,7000,8000]
 #BSZs = [1000,2000,4000,6000,8000]
 BSZs = [1000]
-BWs = [12*1024, 1024]
+BWs = [1024]
+#BWs = [12*1024, 1024]
 #BWs = [12*1024]
 
 cached = True

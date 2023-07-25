@@ -1,0 +1,102 @@
+Cached  True
+Transformed  True
+All in COS  False
+No adaptation  False
+Namespace(all_in_cos=False, batch_size=1000, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=17, model='myvit', no_adaptation=False, num_epochs=1, sequential=False, split_choice='manual', split_idx=1, start=0, testonly=False, transformed=True, use_intermediate=True)
+Nb GPUS  2
+==> Preparing data..
+Initialize time: 1.161182165145874
+Time to prepare transforms: 0.0002562999725341797
+Time to download labels: 0.04716348648071289
+==> Building model..
+IN SPLITTING ALGO
+Recorded bandwidth: 10026.682377876921 Mbps
+Get bandwitdh took 1.2286889553070068
+In _get_intermediate_outputs_and_time
+Done intermediate outputs and time
+Sizes  [6.02112e+05 0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00 9.07776e+06
+ 9.07776e+06 9.07776e+06 9.07776e+06 9.07776e+06 9.07776e+06 9.07776e+06
+ 9.07776e+06 9.07776e+06 9.07776e+06 9.07776e+06 9.07776e+06 3.07200e+03
+ 3.07200e+03 3.07200e+03 4.00000e+03]
+Input_size  0.57421875
+TESTING *****************************
+Input size, BW, MIN:
+224483624004266.66 1314217312.6330838 1314217312.6330838
+All candidates indexes:  (array([17, 18, 19, 20]),)
+SPLIT IDX CHOICE, split idx manual, freeze_idx:  manual 1 17
+Intermediate:  0.57421875
+1.1484375
+Total layers size  104.47354125976562
+Server, client, server+client, vanilla  357.7919921875 18244.10888671875 18601.90087890625 19392.54638671875
+Fixed, scale_with_bsz  0 1.72265625
+Mem usage  1654.0 3.0
+Time for splitting algorithm: 5.954948425292969
+Using split index: 1
+Freezing the lower layers of the model (myvit) till index 17
+Time to freeze model: 0.0008857250213623047
+Time for model prep: 0.0022792816162109375
+Time for model and splitting algorithm: 5.958134412765503
+The mode is:  split
+Start 0, end 1000, post_step 1000
+
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 11, 2']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [1654.0, 3.0] Time: 0.3215320110321045
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [1654.0, 3.0] Time: 1.6447384357452393
+Length of received data: 602157121
+Future took 2.6327736377716064 seconds
+Pickle took 0.3163878917694092 seconds
+Read 574.2617807388306 MBs for this batch
+Executing all posts took 2.949350357055664 seconds
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [1654.0, 3.0] Time: 3.3784444332122803
+Dataloader took 0.4745900630950928 seconds
+Streaming imagenet data took 3.4239768981933594 seconds
+First stream takes: 3.4477899074554443 seconds
+The mode is:  split
+Start 1000, end 2000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.08061528205871582
+Time for copying to cuda: 0.12650394439697266
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 3, 0']
+Memory occupied: [2230.0, 782.0] Time: 4.809833288192749
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+Length of received data: 602157121
+Future took 2.725353479385376 seconds
+Pickle took 0.3269219398498535 seconds
+Read 574.2617807388306 MBs for this batch
+Executing all posts took 3.052556276321411 seconds
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 5, 0']
+Memory occupied: [2230.0, 1460.0] Time: 6.786314964294434
+Dataloader took 0.44454193115234375 seconds
+Streaming imagenet data took 3.4971461296081543 seconds
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 47']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [14816.0, 11238.0] Time: 8.261302709579468
+Exception: Caught RuntimeError in replica 0 on device 0.
+Original Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/parallel/parallel_apply.py", line 61, in _worker
+    output = module(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/root/collabml_client/application_layer/models/myvit.py", line 107, in forward
+    x = cc(x)
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 155, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+  File "/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py", line 1110, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/timm/models/vision_transformer.py", line 92, in forward
+    attn = q @ k.transpose(-2, -1)
+RuntimeError: CUDA out of memory. Tried to allocate 890.00 MiB (GPU 0; 14.76 GiB total capacity; 13.35 GiB already allocated; 33.75 MiB free; 13.48 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+Total time for streaming and training: 8.889381170272827
+Finish gpu thread time: 0.37293314933776855
+The whole process took 16.429540872573853 seconds

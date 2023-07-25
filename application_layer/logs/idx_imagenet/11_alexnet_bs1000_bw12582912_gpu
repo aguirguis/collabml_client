@@ -1,0 +1,246 @@
+Cached  True
+Transformed  True
+All in COS  False
+No adaptation  False
+Namespace(all_in_cos=False, batch_size=1000, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=17, model='myalexnet', no_adaptation=False, num_epochs=1, sequential=False, split_choice='manual', split_idx=11, start=0, testonly=False, transformed=True, use_intermediate=True)
+Nb GPUS  2
+==> Preparing data..
+Initialize time: 1.1626458168029785
+Time to prepare transforms: 0.00024175643920898438
+Time to download labels: 0.04677534103393555
+==> Building model..
+IN SPLITTING ALGO
+Recorded bandwidth: 10149.900808136268 Mbps
+Get bandwitdh took 1.2270722389221191
+In _get_intermediate_outputs_and_time
+Done intermediate outputs and time
+Sizes  [774400. 774400. 186624. 559872. 559872. 129792. 259584. 259584. 173056.
+ 173056. 173056. 173056.  36864.  36864.  36864.  16384.  16384.  16384.
+  16384.  16384.   4000.]
+Input_size  0.57421875
+TESTING *****************************
+Input size, BW, MIN:
+224483624004266.66 1330367798.724037 1330367798.724037
+All candidates indexes:  (array([ 5, 12, 13, 14, 15, 16, 17, 18, 19, 20]),)
+SPLIT IDX CHOICE, split idx manual, freeze_idx:  manual 11 17
+Intermediate:  0.1650390625
+1.47705078125
+Total layers size  4.189361572265625
+Server, client, server+client, vanilla  266.27734375 829.95361328125 1096.23095703125 2716.18408203125
+Fixed, scale_with_bsz  0 2.05126953125
+Mem usage  1514.0 3.0
+Time for splitting algorithm: 5.219696998596191
+Using split index: 11
+Freezing the lower layers of the model (myalexnet) till index 17
+Time to freeze model: 0.00020933151245117188
+Time for model prep: 0.0007970333099365234
+Time for model and splitting algorithm: 5.220722198486328
+The mode is:  split
+Start 0, end 1000, post_step 1000
+
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [1514.0, 3.0] Time: 0.3337714672088623
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [1514.0, 3.0] Time: 1.6698787212371826
+Length of received data: 173103121
+Future took 1.8742289543151855 seconds
+Pickle took 0.09281253814697266 seconds
+Read 165.08400058746338 MBs for this batch
+Executing all posts took 1.967200517654419 seconds
+Dataloader took 0.06143522262573242 seconds
+Streaming imagenet data took 2.028671979904175 seconds
+First stream takes: 2.0347275733947754 seconds
+The mode is:  split
+Start 1000, end 2000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.05057358741760254
+Time for copying to cuda: 0.0371096134185791
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 3, 0']
+Memory occupied: [1680.0, 502.0] Time: 3.06089186668396
+Length of received data: 173103121
+Future took 1.7407760620117188 seconds
+Pickle took 0.09275460243225098 seconds
+Read 165.08400058746338 MBs for this batch
+Executing all posts took 1.833681344985962 seconds
+Dataloader took 0.06316041946411133 seconds
+Streaming imagenet data took 1.8968853950500488 seconds
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 3, 0']
+Memory occupied: [1680.0, 1008.0] Time: 4.472218990325928
+Time for forward pass: 3.297994613647461
+Time for backpropagation: 0.04791402816772461
+GPU memory for training: 1.2120437622070312                          
+
+One training iteration takes: 3.440626859664917 seconds
+Index: 0
+Then, training+dataloading take 3.4410998821258545 seconds
+The mode is:  split
+Start 2000, end 3000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.09081459045410156
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 34, 7']
+Time for copying to cuda: 0.07695651054382324
+Time for forward pass: 0.0565488338470459
+Time for backpropagation: 0.003108978271484375
+GPU memory for training: 1.367194652557373                          
+
+One training iteration takes: 0.2347393035888672 seconds
+Index: 1
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 30, 6']
+Memory occupied: [2420.0, 1642.0] Time: 5.918884992599487
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [2420.0, 1642.0] Time: 7.384063482284546
+Length of received data: 173103121
+Future took 1.9344456195831299 seconds
+Pickle took 0.09117889404296875 seconds
+Read 165.08400058746338 MBs for this batch
+Executing all posts took 2.0257644653320312 seconds
+Dataloader took 0.06241035461425781 seconds
+Streaming imagenet data took 2.088219404220581 seconds
+Then, training+dataloading take 2.0947537422180176 seconds
+The mode is:  split
+Start 3000, end 4000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.04956936836242676
+Time for copying to cuda: 0.036663055419921875
+Time for forward pass: 0.0559849739074707
+Time for backpropagation: 0.002209186553955078
+GPU memory for training: 1.367560863494873                          
+
+One training iteration takes: 0.1510303020477295 seconds
+Index: 2
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [2420.0, 1642.0] Time: 8.815855264663696
+Length of received data: 173103121
+Future took 1.7530980110168457 seconds
+Pickle took 0.07175564765930176 seconds
+Read 165.08400058746338 MBs for this batch
+Executing all posts took 1.8249943256378174 seconds
+Dataloader took 0.06196856498718262 seconds
+Streaming imagenet data took 1.8870084285736084 seconds
+Then, training+dataloading take 1.8961944580078125 seconds
+The mode is:  split
+Start 4000, end 5000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.04946160316467285
+Time for copying to cuda: 0.036402225494384766
+Time for forward pass: 0.05603957176208496
+Time for backpropagation: 0.0022253990173339844
+GPU memory for training: 1.367560863494873                          
+
+One training iteration takes: 0.15073585510253906 seconds
+Index: 3
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [2420.0, 1642.0] Time: 10.241337776184082
+Length of received data: 173103121
+Future took 1.6978840827941895 seconds
+Pickle took 0.08503842353820801 seconds
+Read 165.08400058746338 MBs for this batch
+Executing all posts took 1.783074140548706 seconds
+Dataloader took 0.10556578636169434 seconds
+Streaming imagenet data took 1.8886871337890625 seconds
+Then, training+dataloading take 1.8985271453857422 seconds
+The mode is:  split
+Start 5000, end 6000, post_step 1000
+
+
+Epoch: 0
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+Time of next(dataloader) is: 0.0994107723236084
+Time for copying to cuda: 0.07395076751708984
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Time for forward pass: 0.09414219856262207
+Time for backpropagation: 0.003183126449584961
+GPU memory for training: 1.367560863494873                          
+
+One training iteration takes: 0.27477550506591797 seconds
+Index: 4
+Memory occupied: [2420.0, 1642.0] Time: 11.705105781555176
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Length of received data: 173103121
+Future took 1.8792407512664795 seconds
+Memory occupied: [2420.0, 1642.0] Time: 13.3300940990448
+Pickle took 0.08509087562561035 seconds
+Read 165.08400058746338 MBs for this batch
+Executing all posts took 1.9644770622253418 seconds
+Dataloader took 0.06220436096191406 seconds
+Streaming imagenet data took 2.026724100112915 seconds
+Then, training+dataloading take 2.034518241882324 seconds
+The mode is:  split
+Start 6000, end 7000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.05270671844482422
+Time for copying to cuda: 0.036121368408203125
+Time for forward pass: 0.05592846870422363
+Time for backpropagation: 0.0021572113037109375
+GPU memory for training: 1.367560863494873                          
+
+One training iteration takes: 0.15312600135803223 seconds
+Index: 5
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [2420.0, 1642.0] Time: 14.752696752548218
+Length of received data: 173103121
+Future took 1.7186408042907715 seconds
+Pickle took 0.08391976356506348 seconds
+Read 165.08400058746338 MBs for this batch
+Executing all posts took 1.8027012348175049 seconds
+Dataloader took 0.06210064888000488 seconds
+Streaming imagenet data took 1.8648459911346436 seconds
+Then, training+dataloading take 1.8737974166870117 seconds
+The mode is:  split
+Start 7000, end 8000, post_step 1000
+
+
+Epoch: 0
+Time of next(dataloader) is: 0.04959750175476074
+Time for copying to cuda: 0.036388397216796875
+Time for forward pass: 0.05602598190307617
+Time for backpropagation: 0.002214193344116211
+GPU memory for training: 1.367560863494873                          
+
+One training iteration takes: 0.15047621726989746 seconds
+Index: 6
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [2420.0, 1642.0] Time: 16.1768319606781
+Length of received data: 173103121
+Future took 1.767472743988037 seconds
+Pickle took 0.08036470413208008 seconds
+Read 165.08400058746338 MBs for this batch
+Executing all posts took 1.847987174987793 seconds
+Dataloader took 0.10366034507751465 seconds
+Streaming imagenet data took 1.9517159461975098 seconds
+Then, training+dataloading take 1.9576945304870605 seconds
+
+Epoch: 0
+Time of next(dataloader) is: 0.05472755432128906
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+Time for copying to cuda: 0.08046889305114746
+Time for forward pass: 0.0892343521118164
+Time for backpropagation: 0.0031325817108154297
+GPU memory for training: 1.367560863494873                          
+
+Last train takes: 0.23105573654174805 seconds
+Total time for streaming and training: 17.462600708007812
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 14, 5']
+Memory occupied: [2420.0, 1642.0] Time: 17.64016842842102
+Finish gpu thread time: 1.1786351203918457
+The whole process took 25.072025299072266 seconds
