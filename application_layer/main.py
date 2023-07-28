@@ -164,11 +164,13 @@ if not args.downloadall and dataset_name in stream_datasets:
     labels = [int(l)-1 for l in labels]
 print("Time to download labels: {}".format(time.time()-download_labels_time))
 
-model_prep_split = time.time()
 # Model
+get_model_time = time.time()
 print('==> Building model..')
 net = get_model(model, dataset_name)
 mem_cons = [10,10]
+print("Time for getting model: {}".format(time.time()-get_model_time))
+model_prep_split = time.time()
 if mode == 'split':
     split_idx, mem_cons = choose_split_idx(model, net, freeze_idx, batch_size, split_choice, split_idx, device)
 

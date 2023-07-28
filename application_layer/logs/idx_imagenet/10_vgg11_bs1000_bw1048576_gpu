@@ -2,802 +2,830 @@ Cached  True
 Transformed  True
 All in COS  False
 No adaptation  False
-Namespace(all_in_cos=False, batch_size=1000, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=21, model='myresnet50', no_adaptation=False, num_epochs=1, sequential=False, split_choice='manual', split_idx=7, start=0, testonly=False, transformed=True, use_intermediate=True)
+Namespace(all_in_cos=False, batch_size=1000, cached=True, cpuonly=False, dataset='imagenet', downloadall=False, end=10000, freeze=True, freeze_idx=25, model='myvgg11', no_adaptation=False, num_epochs=1, sequential=False, split_choice='manual', split_idx=10, start=0, testonly=False, transformed=True, use_intermediate=True)
 Nb GPUS  2
 ==> Preparing data..
-Initialize time: 1.164320945739746
-Time to prepare transforms: 0.0002617835998535156
-Time to download labels: 0.0660703182220459
+Initialize time: 1.161109447479248
+Time to prepare transforms: 0.0002422332763671875
+Time to download labels: 0.06496310234069824
 ==> Building model..
 IN SPLITTING ALGO
-Recorded bandwidth: 908.5419773280822 Mbps
-Get bandwitdh took 1.24174165725708
+Recorded bandwidth: 907.8868743945421 Mbps
+Get bandwitdh took 1.2287168502807617
 In _get_intermediate_outputs_and_time
 Done intermediate outputs and time
-Sizes  [3.2112640e+06 3.2112640e+06 3.2112640e+06 8.0281600e+05 1.4450688e+07
- 1.4450688e+07 1.4450688e+07 1.0838016e+07 7.2253440e+06 7.2253440e+06
- 7.2253440e+06 5.4190080e+06 3.6126720e+06 3.6126720e+06 3.6126720e+06
- 3.6126720e+06 3.6126720e+06 2.7095040e+06 1.8063360e+06 1.8063360e+06
- 8.1920000e+03 4.0000000e+03]
+Sizes  [1.2845056e+07 1.2845056e+07 3.2112640e+06 6.4225280e+06 6.4225280e+06
+ 1.6056320e+06 3.2112640e+06 3.2112640e+06 3.2112640e+06 3.2112640e+06
+ 8.0281600e+05 1.6056320e+06 1.6056320e+06 1.6056320e+06 1.6056320e+06
+ 4.0140800e+05 4.0140800e+05 4.0140800e+05 4.0140800e+05 4.0140800e+05
+ 1.0035200e+05 1.0035200e+05 1.6384000e+04 1.6384000e+04 1.6384000e+04
+ 1.6384000e+04 1.6384000e+04 1.6384000e+04 4.0000000e+03]
 Input_size  0.57421875
 TESTING *****************************
 Input size, BW, MIN:
-224483624004266.66 119084414.0523464 119084414.0523464
-All candidates indexes:  (array([20, 21]),)
-SPLIT IDX CHOICE, split idx manual, freeze_idx:  manual 7 21
+224483624004266.66 118998548.40064143 118998548.40064143
+All candidates indexes:  (array([20, 21, 22, 23, 24, 25, 26, 27, 28]),)
+SPLIT IDX CHOICE, split idx manual, freeze_idx:  manual 10 25
 Intermediate:  3.0625
-6.125
-Total layers size  110.74014282226562
-Server, client, server+client, vanilla  204.91552734375 7761.607421875 7966.52294921875 11398.326171875
-Fixed, scale_with_bsz  0 6.69921875
-Mem usage  1410.0 3.0
-Time for splitting algorithm: 5.153362274169922
-Using split index: 7
-Freezing the lower layers of the model (myresnet50) till index 21
-Time to freeze model: 0.0007131099700927734
-Time for model prep: 0.0022764205932617188
-Time for model and splitting algorithm: 5.1563708782196045
+24.5
+Total layers size  62.687408447265625
+Server, client, server+client, vanilla  908.396484375 7499.21337890625 8407.60986328125 29510.93212890625
+Fixed, scale_with_bsz  0 25.07421875
+Mem usage  1840.0 3.0
+Time for splitting algorithm: 6.571748495101929
+Using split index: 10
+Freezing the lower layers of the model (myvgg11) till index 25
+Time to freeze model: 0.00024199485778808594
+Time for model prep: 0.000850677490234375
+Time for model and splitting algorithm: 6.572858810424805
 The mode is:  split
 Start 0, end 1000, post_step 1000
 
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 6, 1']
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 5, 2']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 0.3367273807525635
+Memory occupied: [1840.0, 3.0] Time: 0.3168468475341797
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 1.6736657619476318
+Memory occupied: [1840.0, 3.0] Time: 1.6376619338989258
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 3.008417844772339
+Memory occupied: [1840.0, 3.0] Time: 2.957354784011841
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 4.348627328872681
+Memory occupied: [1840.0, 3.0] Time: 4.283705949783325
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 5.690145492553711
+Memory occupied: [1840.0, 3.0] Time: 5.605625152587891
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 7.031551837921143
+Memory occupied: [1840.0, 3.0] Time: 6.927549123764038
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 8.435745477676392
+Memory occupied: [1840.0, 3.0] Time: 8.251483917236328
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 9.8341224193573
+Memory occupied: [1840.0, 3.0] Time: 9.598290920257568
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 11.221259355545044
+Memory occupied: [1840.0, 3.0] Time: 10.969436645507812
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 12.619996786117554
+Memory occupied: [1840.0, 3.0] Time: 12.359232664108276
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 14.029797554016113
+Memory occupied: [1840.0, 3.0] Time: 13.765287399291992
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 15.453705072402954
+Memory occupied: [1840.0, 3.0] Time: 15.180961847305298
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 16.89082169532776
+Memory occupied: [1840.0, 3.0] Time: 16.614604711532593
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 18.343668937683105
+Memory occupied: [1840.0, 3.0] Time: 18.06973648071289
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 19.804665565490723
+Memory occupied: [1840.0, 3.0] Time: 19.538524627685547
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 21.276631832122803
+Memory occupied: [1840.0, 3.0] Time: 21.006024837493896
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 22.755618572235107
+Memory occupied: [1840.0, 3.0] Time: 22.469895362854004
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 24.252931356430054
+Memory occupied: [1840.0, 3.0] Time: 23.940563201904297
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 25.75591492652893
+Memory occupied: [1840.0, 3.0] Time: 25.42421793937683
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 27.270032167434692
+Memory occupied: [1840.0, 3.0] Time: 26.916227340698242
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 28.788191556930542
+Memory occupied: [1840.0, 3.0] Time: 28.417999267578125
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 30.319878101348877
+Memory occupied: [1840.0, 3.0] Time: 29.927883625030518
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 31.86233901977539
+Memory occupied: [1840.0, 3.0] Time: 31.45316195487976
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 33.41495370864868
+Memory occupied: [1840.0, 3.0] Time: 32.988855838775635
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 34.97785758972168
+Memory occupied: [1840.0, 3.0] Time: 34.53741812705994
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [1840.0, 3.0] Time: 36.10454320907593
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [1840.0, 3.0] Time: 37.6739444732666
 Length of received data: 3211311121
-Future took 36.54864430427551 seconds
-Pickle took 1.6386609077453613 seconds
+Future took 37.9370379447937 seconds
+Pickle took 1.6421558856964111 seconds
 Read 3062.5449380874634 MBs for this batch
-Executing all posts took 38.18752074241638 seconds
-Memory occupied: [1410.0, 3.0] Time: 38.18785738945007
-Dataloader took 1.1938040256500244 seconds
-Streaming imagenet data took 39.3813681602478 seconds
-First stream takes: 39.56294775009155 seconds
+Executing all posts took 39.57942247390747 seconds
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [1840.0, 3.0] Time: 40.34291100502014
+Dataloader took 1.439727783203125 seconds
+Streaming imagenet data took 41.019187211990356 seconds
+First stream takes: 41.204331398010254 seconds
 The mode is:  split
 Start 1000, end 2000, post_step 1000
 
 
 Epoch: 0
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+Time of next(dataloader) is: 0.4171116352081299
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [1410.0, 3.0] Time: 39.88205528259277
-Time of next(dataloader) is: 0.4310183525085449
-Time for copying to cuda: 0.6707539558410645
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 2, 0']
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 3, 0']
-Memory occupied: [4474.0, 1832.0] Time: 41.48104214668274
+Memory occupied: [4904.0, 3.0] Time: 41.92471194267273
+Time for copying to cuda: 0.7833387851715088
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 3, 0']
-Memory occupied: [4474.0, 2390.0] Time: 43.09994578361511
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 2, 0']
+Memory occupied: [4904.0, 1946.0] Time: 43.52052879333496
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 81, 33']
-Memory occupied: [10430.0, 8846.0] Time: 44.73649287223816
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 99, 43']
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 82, 71']
-Memory occupied: [10406.0, 8846.0] Time: 46.371665716171265
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 82, 51']
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 100, 79']
-Memory occupied: [9640.0, 8080.0] Time: 48.02981781959534
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 79, 53']
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 100, 65']
-Memory occupied: [9640.0, 8080.0] Time: 49.71984004974365
-Time for forward pass: 9.285160541534424
-Time for backpropagation: 0.05968523025512695
-GPU memory for training: 16.299291133880615                          
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 2, 0']
+Memory occupied: [4904.0, 2452.0] Time: 45.13823127746582
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 14']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 75, 7']
+Memory occupied: [9518.0, 7904.0] Time: 46.762916564941406
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 14']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [13770.0, 14796.0] Time: 48.38747024536133
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 38']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 100, 20']
+Memory occupied: [13376.0, 14796.0] Time: 50.01329302787781
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 89, 39']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 59, 17']
+Memory occupied: [9066.0, 7520.0] Time: 51.6538348197937
+Time for forward pass: 9.975289583206177
+Time for backpropagation: 0.052752017974853516
+GPU memory for training: 19.40782928466797                          
 
-One training iteration takes: 10.541876077651978 seconds
+One training iteration takes: 11.328467845916748 seconds
 Index: 0
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 51.166025161743164
+Memory occupied: [6022.0, 7528.0] Time: 53.07402229309082
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 52.62984895706177
+Memory occupied: [6022.0, 7528.0] Time: 54.52327561378479
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 54.104241609573364
+Memory occupied: [6022.0, 7528.0] Time: 55.9905059337616
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 55.593881130218506
+Memory occupied: [6022.0, 7528.0] Time: 57.47547364234924
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 57.14496302604675
+Memory occupied: [6022.0, 7528.0] Time: 58.96377968788147
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 58.683292627334595
+Memory occupied: [6022.0, 7528.0] Time: 60.46301245689392
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 60.249046325683594
+Memory occupied: [6022.0, 7528.0] Time: 61.976943254470825
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 61.830819845199585
+Memory occupied: [6022.0, 7528.0] Time: 63.505820989608765
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 63.42469382286072
+Memory occupied: [6022.0, 7528.0] Time: 65.04455351829529
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 65.0192506313324
+Memory occupied: [6022.0, 7528.0] Time: 66.59855818748474
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 66.62477517127991
+Memory occupied: [6022.0, 7528.0] Time: 68.15982580184937
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 68.24026560783386
+Memory occupied: [6022.0, 7528.0] Time: 69.73333716392517
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 69.86854338645935
+Memory occupied: [6022.0, 7528.0] Time: 71.31525111198425
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 71.5133490562439
+Memory occupied: [6022.0, 7528.0] Time: 72.9111545085907
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 73.17037177085876
+Memory occupied: [6022.0, 7528.0] Time: 74.51809334754944
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 74.83287358283997
+Memory occupied: [6022.0, 7528.0] Time: 76.13407325744629
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 76.5100588798523
+Memory occupied: [6022.0, 7528.0] Time: 77.76349687576294
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [6022.0, 7528.0] Time: 79.41029214859009
 Length of received data: 3211311121
-Future took 37.315096616744995 seconds
-Pickle took 1.6434314250946045 seconds
+Future took 38.44329118728638 seconds
+Pickle took 1.641672134399414 seconds
 Read 3062.5449380874634 MBs for this batch
-Executing all posts took 38.95869159698486 seconds
+Executing all posts took 40.08513927459717 seconds
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 79.35133862495422
-Dataloader took 1.4630064964294434 seconds
-Streaming imagenet data took 40.42174220085144 seconds
-Then, training+dataloading take 40.56113815307617 seconds
+Memory occupied: [6022.0, 7528.0] Time: 82.11216521263123
+Dataloader took 1.456618070602417 seconds
+Streaming imagenet data took 41.54180288314819 seconds
+Then, training+dataloading take 41.684441566467285 seconds
 The mode is:  split
 Start 2000, end 3000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.4045274257659912
+Time of next(dataloader) is: 0.37743210792541504
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9668.0, 8104.0] Time: 81.11665630340576
-Time for copying to cuda: 0.8711934089660645
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 86']
-Time for forward pass: 1.1431121826171875
-Time for backpropagation: 0.006966352462768555
-GPU memory for training: 9.183461666107178                          
+Memory occupied: [6022.0, 7528.0] Time: 83.84876847267151
+Time for copying to cuda: 0.8395018577575684
+Time for forward pass: 0.6283295154571533
+Time for backpropagation: 0.002807140350341797
+GPU memory for training: 14.902618408203125                          
 
-One training iteration takes: 2.4651267528533936 seconds
+One training iteration takes: 1.9486396312713623 seconds
 Index: 1
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 100, 72']
-Memory occupied: [9676.0, 8112.0] Time: 82.7901713848114
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 35, 9']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 85.27516317367554
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 84.23421549797058
+Memory occupied: [12148.0, 10750.0] Time: 86.70586013793945
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 85.68104219436646
+Memory occupied: [12148.0, 10750.0] Time: 88.13605403900146
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 87.13317275047302
+Memory occupied: [12148.0, 10750.0] Time: 89.56462049484253
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 88.59772872924805
+Memory occupied: [12148.0, 10750.0] Time: 90.99243140220642
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 90.07339334487915
+Memory occupied: [12148.0, 10750.0] Time: 92.4400429725647
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 91.586501121521
+Memory occupied: [12148.0, 10750.0] Time: 93.90083169937134
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 93.10660028457642
+Memory occupied: [12148.0, 10750.0] Time: 95.3807418346405
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 94.62967705726624
+Memory occupied: [12148.0, 10750.0] Time: 96.892897605896
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 96.16546368598938
+Memory occupied: [12148.0, 10750.0] Time: 98.41722178459167
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 97.71748495101929
+Memory occupied: [12148.0, 10750.0] Time: 99.93809700012207
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 99.29591417312622
+Memory occupied: [12148.0, 10750.0] Time: 101.47213649749756
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 100.89235496520996
+Memory occupied: [12148.0, 10750.0] Time: 103.02024006843567
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 102.49421644210815
+Memory occupied: [12148.0, 10750.0] Time: 104.58386945724487
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 104.09171056747437
+Memory occupied: [12148.0, 10750.0] Time: 106.15266036987305
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 105.69707036018372
+Memory occupied: [12148.0, 10750.0] Time: 107.73293328285217
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 107.31064987182617
+Memory occupied: [12148.0, 10750.0] Time: 109.32599449157715
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 108.98218107223511
+Memory occupied: [12148.0, 10750.0] Time: 110.93327689170837
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 110.64912462234497
+Memory occupied: [12148.0, 10750.0] Time: 112.54669857025146
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 112.30305457115173
+Memory occupied: [12148.0, 10750.0] Time: 114.17165803909302
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 113.96331834793091
+Memory occupied: [12148.0, 10750.0] Time: 115.80775380134583
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 115.63402390480042
+Memory occupied: [12148.0, 10750.0] Time: 117.45466589927673
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 117.31961584091187
+Memory occupied: [12148.0, 10750.0] Time: 119.11578631401062
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 120.7846577167511
 Length of received data: 3211311121
-Future took 37.31848764419556 seconds
-Pickle took 1.6458001136779785 seconds
+Future took 38.81650519371033 seconds
+Pickle took 1.6381337642669678 seconds
 Read 3062.5449380874634 MBs for this batch
-Executing all posts took 38.96444129943848 seconds
+Executing all posts took 40.45482611656189 seconds
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 119.95606732368469
-Dataloader took 1.4745452404022217 seconds
-Streaming imagenet data took 40.4390344619751 seconds
-Then, training+dataloading take 40.582038164138794 seconds
+Memory occupied: [12148.0, 10750.0] Time: 124.20159888267517
+Dataloader took 1.4674203395843506 seconds
+Streaming imagenet data took 41.92229104042053 seconds
+Then, training+dataloading take 42.070199966430664 seconds
 The mode is:  split
 Start 3000, end 4000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.3707005977630615
+Time of next(dataloader) is: 0.3583061695098877
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 121.7237274646759
-Time for copying to cuda: 0.8740067481994629
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 89']
-Time for forward pass: 1.1952297687530518
-Time for backpropagation: 0.006897449493408203
-GPU memory for training: 9.183461666107178                          
+Memory occupied: [12148.0, 10750.0] Time: 125.95698142051697
+Time for copying to cuda: 0.881026029586792
+Time for forward pass: 0.6538872718811035
+Time for backpropagation: 0.0028388500213623047
+GPU memory for training: 14.901641845703125                          
 
-One training iteration takes: 2.485942840576172 seconds
+One training iteration takes: 1.9961326122283936 seconds
 Index: 2
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 90, 62']
-Memory occupied: [9676.0, 8112.0] Time: 123.42861366271973
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 27, 5']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 127.42360472679138
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 124.90627121925354
+Memory occupied: [12148.0, 10750.0] Time: 128.88553762435913
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 126.38501310348511
+Memory occupied: [12148.0, 10750.0] Time: 130.3474051952362
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 127.86714172363281
+Memory occupied: [12148.0, 10750.0] Time: 131.80985498428345
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 129.36899304389954
+Memory occupied: [12148.0, 10750.0] Time: 133.27157855033875
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 130.88238382339478
+Memory occupied: [12148.0, 10750.0] Time: 134.78452348709106
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 132.4123134613037
+Memory occupied: [12148.0, 10750.0] Time: 136.2927598953247
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 133.95690751075745
+Memory occupied: [12148.0, 10750.0] Time: 137.80345964431763
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 135.51671862602234
+Memory occupied: [12148.0, 10750.0] Time: 139.33119797706604
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 137.08844804763794
+Memory occupied: [12148.0, 10750.0] Time: 140.8869547843933
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 138.67808961868286
+Memory occupied: [12148.0, 10750.0] Time: 142.4431734085083
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 140.27802753448486
+Memory occupied: [12148.0, 10750.0] Time: 144.0105550289154
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 141.88982582092285
+Memory occupied: [12148.0, 10750.0] Time: 145.58971452713013
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 143.51821947097778
+Memory occupied: [12148.0, 10750.0] Time: 147.18364262580872
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 145.153165102005
+Memory occupied: [12148.0, 10750.0] Time: 148.78714156150818
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 146.80211853981018
+Memory occupied: [12148.0, 10750.0] Time: 150.39994740486145
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 148.4522922039032
+Memory occupied: [12148.0, 10750.0] Time: 152.02810311317444
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 150.1150827407837
+Memory occupied: [12148.0, 10750.0] Time: 153.66574883460999
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 151.78963327407837
+Memory occupied: [12148.0, 10750.0] Time: 155.31136846542358
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 153.47485756874084
+Memory occupied: [12148.0, 10750.0] Time: 156.96987795829773
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 155.1715383529663
+Memory occupied: [12148.0, 10750.0] Time: 158.6408727169037
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 156.88004279136658
+Memory occupied: [12148.0, 10750.0] Time: 160.3275785446167
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 162.02246189117432
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 163.72786021232605
 Length of received data: 3211311121
-Future took 37.16033434867859 seconds
-Pickle took 1.6403720378875732 seconds
+Future took 39.105095863342285 seconds
+Pickle took 1.6356942653656006 seconds
 Read 3062.5449380874634 MBs for this batch
-Executing all posts took 38.80087471008301 seconds
+Executing all posts took 40.74094796180725 seconds
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 160.40424394607544
-Dataloader took 1.4753978252410889 seconds
-Streaming imagenet data took 40.27631759643555 seconds
-Then, training+dataloading take 40.427902936935425 seconds
+Memory occupied: [12148.0, 10750.0] Time: 166.58482956886292
+Dataloader took 1.477414846420288 seconds
+Streaming imagenet data took 42.21841073036194 seconds
+Then, training+dataloading take 42.37303376197815 seconds
 The mode is:  split
 Start 4000, end 5000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.2708289623260498
+Time of next(dataloader) is: 0.35517191886901855
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 162.1945207118988
-Time for copying to cuda: 0.955308198928833
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 87']
-Time for forward pass: 1.1512112617492676
-Time for backpropagation: 0.006699800491333008
-GPU memory for training: 9.183461666107178                          
+Memory occupied: [12148.0, 10750.0] Time: 168.38704586029053
+Time for copying to cuda: 0.905480146408081
+Time for forward pass: 0.6614792346954346
+Time for backpropagation: 0.0027298927307128906
+GPU memory for training: 14.901641845703125                          
 
-One training iteration takes: 2.478471517562866 seconds
+One training iteration takes: 2.023872137069702 seconds
 Index: 3
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 13, 9']
-Memory occupied: [9676.0, 8112.0] Time: 163.88815259933472
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 30, 7']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 169.9247817993164
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 165.44140243530273
+Memory occupied: [12148.0, 10750.0] Time: 171.46202659606934
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 166.9940357208252
+Memory occupied: [12148.0, 10750.0] Time: 173.00070643424988
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 168.54737663269043
+Memory occupied: [12148.0, 10750.0] Time: 174.5382800102234
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 170.12175941467285
+Memory occupied: [12148.0, 10750.0] Time: 176.07700967788696
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 171.71050119400024
+Memory occupied: [12148.0, 10750.0] Time: 177.65754985809326
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 173.31228876113892
+Memory occupied: [12148.0, 10750.0] Time: 179.24539589881897
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 174.930584192276
+Memory occupied: [12148.0, 10750.0] Time: 180.83527040481567
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 176.56549668312073
+Memory occupied: [12148.0, 10750.0] Time: 182.44065499305725
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 178.21792578697205
+Memory occupied: [12148.0, 10750.0] Time: 184.06297421455383
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 179.88305497169495
+Memory occupied: [12148.0, 10750.0] Time: 185.6982991695404
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 181.55899500846863
+Memory occupied: [12148.0, 10750.0] Time: 187.34718012809753
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 183.2445728778839
+Memory occupied: [12148.0, 10750.0] Time: 189.01052474975586
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 184.9433012008667
+Memory occupied: [12148.0, 10750.0] Time: 190.68439292907715
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 186.65470433235168
+Memory occupied: [12148.0, 10750.0] Time: 192.36958074569702
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 188.37738943099976
+Memory occupied: [12148.0, 10750.0] Time: 194.06773018836975
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 190.10897541046143
+Memory occupied: [12148.0, 10750.0] Time: 195.77793097496033
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 191.85192275047302
+Memory occupied: [12148.0, 10750.0] Time: 197.49465680122375
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 193.60799431800842
+Memory occupied: [12148.0, 10750.0] Time: 199.22480463981628
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 195.3759207725525
+Memory occupied: [12148.0, 10750.0] Time: 200.96859049797058
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 197.15644001960754
+Memory occupied: [12148.0, 10750.0] Time: 202.72240686416626
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 198.94872212409973
+Memory occupied: [12148.0, 10750.0] Time: 204.4892339706421
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 206.26674032211304
 Length of received data: 3211311121
-Future took 37.90344715118408 seconds
-Pickle took 1.5387911796569824 seconds
+Future took 39.56228804588318 seconds
+Pickle took 1.4917616844177246 seconds
 Read 3062.5449380874634 MBs for this batch
-Executing all posts took 39.442402362823486 seconds
+Executing all posts took 41.05420708656311 seconds
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 201.47111320495605
-Dataloader took 1.4738023281097412 seconds
-Streaming imagenet data took 40.91625094413757 seconds
-Then, training+dataloading take 41.069878339767456 seconds
+Memory occupied: [12148.0, 10750.0] Time: 209.27459263801575
+Dataloader took 1.4866502285003662 seconds
+Streaming imagenet data took 42.54090142250061 seconds
+Then, training+dataloading take 42.700329303741455 seconds
 The mode is:  split
 Start 5000, end 6000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.35341358184814453
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 5, 0']
+Time of next(dataloader) is: 0.3528320789337158
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 3, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 203.262277841568
-Time for copying to cuda: 0.8832042217254639
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 77']
-Time for forward pass: 1.1643333435058594
-Time for backpropagation: 0.006693124771118164
-GPU memory for training: 9.183461666107178                          
+Memory occupied: [12148.0, 10750.0] Time: 211.0555922985077
+Time for copying to cuda: 0.8820104598999023
+Time for forward pass: 0.6141483783721924
+Time for backpropagation: 0.0027971267700195312
+GPU memory for training: 14.901641845703125                          
 
-One training iteration takes: 2.5025415420532227 seconds
+One training iteration takes: 1.9512181282043457 seconds
 Index: 4
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 76, 60']
-Memory occupied: [9676.0, 8112.0] Time: 204.98118686676025
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 42, 11']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 212.58227396011353
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 206.53002500534058
+Memory occupied: [12148.0, 10750.0] Time: 214.10817575454712
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 208.08110809326172
+Memory occupied: [12148.0, 10750.0] Time: 215.63407826423645
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 209.63145065307617
+Memory occupied: [12148.0, 10750.0] Time: 217.16273546218872
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 211.19656229019165
+Memory occupied: [12148.0, 10750.0] Time: 218.6894600391388
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 212.777250289917
+Memory occupied: [12148.0, 10750.0] Time: 220.2322382926941
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 214.370178937912
+Memory occupied: [12148.0, 10750.0] Time: 221.7907419204712
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 215.98012709617615
+Memory occupied: [12148.0, 10750.0] Time: 223.36595845222473
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 217.60233545303345
+Memory occupied: [12148.0, 10750.0] Time: 224.95624566078186
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 219.2399139404297
+Memory occupied: [12148.0, 10750.0] Time: 226.56183528900146
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 220.89280462265015
+Memory occupied: [12148.0, 10750.0] Time: 228.17903685569763
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 222.55937004089355
+Memory occupied: [12148.0, 10750.0] Time: 229.8129596710205
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 224.23778915405273
+Memory occupied: [12148.0, 10750.0] Time: 231.45921182632446
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 225.92895531654358
+Memory occupied: [12148.0, 10750.0] Time: 233.12097811698914
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 227.63047790527344
+Memory occupied: [12148.0, 10750.0] Time: 234.79255151748657
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 229.34519982337952
+Memory occupied: [12148.0, 10750.0] Time: 236.47302675247192
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 231.06669569015503
+Memory occupied: [12148.0, 10750.0] Time: 238.16693091392517
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 232.7990641593933
+Memory occupied: [12148.0, 10750.0] Time: 239.86947441101074
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 234.54539728164673
+Memory occupied: [12148.0, 10750.0] Time: 241.58358097076416
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 236.30306553840637
+Memory occupied: [12148.0, 10750.0] Time: 243.3076639175415
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 238.07293057441711
+Memory occupied: [12148.0, 10750.0] Time: 245.049889087677
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 239.85713171958923
+Memory occupied: [12148.0, 10750.0] Time: 246.79920172691345
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 248.55963373184204
 Length of received data: 3211311121
-Future took 37.95375680923462 seconds
-Pickle took 1.4998438358306885 seconds
+Future took 39.26984238624573 seconds
+Pickle took 1.505915641784668 seconds
 Read 3062.5449380874634 MBs for this batch
-Executing all posts took 39.45381045341492 seconds
+Executing all posts took 40.775965452194214 seconds
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 242.55540227890015
-Dataloader took 1.488783359527588 seconds
-Streaming imagenet data took 40.942639112472534 seconds
-Then, training+dataloading take 41.09605073928833 seconds
+Memory occupied: [12148.0, 10750.0] Time: 251.69289565086365
+Dataloader took 1.4617335796356201 seconds
+Streaming imagenet data took 42.23774242401123 seconds
+Then, training+dataloading take 42.39568543434143 seconds
 The mode is:  split
 Start 6000, end 7000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.3990602493286133
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 10, 1']
+Time of next(dataloader) is: 0.35378527641296387
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 244.36700129508972
-Time for copying to cuda: 0.8760490417480469
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 90']
-Time for forward pass: 1.1690897941589355
-Time for backpropagation: 0.00637507438659668
-GPU memory for training: 9.183461666107178                          
+Memory occupied: [12148.0, 10750.0] Time: 253.46837830543518
+Time for copying to cuda: 0.8775441646575928
+Time for forward pass: 0.6237294673919678
+Time for backpropagation: 0.0027251243591308594
+GPU memory for training: 14.901641845703125                          
 
-One training iteration takes: 2.5455305576324463 seconds
+One training iteration takes: 1.9569635391235352 seconds
 Index: 5
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 65, 52']
-Memory occupied: [9676.0, 8112.0] Time: 246.11964511871338
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 247.6715123653412
+Memory occupied: [12148.0, 10750.0] Time: 254.99836373329163
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 249.22053456306458
+Memory occupied: [12148.0, 10750.0] Time: 256.5290267467499
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 250.77045035362244
+Memory occupied: [12148.0, 10750.0] Time: 258.0592589378357
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 252.33694577217102
+Memory occupied: [12148.0, 10750.0] Time: 259.59412360191345
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 253.918470621109
+Memory occupied: [12148.0, 10750.0] Time: 261.12352895736694
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 255.51143884658813
+Memory occupied: [12148.0, 10750.0] Time: 262.67058420181274
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 257.1228346824646
+Memory occupied: [12148.0, 10750.0] Time: 264.23261189460754
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 258.747456073761
+Memory occupied: [12148.0, 10750.0] Time: 265.8145408630371
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 260.386771440506
+Memory occupied: [12148.0, 10750.0] Time: 267.40863728523254
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 262.0418601036072
+Memory occupied: [12148.0, 10750.0] Time: 269.01832580566406
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 263.71556997299194
+Memory occupied: [12148.0, 10750.0] Time: 270.64318799972534
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 265.3930571079254
+Memory occupied: [12148.0, 10750.0] Time: 272.28278136253357
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 267.09235095977783
+Memory occupied: [12148.0, 10750.0] Time: 273.93462085723877
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 268.7910125255585
+Memory occupied: [12148.0, 10750.0] Time: 275.59832644462585
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 270.5013852119446
+Memory occupied: [12148.0, 10750.0] Time: 277.27054238319397
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 272.2184000015259
+Memory occupied: [12148.0, 10750.0] Time: 278.9558947086334
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 273.95013523101807
+Memory occupied: [12148.0, 10750.0] Time: 280.6696038246155
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 275.6905391216278
+Memory occupied: [12148.0, 10750.0] Time: 282.4113953113556
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 277.44319558143616
+Memory occupied: [12148.0, 10750.0] Time: 284.1667914390564
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 279.20696544647217
+Memory occupied: [12148.0, 10750.0] Time: 285.9479956626892
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 280.98311400413513
+Memory occupied: [12148.0, 10750.0] Time: 287.74266600608826
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 289.54986000061035
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 291.3710894584656
 Length of received data: 3211311121
-Future took 38.04229402542114 seconds
-Pickle took 1.5342559814453125 seconds
+Future took 39.30388045310974 seconds
+Pickle took 1.5277986526489258 seconds
 Read 3062.5449380874634 MBs for this batch
-Executing all posts took 39.57671666145325 seconds
+Executing all posts took 40.83185029029846 seconds
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 283.77081322669983
-Dataloader took 1.4894523620605469 seconds
-Streaming imagenet data took 41.066214084625244 seconds
-Then, training+dataloading take 41.2203152179718 seconds
+Memory occupied: [12148.0, 10750.0] Time: 294.1459300518036
+Dataloader took 1.484724760055542 seconds
+Streaming imagenet data took 42.31663203239441 seconds
+Then, training+dataloading take 42.475154638290405 seconds
 The mode is:  split
 Start 7000, end 8000, post_step 1000
 
 
 Epoch: 0
-Time of next(dataloader) is: 0.35497450828552246
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 6, 0']
+Time of next(dataloader) is: 0.3535933494567871
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 14, 1']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 285.60150122642517
-Time for copying to cuda: 0.89542555809021
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 79']
-Time for forward pass: 1.169673204421997
-Time for backpropagation: 0.006928920745849609
-GPU memory for training: 9.183461666107178                          
+Memory occupied: [12148.0, 10750.0] Time: 295.9309527873993
+Time for copying to cuda: 0.8916225433349609
+Time for forward pass: 0.6303191184997559
+Time for backpropagation: 0.002755880355834961
+GPU memory for training: 14.901641845703125                          
 
-One training iteration takes: 2.5222840309143066 seconds
+One training iteration takes: 1.9778189659118652 seconds
 Index: 6
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 81, 60']
-Memory occupied: [9676.0, 8112.0] Time: 287.3188228607178
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 30, 7']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 297.4624457359314
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 288.87231159210205
+Memory occupied: [12148.0, 10750.0] Time: 298.99341678619385
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 290.42469453811646
+Memory occupied: [12148.0, 10750.0] Time: 300.5255515575409
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 291.9770710468292
+Memory occupied: [12148.0, 10750.0] Time: 302.0550901889801
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 293.54536533355713
+Memory occupied: [12148.0, 10750.0] Time: 303.58424258232117
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 295.1276144981384
+Memory occupied: [12148.0, 10750.0] Time: 305.12895226478577
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 296.7249438762665
+Memory occupied: [12148.0, 10750.0] Time: 306.6928472518921
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 298.33875131607056
+Memory occupied: [12148.0, 10750.0] Time: 308.2743308544159
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 299.96781301498413
+Memory occupied: [12148.0, 10750.0] Time: 309.8713572025299
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 301.60823249816895
+Memory occupied: [12148.0, 10750.0] Time: 311.4813234806061
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 303.2598509788513
+Memory occupied: [12148.0, 10750.0] Time: 313.1056795120239
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 304.9231696128845
+Memory occupied: [12148.0, 10750.0] Time: 314.74396443367004
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 306.61719250679016
+Memory occupied: [12148.0, 10750.0] Time: 316.39509987831116
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 308.3090469837189
+Memory occupied: [12148.0, 10750.0] Time: 318.05833101272583
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 310.0120418071747
+Memory occupied: [12148.0, 10750.0] Time: 319.7397472858429
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 311.72678804397583
+Memory occupied: [12148.0, 10750.0] Time: 321.43780422210693
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 313.44851565361023
+Memory occupied: [12148.0, 10750.0] Time: 323.1411917209625
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 315.1822774410248
+Memory occupied: [12148.0, 10750.0] Time: 324.8528468608856
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 316.92905473709106
+Memory occupied: [12148.0, 10750.0] Time: 326.58883023262024
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 318.6913847923279
+Memory occupied: [12148.0, 10750.0] Time: 328.32200026512146
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 320.4701278209686
+Memory occupied: [12148.0, 10750.0] Time: 330.07434248924255
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 322.2549583911896
+Memory occupied: [12148.0, 10750.0] Time: 331.83768248558044
+GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
+GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
+Memory occupied: [12148.0, 10750.0] Time: 333.6099851131439
 Length of received data: 3211311121
-Future took 37.87361288070679 seconds
-Pickle took 1.5016674995422363 seconds
+Future took 39.326523303985596 seconds
+Pickle took 1.5028431415557861 seconds
 Read 3062.5449380874634 MBs for this batch
-Executing all posts took 39.37543296813965 seconds
+Executing all posts took 40.82952857017517 seconds
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 324.7927873134613
-Dataloader took 1.4725775718688965 seconds
-Streaming imagenet data took 40.84805679321289 seconds
-Then, training+dataloading take 41.00265431404114 seconds
+Memory occupied: [12148.0, 10750.0] Time: 336.61953020095825
+Dataloader took 1.4758050441741943 seconds
+Streaming imagenet data took 42.3053765296936 seconds
+Then, training+dataloading take 42.46340608596802 seconds
 
 Epoch: 0
-Time of next(dataloader) is: 0.3544578552246094
+Time of next(dataloader) is: 0.35566210746765137
 GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 0, 0']
 GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 0, 0']
-Memory occupied: [9676.0, 8112.0] Time: 326.58700251579285
-Time for copying to cuda: 0.8828654289245605
-GPU ID:  0  uuid,utilization.gpu,utilization.memory:  ['GPU-be601ad8-2c65-26d5-b2a8-47f20f99e389, 100, 89']
-Time for forward pass: 1.153545618057251
-Time for backpropagation: 0.006965160369873047
-GPU memory for training: 9.183461666107178                          
+Memory occupied: [12148.0, 10750.0] Time: 338.4169809818268
+Time for copying to cuda: 0.904860258102417
+Time for forward pass: 0.6639153957366943
+Time for backpropagation: 0.0027658939361572266
+GPU memory for training: 14.901641845703125                          
 
-Last train takes: 2.4930994510650635 seconds
-Total time for streaming and training: 328.01628279685974
-GPU ID:  1  uuid,utilization.gpu,utilization.memory:  ['GPU-938738c2-611e-c1d4-d629-2d6173de0c19, 91, 59']
-Memory occupied: [9676.0, 8112.0] Time: 328.257910490036
-Finish gpu thread time: 1.2427103519439697
-The whole process took 335.64641213417053 seconds
+Last train takes: 2.0261991024017334 seconds
+Total time for streaming and training: 339.3930411338806
+Finish gpu thread time: 0.024937152862548828
+The whole process took 347.21754336357117 seconds
