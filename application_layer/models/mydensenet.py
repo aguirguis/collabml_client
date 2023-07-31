@@ -22,7 +22,7 @@ class MyDenseNet(DenseNet):
         remove_sequential(self, self.all_layers)
 #        print("Length of all layers: ", len(self.all_layers))
 
-    def forward(self, x:Tensor, start: int, end: int, need_time=False) -> Tensor:
+    def forward(self, x:Tensor, start=0, end=10000, need_time=False) -> Tensor:
       idx = 0
       res=[]
       detailed_res = []
@@ -52,6 +52,7 @@ class MyDenseNet(DenseNet):
               detailed_res.append(x.element_size() * x.nelement()/1024.)
               detailed_idx.append(idx)
           x = m(x)
+          torch.cuda.synchronize()
           time_res.append(time()-layer_time)
           res.append(x.element_size() * x.nelement()/1024.)
           detailed_res.append(x.element_size() * x.nelement()/1024.)

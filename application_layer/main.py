@@ -1,6 +1,7 @@
 '''Train CIFAR10 with PyTorch.'''
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
+#os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -56,7 +57,6 @@ parser.add_argument('--freeze_idx', default=0, type=int, help='index at which ne
 parser.add_argument('--freeze', action='store_true', help='freeze the lower layers of training model')
 parser.add_argument('--sequential', action='store_true', help='execute in a single thread')
 parser.add_argument('--cpuonly', action='store_true', help='do not use GPUs')
-parser.add_argument('--use_intermediate', action='store_true', help='If set, we use intermediate compute server between Swift server and client. Otherwise, ML computation (i.e., feature extraction) will happen inside Swift')
 #parser.add_argument('--splitindex_to_freezeindex', action='store_true', help='If set, we use the freezing index as split point')
 parser.add_argument('--split_choice', default='automatic', type=str, help='How to choose split_idx (manual, automatic, to_freeze, to_min, to_max)')
 
@@ -168,11 +168,22 @@ print("Time to download labels: {}".format(time.time()-download_labels_time))
 get_model_time = time.time()
 print('==> Building model..')
 net = get_model(model, dataset_name)
-mem_cons = [10,10]
+net.to(device)
 print("Time for getting model: {}".format(time.time()-get_model_time))
+
+mem_cons = [10,10]
+
 model_prep_split = time.time()
+predicted_sizes = []
+times_for_prediction = {}
 if mode == 'split':
-    split_idx, mem_cons = choose_split_idx(model, net, freeze_idx, batch_size, split_choice, split_idx, device)
+    predicted_sizes, _, _, _ = get_intermediate_outputs_and_time(net, torch.rand((1, 3, 224, 224)).to(device))
+    predicted_sizes = np.array(predicted_sizes)*1024.*batch_size # sizes is in Bytes (after *1024)
+    times_for_prediction['inference_time'] = np.zeros(shape=(len(predicted_sizes)))
+    split_choice_first = split_choice
+    if split_choice == 'automatic':
+        split_choice_first = 'to_freeze'
+    split_idx, mem_cons = choose_split_idx(model, net, freeze_idx, batch_size, split_choice_first, split_idx, device, predicted_sizes)
 
 print("Time for splitting algorithm: {}".format(time.time()-model_prep_split))
 
@@ -184,23 +195,25 @@ if mode == 'split' or args.freeze:
       freeze_idx = split_idx
     print("Freezing the lower layers of the model ({}) till index {}".format(model, freeze_idx))
     freeze_lower_layers(net, freeze_idx)		#for transfer learning -- no need for backpropagation for upper layers (idx < split_idx)
+    #freeze_lower_layers(list(net.children())[0], freeze_idx)		#for transfer learning -- no need for backpropagation for upper layers (idx < split_idx) -- if torch.nn-DataParallel(net) is done before
+
 print("Time to freeze model: {}".format(time.time()-freeze_model_time))
 
 prepare_model_time = time.time()
-net = net.to(device)
-if device == 'cuda':
-#    torch.distributed.init_process_group(backend='nccl')
-    net = torch.nn.DataParallel(net)
-    cudnn.benchmark = True
-
+#if device == 'cuda':
+##    torch.distributed.init_process_group(backend='nccl')
+#    net = torch.nn.DataParallel(net)
+#    cudnn.benchmark = True
+#optimizer_time = time.time()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(filter(lambda p: p.requires_grad, net.parameters()), lr=0.1,
                       momentum=0.9, weight_decay=5e-4)					#passing only parameters that require grad...the rest are frozen
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
-
+#print("Time for criterion, optimizer, scheduler prep : {}".format(time.time()-optimizer_time))
 print("Time for model prep: {}".format(time.time()-prepare_model_time))
 
 print("Time for model and splitting algorithm: {}".format(time.time()-model_prep_split))
+
 
 # Training
 def train(epoch):
@@ -212,8 +225,9 @@ def train(epoch):
     total = 0
     dataload_time = time.time()
     if device == 'cuda':
-        torch.cuda.reset_max_memory_allocated(0)
-        torch.cuda.reset_max_memory_allocated(1)
+        for i in range(torch.cuda.device_count()):
+            torch.cuda.reset_max_memory_allocated(i)
+    train_times = []
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         print("Time of next(dataloader) is: {}".format(time.time()-dataload_time))
         copy_time = time.time()
@@ -222,7 +236,8 @@ def train(epoch):
         optimizer.zero_grad()
         forward_time = time.time()
         if mode == 'split':		#This is transfer learning deceted!
-            outputs,_ = net(inputs, split_idx, 100)
+            outputs, _, i_train_times, _, _  = net(inputs, split_idx, 100, need_time=True)
+            train_times.append(i_train_times)
         else:
             outputs = net(inputs)
         print("Time for forward pass: {}".format(time.time()-forward_time))
@@ -230,11 +245,16 @@ def train(epoch):
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
-        print("Time for backpropagation: {}".format(time.time()-back_time))
+        backward_pass_time = time.time()-back_time
+        print("Time for backpropagation: {}".format(backward_pass_time))
         if device == 'cuda':
+            max_mem = 0.0
+            for i in range(torch.cuda.device_count()):
+                max_mem += torch.cuda.max_memory_allocated(i)
             print("GPU memory for training: {}         \
-                 \r\n".format((torch.cuda.max_memory_allocated(0)+torch.cuda.max_memory_allocated(1))/(1024*1024*1024)))
+                 \r\n".format((max_mem)/(1024*1024*1024)))
         dataload_time = time.time()
+    return np.mean(train_times, axis=0), backward_pass_time
 
 def test(epoch):
     global testloader, net
@@ -246,8 +266,8 @@ def test(epoch):
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
-            if mode == 'split':              #This is split inference deceted!
-                outputs,_,_ = net(inputs, split_idx, 100)
+            if mode == 'split':              #This is split inference detected!
+                outputs,_,_,_,_ = net(inputs, split_idx, 100, need_time=True)
             else:
                 outputs = net(inputs)
             loss = criterion(outputs, targets)
@@ -263,13 +283,36 @@ gpu_th = Thread(target=get_periodic_stat, args=(lambda: stop_thread, ))
 gpu_th.start()
 
 next_loader= None
-def start_now(lstart, lend, transform):
+def start_now(lstart, lend, transform, result=[], do_split=False):
   global next_dataloader
+  global times_for_prediction
   next_dataloader = None
-  # TODO run splitting algo at each iteration
-  #split_idx, mem_cons = choose_split_idx(net, freeze_idx, batch_size, split_choice, split_idx)
+  
 
-  next_dataloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode, split_idx, mem_cons,  args.sequential, args.use_intermediate, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
+  split_idx_ = split_idx
+  mem_cons_ = mem_cons
+  if do_split:
+      split_idx_, mem_cons_ = choose_split_idx(model, net, freeze_idx, batch_size, split_choice, split_idx, device, predicted_sizes, times_for_prediction)
+
+  next_dataloader, server_times = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode, split_idx_, mem_cons_,  args.sequential, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
+
+  #print('Server times :', server_times)
+
+
+  times_for_prediction['s_read_data_shm'] = server_times['s_read_data_shm']
+  times_for_prediction['s_read_model_shm_to_gpu'] = server_times['s_read_model_shm_to_gpu']
+  
+  nb_inferences = batch_size/SERVER_BATCH
+  times_for_prediction['s_inf_to_pytorch'] = server_times['s_inf_to_pytorch']*nb_inferences
+  times_for_prediction['s_inf_copy_to_gpu'] = server_times['s_inf_copy_to_gpu']*nb_inferences
+  times_for_prediction['s_inf_to_numpy'] = server_times['s_inf_to_numpy']*nb_inferences
+
+  for idx in range(len(server_times['s_inf_forward_pass'])):
+      times_for_prediction['inference_time'][idx] = server_times['s_inf_forward_pass'][idx]*nb_inferences
+
+  #print("Times for prediction : ", times_for_prediction)
+
+  result.append((split_idx_, mem_cons_))
 
 #step defines the number of images (or intermediate values) got from the server per iteration
 #this value should be at least equal to the batch size
@@ -280,23 +323,24 @@ try:
     if not args.downloadall and dataset_name in stream_datasets:
       gstart, gend = start, end
       lstart, lend = gstart, gstart+step if gstart+step < gend else gend
-      testloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential,args.use_intermediate, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
+      testloader, _ = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_test, batch_size, lstart, lend, model, mode, split_idx, mem_cons, args.sequential, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
       res = []
-      idx = 0
+      idx_iter = 0
       for s in range(gstart+step, gend, step):
+        results_split_idx_mem_cons = []
         lstart, lend = s,s+step if s+step < gend else gend
-        myt = Thread(target=start_now, args=(lstart, lend,transform_test,))
+        myt = Thread(target=start_now, args=(lstart, lend,transform_test,results_split_idx_mem_cons))
         if not args.sequential:	#run this in parallel
           myt.start()
-        lres = test(idx)
+        lres = test(idx_iter)
         res.extend(lres)
-        idx+=1
+        idx_iter+=1
         if args.sequential:
           myt.start()
         myt.join()
         testloader = next_dataloader
         dataloader = None
-      res.extend(test(idx))
+      res.extend(test(idx_iter))
     else:
       res = test(0)
     print("Inference done for {} inputs".format(len(res)))
@@ -306,27 +350,40 @@ try:
       if not args.downloadall and dataset_name in stream_datasets:
         lstart, lend = 0, step
         first_stream = time.time()
-        trainloader = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, args.use_intermediate, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
+        trainloader, _ = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform_train, batch_size, lstart, lend, model, mode, split_idx,mem_cons, args.sequential, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
         print("First stream takes: {} seconds".format(time.time()-first_stream))
-        idx=0
+        idx_iter=0
         for s in range(step, stream_dataset_len[dataset_name], step):
-        #for s in range(step, 24320, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
-        #for s in range(step, 24000, step):			#TODO: Here, replace 50000 with step if you want to run 1 iteration only
+          print("Index: ", idx_iter)
+          print("Split idx: ", split_idx)
+          results_split_idx_mem_cons = []
           localtime = time.time()
           lstart, lend = s, s+step
-          myt = Thread(target=start_now, args=(lstart, lend,transform_train,))
+          if idx_iter == 2:
+            myt = Thread(target=start_now, args=(lstart, lend,transform_train,results_split_idx_mem_cons, True))
+          else:
+            myt = Thread(target=start_now, args=(lstart, lend,transform_train,results_split_idx_mem_cons))
           if not args.sequential:   #run this in parallel
             myt.start()
-          train(epoch)
+          train_times, backward_pass_time = train(epoch)
+          
+          for idx in range(split_idx, split_idx+len(train_times)):
+            times_for_prediction['inference_time'][idx] = train_times[(idx-split_idx)]
+          print(times_for_prediction['inference_time'])
+          times_for_prediction['c_train_backward_pass'] = backward_pass_time
+
           print("One training iteration takes: {} seconds".format(time.time()-localtime))
-          print("Index:",idx)
-          idx+=1
+          idx_iter+=1
           if args.sequential:
             myt.start()
           myt.join()
+          
+          split_idx, mem_cons = results_split_idx_mem_cons[0]
+
           trainloader = next_dataloader
           dataloader = None
           print("Then, training+dataloading take {} seconds".format(time.time()-localtime))
+          
         last_train = time.time()
         train(epoch)
         print("Last train takes: {} seconds".format(time.time()-last_train))

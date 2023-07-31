@@ -117,12 +117,26 @@ def get_model(model_str, dataset):
                   'regnetx200': RegNetX_200MF}
         if model_str not in models.keys():
             raise ValueError("Provided model ({}) is not known!".format(model_str))
-        model = models[model_str](num_classes=num_classes)
+        # add this to be faire because synchronize can slow down
+        if model_str.startswith('alex'):
+            model = build_my_alexnet(num_classes)
+        elif model_str.startswith('inception'):
+            model = build_my_inception(num_classes)
+        elif model_str.startswith('res'):
+            model = build_my_resnet(model_str, num_classes)
+        elif model_str.startswith('vgg'):
+            model = build_my_vgg(model_str, num_classes)
+        elif model_str.startswith('dense'):
+            model = build_my_densenet(model_str, num_classes)
+        elif model_str.startswith('vit'):
+            model = build_my_vit(num_classes)
+        else:
+            model = models[model_str](num_classes=num_classes)
     return model
 
 
-def _get_intermediate_outputs_and_time(model, input):
-    print("In _get_intermediate_outputs_and_time")
+def get_intermediate_outputs_and_time(model, input):
+    print("In get_intermediate_outputs_and_time")
     # returns an array with sizes of intermediate outputs (in KBs), assuming some input
     model.eval()
     with torch.no_grad():
@@ -189,116 +203,121 @@ def get_mem_consumption(model_str, model_size, input_size, outputs_, split_idx, 
     print("Server, client, server+client, vanilla ", total_server, total_client, total_server + total_client, vanilla)
     return total_server, total_client, vanilla, model_size, begtosplit_size, diff_bs1
 
+def _estimate_c_train_total(times_for_prediction, nb_inferences, idx_potential, output_size_layer):
+    c_train_dataloader = output_size_layer*1.0190668e-10
+    c_train_copy_to_gpu = output_size_layer*2.70339617e-10
+    c_train_forward_pass = times_for_prediction['inference_time'][idx_potential:].sum()
+    c_train_backward_pass = times_for_prediction['c_train_backward_pass']
+    c_train_total = c_train_dataloader+c_train_copy_to_gpu+c_train_forward_pass+c_train_backward_pass
+    print("Estimated client times ", c_train_dataloader, c_train_copy_to_gpu, c_train_forward_pass, c_train_backward_pass, c_train_total)
+    print("Estimated c_train_total ", c_train_total)
 
-def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, split_idx_manual, device):
-    GPU_in = torch.cuda.max_memory_allocated(device) / (1024 ** 2)
-    if torch.cuda.is_available():
-        model.to(device)
-        _model_size = torch.cuda.max_memory_allocated(device) / (1024 ** 2) - GPU_in
+    return c_train_total
+
+
+def _estimate_c_stream_total_iteration(times_for_prediction, nb_inferences, idx_potential, output_size_layer, bw):
+    s_read_data_shm = times_for_prediction['s_read_data_shm']
+    s_read_model_shm_to_gpu = times_for_prediction['s_read_model_shm_to_gpu']
+
+    s_inf_to_pytorch = np.array(times_for_prediction['s_inf_to_pytorch'])
+    s_inf_copy_to_gpu = np.array(times_for_prediction['s_inf_copy_to_gpu'])
+    s_inf_to_numpy = np.array(times_for_prediction['s_inf_to_numpy'])
+
+    server_forward_pass = times_for_prediction['inference_time'][:idx_potential].sum()
+
+    if output_size_layer < 4*1e8:
+        s_inf_copy_to_cpu = output_size_layer*2.38103186e-12*nb_inferences
     else:
-        mod_sizes = [np.prod(np.array(p.size())) for p in model.parameters()]
-        _model_size = np.sum(mod_sizes) * 4 / (1024 * 1024)
+        s_inf_copy_to_cpu = output_size_layer*7.52775484e-12*nb_inferences
+    
+    s_pickle_time = output_size_layer*9.00549092e-10
+
+
+    s_sending_time = output_size_layer/(bw)
+
+    c_stream_from_server = s_read_data_shm+s_read_model_shm_to_gpu+s_inf_to_pytorch+s_inf_copy_to_gpu+s_inf_to_numpy+server_forward_pass+s_inf_copy_to_cpu+s_pickle_time+s_sending_time
+
+    print("Estimated server times ", s_read_data_shm, s_read_model_shm_to_gpu, s_inf_to_pytorch, s_inf_copy_to_gpu, s_inf_to_numpy, server_forward_pass, s_inf_copy_to_cpu, s_pickle_time, s_sending_time, c_stream_from_server)
+    print("Estimated c_stream_from_server ", c_stream_from_server)
+
+    c_stream_pickle_load = output_size_layer*4.96287825e-10
+    c_stream_dataloader = output_size_layer*4.57389807e-10
+    print("Estimated c_stream_pickle_load and c_stream_dataloader ", c_stream_pickle_load, c_stream_dataloader)
+
+    c_stream_total_iteration = c_stream_from_server+c_stream_pickle_load+c_stream_dataloader
+    print("Estimated c_stream_total_iteration ", c_stream_total_iteration)
+
+    return c_stream_total_iteration 
+
+
+
+def choose_split_idx(model_str, model, freeze_idx, client_batch, split_choice, split_idx_manual, device, sizes, times_for_prediction={}):
     print("IN SPLITTING ALGO")
-    # a=torch.cuda.FloatTensor(1)
-    # print("INIT ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
-    # First of all, get the bandwidth
-    bw_iperf_time = time.time()
-    client = iperf3.Client()
-    client.duration = 1
-    # client.server_hostname = "192.168.0.242"
-    client.server_hostname = "192.168.0.239"
-    #client.server_hostname = "192.168.0.246"
-    #client.server_hostname = "192.168.0.189"
-    while True:
-        try:
-            res = client.run()
-            if res.error is None:
-                bw = res.received_bps / 8  # bw now (after /8) is in Bytes/sec
-                break
-        except Exception as e:
-            print(f"Error of iperf: {res.error}")
-            print(e)
-            sys.stdout.flush()
-            res = None
-            print("SLEEPING ")
-            sleep(5)
-            bw = 908.2855256674147 * 1024 * 1024 / 8
-            break
-    print(f"Recorded bandwidth: {bw * 8 / (1024 * 1024)} Mbps")
-    print("Get bandwitdh took {}".format(time.time() - bw_iperf_time))
-    # This function chooses the split index based on the intermediate output sizes and memory consumption
-    input = torch.rand((1, 3, 224, 224)).to(device)
-    # Step 1: select the layers whose outputs size is < input size && whose output < bw
-    # input_size = np.prod(np.array(input.size()))*4/4.5		#I divide by 4.5 because the actual average Imagenet size is 4.5X less than the theoretical one
-    input_size = input.element_size() * input.nelement() / (1024. ** 2)
-
-    sizes, int_time, detailed_sizes, detailed_idx = _get_intermediate_outputs_and_time(model, input)
-    sizes = np.array(sizes) * 1024  # sizes is in Bytes (after *1024)
-    detailed_sizes = np.array(detailed_sizes) * 1024
-    max_allocated_bs1 = torch.cuda.max_memory_allocated(0) / (1024. ** 2) - GPU_in
-    max_output_bs1, sum_cons_sizes = _calculate_max(input_size, detailed_sizes)
-    if np.argmax(sum_cons_sizes) != 0:
-        diff_bs1 = max_allocated_bs1 - (input_size + _model_size + max_output_bs1)
-    else:
-        diff_bs1 = max_allocated_bs1 - (_model_size + max_output_bs1)
-    del input
-    print("Done intermediate outputs and time")
-
-    #    print(f"Intermediate output sizes: {sizes*server_batch*100}")
-    #    print(f"Min. of Input and BW {min(input_size*server_batch*100,bw)}")
-    # note that input_size and sizes are both in Bytes
-    # TODO: server_batch*100 depends on the current way of chunking and streaming data; this may be changed in the future
-    print("Sizes ", sizes)
-    print("Input_size ", input_size)
-    print("TESTING *****************************")
-    print("Input size, BW, MIN:")
-    _input_size = np.prod(np.array(torch.rand((1,3,224,224)).size()))*4/4.5	
-    print(_input_size * (1024. ** 2) * SERVER_BATCH * 100, bw, min(_input_size * (1024. ** 2) * SERVER_BATCH * 100, bw))
-    #pot_idxs = np.where((sizes * SERVER_BATCH * 100 < min(_input_size * SERVER_BATCH * 100, bw)) & (sizes > 0))
-    pot_idxs = np.where((sizes*client_batch < min(_input_size*client_batch, bw)) & (sizes > 0))
-    # Step 2: select an index whose memory utilition is less than that in vanilla cases
-    print("All candidates indexes: ", pot_idxs)
     print("SPLIT IDX CHOICE, split idx manual, freeze_idx: ", split_choice, split_idx_manual, freeze_idx)
+    split_idx = freeze_idx
+
     if split_choice == 'manual':
         split_idx = split_idx_manual
     elif split_choice == 'to_freeze':
         split_idx = freeze_idx
     elif split_choice == 'to_max':
         split_idx = np.argmax(sizes[:freeze_idx]) + 1
-    else:
+    elif split_choice == 'to_min':
         split_idx = np.argmin(sizes[:freeze_idx]) + 1
-    #    print(pot_idxs[0], bw, sizes*server_batch, input_size*server_batch)
-    model_size, begtosplit_mem = 0, 0
+    
     if split_choice == 'automatic':
-        for idx in pot_idxs[0]:
-            candidate_split = idx + 1  # to solve the off-by-one error
-            if candidate_split > freeze_idx:
-                break
-            split_idx = candidate_split
-            server, client, vanilla, model_size, begtosplit_mem, diff_bs1 = get_mem_consumption(model_str, _model_size,
-                                                                                                input_size, sizes,
-                                                                                                split_idx, freeze_idx,
-                                                                                                client_batch, diff_bs1,
-                                                                                                detailed_sizes,
-                                                                                                detailed_idx)
-            print("Candidate split ", candidate_split)
-            print("Server, client, server+client, vanilla ", server, client, server + client, vanilla)
-            print("Model size ", model_size)
-            if server + client < vanilla:
-                break
-    if model_size == 0:
-        _, _, _, _, begtosplit_mem, diff_bs1 = get_mem_consumption(model_str, _model_size, input_size, sizes, split_idx,
-                                                                   freeze_idx, client_batch, diff_bs1, detailed_sizes,
-                                                                   detailed_idx)
-    # Note that, now I have all the pieces of memory consumption on the server:
-    # input_size (in bytes), model_size (in MBs), begtosplit_mem (in MBs)
-    # I group those in 2 categores: (a) not affected by the batch size (model size), and (b) scale with batch size (input and begtosplit)
-    # Note the unification of units in the next line (all reported in MBs to be compatible with the output of nvidia-smi)
-    # TODO change input sizm
-    fixed, scale_with_bsz = model_size, input_size + begtosplit_mem + diff_bs1
-    print("Fixed, scale_with_bsz ", fixed, scale_with_bsz)
-    print("Mem usage ", _get_gpu_stats(0)[0][1], _get_gpu_stats(1)[0][1])
-    return split_idx, (fixed, scale_with_bsz)
+        if len(times_for_prediction) > 0:
+            bw_iperf_time = time.time()
+            client = iperf3.Client()
+            client.duration = 1
+            # client.server_hostname = "192.168.0.242"
+            client.server_hostname = "192.168.0.239"
+            #client.server_hostname = "192.168.0.246"
+            #client.server_hostname = "192.168.0.189"
+            while True:
+                try:
+                    res = client.run()
+                    if res.error is None:
+                        bw = res.received_bps / 8  # bw now (after /8) is in Bytes/sec
+                        break
+                except Exception as e:
+                    print(f"Error of iperf: {res.error}")
+                    print(e)
+                    sys.stdout.flush()
+                    res = None
+                    print("SLEEPING ")
+                    sleep(5)
+                    bw = 908.2855256674147 * 1024 * 1024 / 8
+                    break
+            print(f"Recorded bandwidth: {bw * 8 / (1024 * 1024)} Mbps ")
+            print("Get bandwitdh took {}".format(time.time() - bw_iperf_time))
+            
+            nb_inferences = client_batch/SERVER_BATCH
+
+            c_stream_total_iterations = []
+            c_train_totals = []
+            for idx_potential in range(1,len(times_for_prediction['inference_time'])):
+                print("ESTIMATION FOR LAYER :", idx_potential)
+                output_size_layer = sizes[idx_potential-1]*1.00000033
+                print("Estimated output size layer :", output_size_layer)
+
+                c_stream_total_iteration = _estimate_c_stream_total_iteration(times_for_prediction, nb_inferences, idx_potential, output_size_layer, bw)
+                c_stream_total_iterations.append(c_stream_total_iteration)
+                
+                c_train_total = _estimate_c_train_total(times_for_prediction, nb_inferences, idx_potential, output_size_layer)
+                c_train_totals.append(c_train_total)
+
+            max_stream_train =  np.max(np.vstack((np.array(c_stream_total_iterations), np.array(c_train_totals))), axis=0)
+
+            print(max_stream_train)
+            split_idx_ = np.argmin(max_stream_train)+1
+            # TODO add OOM detection
+            print(split_idx_)
+            if split_idx_ <= freeze_idx:
+                split_idx = split_idx_
+            print(split_idx)
+
+    return split_idx, (0,0)
 
 
 def get_mem_usage():
@@ -625,17 +644,28 @@ def send_request(request_dict):
     # process request_dict
     options = request_dict['meta'].union(request_dict['header'])
     request_dict = {}
+    mode = 'split'
     for opt in options:
         contents = opt.split(":")
         request_dict[contents[0]] = contents[1]
+
+        if contents[0] == 'Split-Idx' and int(contents[1]) < 0:
+            mode = 'vanilla'
     # Create a socket and send the required options
     #  print("Sending request.....")
     sys.stdout.flush()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT))
         s.sendall(json.dumps(request_dict).encode('utf-8'))
+
+        if mode == 'split':
+            server_times_len = struct.unpack('>I', recvall(s,4))[0]
+            server_times = recvall(s, server_times_len)
+            server_times = pickle.loads(server_times)
+        else:
+            server_times = {}
+
         raw_msglen = recvall(s, 8)
-        #    print("Raw message len: ", raw_msglen)
         try:
             msglen = struct.unpack('>Q', raw_msglen)[0]
             data = recvall(s, msglen)
@@ -646,13 +676,14 @@ def send_request(request_dict):
             data = recvall(s, msglen, rest)
 
         print(f"Length of received data: {len(data)}")
-        return data
+        return data, server_times
 
 
 def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model,
-                          mode='vanilla', split_idx=100, mem_cons=(0, 0), sequential=False, use_intermediate=False, CACHED=True, TRANSFORMED=True, ALL_IN_COS=False, NO_ADAPT=False):
+                          mode='vanilla', split_idx=100, mem_cons=(0, 0), sequential=False, CACHED=True, TRANSFORMED=True, ALL_IN_COS=False, NO_ADAPT=False):
     COMP_FILE_SIZE = COMP_FILE_SIZE_DATASET[dataset_name]
     stream_time = time.time()
+    server_times = {}
     print("The mode is: ", mode)
     if mode == 'split':
         parallel_posts = int((lend - lstart) / COMP_FILE_SIZE)  # number of posts request to run in parallel
@@ -678,8 +709,8 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
                              #            "Batch-Size:{}".format(post_step),
                              #            "start:{}".format(lstart),"end:{}".format(lend),
                              "Split-Idx:{}".format(split_idx),
-                             "Fixed-Mem:{}".format(mem_cons[0]),
-                             "Scale-BSZ:{}".format(mem_cons[1]),
+                             #"Fixed-Mem:{}".format(mem_cons[0]),
+                             #"Scale-BSZ:{}".format(mem_cons[1]),
                              "COMP_FILE_SIZE:{}".format(COMP_FILE_SIZE)},
                     "header": {"Parent-Dir:{}".format(parent_dir)}}
             #          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
@@ -691,27 +722,17 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
             post_objects.append(SwiftPostObject(obj_name, opts))  # Create multiple posts
         #      post_time = time.time()
         read_bytes = 0
-        if use_intermediate:
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                futures = [executor.submit(send_request, post_obj.options) for post_obj in post_objects]
-                for fut in futures:
-                    res = fut.result()
-                    print("Future took {} seconds".format(time.time() - stream_time))
-                    pickle_time = time.time()
-                    read_bytes += int(len(res))
-                    images.extend(pickle.loads(res))
-                    print("Pickle took {} seconds".format(time.time() - pickle_time))
-        else:
-            for post_res in swift.post(container=dataset_name, objects=post_objects):
-                if 'error' in post_res.keys():
-                    print("error: {}, traceback: {}".format(post_res['error'], post_res['traceback']))
-                read_bytes += int(len(post_res['result']))
-                print("Executing one post (whose result is of len {} bytes) took {} seconds".format(
-                    len(post_res['result']), time.time() - post_time))
-                images.extend(pickle.loads(post_res['result']))  # images now should be a list of numpy arrays
-                print("After deserialization, time is: {} seconds".format(time.time() - post_time))
-                sys.stdout.flush()
-        print("Read {} MBs for this batch".format(read_bytes / (1024 * 1024)))
+        times_sent_by_server = {}
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = [executor.submit(send_request, post_obj.options) for post_obj in post_objects]
+            for fut in futures:
+                res, server_times = fut.result()
+                print("Future took {} seconds".format(time.time() - stream_time))
+                pickle_time = time.time()
+                read_bytes += int(len(res))
+                images.extend(pickle.loads(res))
+                print("Pickle took {} seconds".format(time.time() - pickle_time))
+        print("Read {} MBs for this batch, {} Bs".format(read_bytes / (1024 * 1024), read_bytes))
         print("Executing all posts took {} seconds".format(time.time() - post_time))
         transform = None  # no transform required in this case
 
@@ -777,7 +798,7 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 images = list(executor.map(listToImages, infolists))
             images = functools.reduce(operator.iconcat, images, [])
-            print("Read {} MBs for this batch".format(read_bytes / (1024 * 1024)))
+            print("Read {} MBs for this batch, {} Bs".format(read_bytes / (1024 * 1024), read_bytes))
         elif CACHED:
             parallel_posts = int((lend - lstart) / COMP_FILE_SIZE)  # number of posts request to run in parallel
             post_step = int((lend - lstart) / parallel_posts)  # if the batch is smaller, it will be handled on the server
@@ -796,8 +817,8 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
                                  #            "Batch-Size:{}".format(post_step),
                                  #            "start:{}".format(lstart),"end:{}".format(lend),
                                  "Split-Idx:{}".format(-1),
-                                 "Fixed-Mem:{}".format(mem_cons[0]),
-                                 "Scale-BSZ:{}".format(mem_cons[1]),
+                                 #"Fixed-Mem:{}".format(mem_cons[0]),
+                                 #"Scale-BSZ:{}".format(mem_cons[1]),
                                  "COMP_FILE_SIZE:{}".format(COMP_FILE_SIZE)},
                         "header": {"Parent-Dir:{}".format(parent_dir)}}
                 #          obj_name = "{}/ILSVRC2012_val_000".format(parent_dir)+((5-len(str(s+1)))*"0")+str(s+1)+".JPEG"
@@ -814,7 +835,7 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
                 futures = [executor.submit(send_request, post_obj.options) for post_obj in post_objects]
                 if not ALL_IN_COS:
                     for fut in futures:
-                        res = fut.result()
+                        res, _ = fut.result()
                         read_bytes += int(len(res))
                         #images.extend(pickle.loads(res))
                         time_concurrent = time.time()
@@ -833,7 +854,7 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
                         read_bytes += int(len(res))
                         images.extend(pickle.loads(res))
                         transform=None
-            print("Read {} MBs for this batch".format(read_bytes / (1024 * 1024)))
+            print("Read {} MBs for this batch, {} Bs".format(read_bytes / (1024 * 1024), read_bytes))
     # use only labels corresponding to the required images
     labels = labels[lstart:lend]
     assert len(images) == len(labels)
@@ -846,7 +867,7 @@ def stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, l
     print("Streaming {} data took {} seconds".format(dataset_name, time.time() - stream_time))
     #  decompress_time += (time.time()-decompt)
     #  print("Time taken for post processing the received compressed file: {} seconds".format(decompress_time))
-    return dataloader
+    return dataloader, server_times
 
 types = [torch.nn.modules.container.Sequential, _DenseLayer, _Transition, PatchEmbed]
 

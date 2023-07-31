@@ -20,7 +20,7 @@ class MyAlexNet(AlexNet):
         remove_sequential(self, self.all_layers)
 #        print("Length of all layers: ", len(self.all_layers))
 
-    def forward(self, x:Tensor, start: int, end: int, need_time=False) -> Tensor:
+    def forward(self, x:Tensor, start=0, end=10000, need_time=False) -> Tensor:
       idx = 0
 #      res = [x.element_size() * x.nelement()/1024]		#this returns the sizes of the intermediate outputs in the network
       res = []

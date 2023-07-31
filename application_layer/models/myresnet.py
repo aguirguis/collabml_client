@@ -75,7 +75,7 @@ class MyResNet(resnet):
         remove_sequential(self, self.all_layers)
 #        print("Length of all layers: ", len(self.all_layers))
 
-    def forward(self, x:Tensor, start: int, end: int, need_time=False) -> Tensor:
+    def forward(self, x:Tensor, start=0, end=10000, need_time=False) -> Tensor:
       all_layers = []
       remove_sequential(self, all_layers)
       idx = 0
@@ -96,7 +96,8 @@ class MyResNet(resnet):
           if isinstance(m, MyBasicBlock) or isinstance(m, MyBottleneck):
               x,sizes = m(x)
               # TODO CHANGE AGAIN
-              res.append(sum(sizes))
+              #res.append(sum(sizes))
+              res.append(x.element_size() * x.nelement()/1024)
               detailed_res.extend(sizes)
               detailed_idx.extend([idx for s in sizes])
           else:
@@ -104,6 +105,7 @@ class MyResNet(resnet):
               res.append(x.element_size() * x.nelement()/1024)
               detailed_res.append(x.element_size() * x.nelement()/1024)
               detailed_idx.append(idx)
+          torch.cuda.synchronize()
           time_res.append(time()-layer_time)
           if idx >= end:
               break

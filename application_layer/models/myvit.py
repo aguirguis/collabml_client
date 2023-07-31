@@ -46,6 +46,7 @@ class MyViT(vision_transformer.VisionTransformer):
 
     def forward(self, x, start=0, end=10000, need_time=False):
         res = []
+        memory_res = []
         time_res = []
         layer_time = time.time()
 
@@ -66,22 +67,24 @@ class MyViT(vision_transformer.VisionTransformer):
                             updated = False
                             if child.flatten:
                                 x = x.flatten(2).transpose(1, 2)
+                            torch.cuda.synchronize()
                             time_res.append(time.time() - layer_time)
-                            #res.append(x.element_size() * x.nelement() / 1024)
+                            res.append(x.element_size() * x.nelement() / 1024)
                             if isinstance(cc, torch.nn.Dropout) or isinstance(cc, torch.nn.Identity):
-                                res.append(0)
+                                memory_res.append(0)
                             else:
-                                res.append(x.element_size() * x.nelement() / 1024)
+                                memory_res.append(x.element_size() * x.nelement() / 1024)
 
                 if updated:
                     x = torch.cat((self.cls_token.expand(x.shape[0], -1, -1), x), dim=1)
                     x = x + self.pos_embed
+                    torch.cuda.synchronize()
                     time_res.append(time.time() - layer_time)
-                    #res.append(x.element_size() * x.nelement() / 1024)
+                    res.append(x.element_size() * x.nelement() / 1024)
                     if isinstance(cc, torch.nn.Dropout) or isinstance(cc, torch.nn.Identity):
-                        res.append(0)
+                        memory_res.append(0)
                     else:
-                        res.append(x.element_size() * x.nelement() / 1024)
+                        memory_res.append(x.element_size() * x.nelement() / 1024)
             else:
                 lcc = flatten(child)
                 if isinstance(lcc, torch.nn.Module):
@@ -93,34 +96,35 @@ class MyViT(vision_transformer.VisionTransformer):
                         if isinstance(child, torch.nn.modules.LayerNorm) and blocks_done:
                             if self.global_pool:
                                 x = x[:, 1:].mean(dim=1) if self.global_pool == 'avg' else x[:, 0]
+                        torch.cuda.synchronize()
                         time_res.append(time.time() - layer_time)
-                        #res.append(x.element_size() * x.nelement() / 1024)
+                        res.append(x.element_size() * x.nelement() / 1024)
                         if isinstance(cc, torch.nn.Dropout) or isinstance(cc, torch.nn.Identity):
-                            res.append(0)
+                            memory_res.append(0)
                         else:
-                            res.append(x.element_size() * x.nelement() / 1024)
+                            memory_res.append(x.element_size() * x.nelement() / 1024)
                 else:
                     for cc in lcc:
                         nbLayer += 1
                         if start <= nbLayer < end:
                             layer_time = time.time()
                             x = cc(x)
+                            torch.cuda.synchronize()
                             time_res.append(time.time() - layer_time)
+                            res.append(x.element_size() * x.nelement() / 1024)
                             if isinstance(cc, vision_transformer.Block):
-                                # TODO change afterwards
                                 sum_sizes = sum(self.features_size_block[list(self.features_size_block.keys())[0]])
-                                res.append(sum_sizes)
+                                memory_res.append(sum_sizes)
                             else:
-                                #res.append(x.element_size() * x.nelement() / 1024)
                                 if isinstance(cc, torch.nn.Dropout) or isinstance(cc, torch.nn.Identity):
-                                    res.append(0)
+                                    memory_res.append(0)
                                 else:
-                                    res.append(x.element_size() * x.nelement() / 1024)
+                                    memory_res.append(x.element_size() * x.nelement() / 1024)
                     if isinstance(child, torch.nn.Sequential):
                         blocks_done = True
 
         if need_time:
-            return x, torch.Tensor(res).cuda(), time_res, res, [idx for idx in range(start, start+len(res))]
+            return x, torch.Tensor(res).cuda(), time_res, memory_res, [idx for idx in range(start, start+len(res))]
         return x, torch.Tensor(res).cuda()
 
 
