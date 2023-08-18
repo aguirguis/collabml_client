@@ -239,7 +239,7 @@ def train(epoch):
             outputs, _, i_train_times, _, _  = net(inputs, split_idx, 100, need_time=True)
             train_times.append(i_train_times)
         else:
-            outputs = net(inputs)
+            outputs, _ = net(inputs)
         print("Time for forward pass: {}".format(time.time()-forward_time))
         back_time = time.time()
         loss = criterion(outputs, targets)
@@ -254,7 +254,10 @@ def train(epoch):
             print("GPU memory for training: {}         \
                  \r\n".format((max_mem)/(1024*1024*1024)))
         dataload_time = time.time()
-    return np.mean(train_times, axis=0), backward_pass_time
+    if len(train_times) > 0:
+        return np.mean(train_times, axis=0), backward_pass_time
+    else:
+        return 0,0
 
 def test(epoch):
     global testloader, net
@@ -269,7 +272,7 @@ def test(epoch):
             if mode == 'split':              #This is split inference detected!
                 outputs,_,_,_,_ = net(inputs, split_idx, 100, need_time=True)
             else:
-                outputs = net(inputs)
+                outputs, _ = net(inputs)
             loss = criterion(outputs, targets)
 
             test_loss += loss.item()
@@ -291,26 +294,26 @@ def start_now(lstart, lend, transform, result=[], do_split=False):
 
   split_idx_ = split_idx
   mem_cons_ = mem_cons
-  if do_split:
+  if do_split and mode == 'split':
       split_idx_, mem_cons_ = choose_split_idx(model, net, freeze_idx, batch_size, split_choice, split_idx, device, predicted_sizes, times_for_prediction)
 
   next_dataloader, server_times = stream_batch(dataset_name, stream_dataset_len, swift, datadir, parent_dir, labels, transform, batch_size, lstart, lend, model, mode, split_idx_, mem_cons_,  args.sequential, CACHED, TRANSFORMED, ALL_IN_COS, NO_ADAPT)
 
   #print('Server times :', server_times)
 
+  if mode == 'split':
+      times_for_prediction['s_read_data_shm'] = server_times['s_read_data_shm']
+      times_for_prediction['s_read_model_shm_to_gpu'] = server_times['s_read_model_shm_to_gpu']
+      
+      nb_inferences = batch_size/SERVER_BATCH
+      times_for_prediction['s_inf_to_pytorch'] = server_times['s_inf_to_pytorch']*nb_inferences
+      times_for_prediction['s_inf_copy_to_gpu'] = server_times['s_inf_copy_to_gpu']*nb_inferences
+      times_for_prediction['s_inf_to_numpy'] = server_times['s_inf_to_numpy']*nb_inferences
 
-  times_for_prediction['s_read_data_shm'] = server_times['s_read_data_shm']
-  times_for_prediction['s_read_model_shm_to_gpu'] = server_times['s_read_model_shm_to_gpu']
-  
-  nb_inferences = batch_size/SERVER_BATCH
-  times_for_prediction['s_inf_to_pytorch'] = server_times['s_inf_to_pytorch']*nb_inferences
-  times_for_prediction['s_inf_copy_to_gpu'] = server_times['s_inf_copy_to_gpu']*nb_inferences
-  times_for_prediction['s_inf_to_numpy'] = server_times['s_inf_to_numpy']*nb_inferences
+      for idx in range(len(server_times['s_inf_forward_pass'])):
+          times_for_prediction['inference_time'][idx] = server_times['s_inf_forward_pass'][idx]*nb_inferences
 
-  for idx in range(len(server_times['s_inf_forward_pass'])):
-      times_for_prediction['inference_time'][idx] = server_times['s_inf_forward_pass'][idx]*nb_inferences
-
-  #print("Times for prediction : ", times_for_prediction)
+      #print("Times for prediction : ", times_for_prediction)
 
   result.append((split_idx_, mem_cons_))
 
@@ -367,10 +370,11 @@ try:
             myt.start()
           train_times, backward_pass_time = train(epoch)
           
-          for idx in range(split_idx, split_idx+len(train_times)):
-            times_for_prediction['inference_time'][idx] = train_times[(idx-split_idx)]
-          print(times_for_prediction['inference_time'])
-          times_for_prediction['c_train_backward_pass'] = backward_pass_time
+          if mode == 'split': 
+              for idx in range(split_idx, split_idx+len(train_times)):
+                times_for_prediction['inference_time'][idx] = train_times[(idx-split_idx)]
+              print(times_for_prediction['inference_time'])
+              times_for_prediction['c_train_backward_pass'] = backward_pass_time
 
           print("One training iteration takes: {} seconds".format(time.time()-localtime))
           idx_iter+=1
